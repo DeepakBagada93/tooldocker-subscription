@@ -1,25 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #F97316;
-  --color-secondary: #1E293B;
-  --color-accent: #64748B;
-  --color-workshop-bg: #F8FAFC;
-  --color-workshop-dark: #0F172A;
-  
+  --color-primary: #E31E33;
+  /* Vibrant Red */
+  --color-secondary: #1A1A1B;
+  /* Deep Charcoal */
+  --color-accent: #808285;
+  /* Medium Gray */
+  --color-workshop-bg: #F4F4F4;
+  /* Off-White */
+  --color-workshop-dark: #1A1A1B;
+
+  /* Geometric and highly readable */
   --font-sans: var(--font-inter);
+  --font-heading: var(--font-outfit);
   --font-mono: var(--font-jetbrains-mono);
 }
 
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
+  --background: #F4F4F4;
+  /* Off-White Implied Background */
+  --foreground: #1A1A1B;
+  /* Deep Charcoal Text */
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f172a;
-    --foreground: #f8fafc;
+    --background: #1A1A1B;
+    /* Deep Charcoal */
+    --foreground: #F4F4F4;
+    /* Off-White Text */
   }
 }
 
@@ -30,10 +40,26 @@ body {
 }
 
 .industrial-grid {
-  background-image: radial-gradient(circle, #e2e8f0 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image:
+    radial-gradient(circle, rgba(226, 30, 51, 0.15) 1px, transparent 1px),
+    linear-gradient(to right, rgba(0, 0, 0, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 24px 24px, 100px 100px, 100px 100px;
 }
 
 .dark .industrial-grid {
-  background-image: radial-gradient(circle, #1e293b 1px, transparent 1px);
+  background-image:
+    radial-gradient(circle, rgba(226, 30, 51, 0.15) 1px, transparent 1px),
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Base Heading Overrides to use Outfit */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
 }

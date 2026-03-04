@@ -23,12 +23,33 @@ const CartContext = React.createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
   const [items, setItems] = React.useState<CartItem[]>([]);
+  const [isLoaded, setIsLoaded] = React.useState(false);
+
+  // Load from local storage on mount
+  React.useEffect(() => {
+    const saved = localStorage.getItem('tooldocker_cart');
+    if (saved) {
+      try {
+        setItems(JSON.parse(saved));
+      } catch (e) {
+        console.error('Failed to parse cart', e);
+      }
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save to local storage when items change
+  React.useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem('tooldocker_cart', JSON.stringify(items));
+    }
+  }, [items, isLoaded]);
 
   const addItem = (newItem: CartItem) => {
     setItems((prev) => {
       const existing = prev.find((i) => i.id === newItem.id);
       if (existing) {
-        return prev.map((i) => 
+        return prev.map((i) =>
           i.id === newItem.id ? { ...i, quantity: i.quantity + newItem.quantity } : i
         );
       }

@@ -1,5 +1,7 @@
-import { PRODUCTS, VENDORS } from '@/lib/mock-data';
+import { getProductById } from '@/app/actions/products';
+import { VENDORS } from '@/lib/mock-data';
 import { ImageGallery } from '@/components/product/image-gallery';
+import { AddToCartButton } from '@/components/product/add-to-cart-button';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Star, ShieldCheck, Truck, ShoppingCart, Heart, Share2 } from 'lucide-react';
@@ -10,20 +12,21 @@ import { cn } from '@/lib/utils';
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const product = PRODUCTS.find(p => p.id === id);
+  const product = await getProductById(id);
 
   if (!product) {
     notFound();
   }
 
-  const vendor = VENDORS.find(v => v.id === product.vendorId);
+  // Currently mocking vendor info, but eventually this would join from DB 'stores'
+  const vendor = VENDORS.find(v => v.id === product.store_id) || VENDORS[0];
 
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex flex-col gap-12">
         {/* Breadcrumbs */}
         <div className="text-sm text-muted-foreground">
-          Home / {product.category} / <span className="text-foreground font-medium">{product.name}</span>
+          Home / {product.category_id || 'Category'} / <span className="text-foreground font-medium">{product.title}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -34,33 +37,33 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <div className="space-y-8">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="px-3 py-1">{product.category}</Badge>
+                <Badge variant="secondary" className="px-3 py-1">ID: {product.category_id}</Badge>
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="icon" className="rounded-full"><Heart className="h-5 w-5" /></Button>
                   <Button variant="ghost" size="icon" className="rounded-full"><Share2 className="h-5 w-5" /></Button>
                 </div>
               </div>
-              
+
               <h1 className="text-4xl lg:text-5xl font-black tracking-tighter uppercase leading-none">
-                {product.name}
+                {product.title}
               </h1>
-              
+
               <div className="flex items-center gap-6">
                 <div className="flex items-center gap-1">
                   {[...Array(5)].map((_, i) => (
-                    <Star 
-                      key={i} 
+                    <Star
+                      key={i}
                       className={cn(
-                        "h-4 w-4", 
-                        i < Math.floor(product.rating) ? "fill-primary text-primary" : "text-slate-300"
-                      )} 
+                        "h-4 w-4",
+                        i < 4 ? "fill-primary text-primary" : "text-slate-300" // using static 4 for now
+                      )}
                     />
                   ))}
-                  <span className="ml-2 text-sm font-bold">{product.rating} ({product.reviews} reviews)</span>
+                  <span className="ml-2 text-sm font-bold">4.8 (124 reviews)</span>
                 </div>
                 <div className="h-4 w-px bg-slate-200" />
-                <Link href={`/vendor/${product.vendorId}`} className="text-sm font-bold text-primary hover:underline">
-                  By {product.vendorName}
+                <Link href={`/vendor/${product.store_id}`} className="text-sm font-bold text-primary hover:underline">
+                  By {product.stores?.store_name || vendor?.name}
                 </Link>
               </div>
             </div>
@@ -73,17 +76,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               </div>
 
               <div className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center border rounded-lg h-12 overflow-hidden bg-white dark:bg-black">
-                    <button className="px-4 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">-</button>
-                    <input type="number" defaultValue={1} className="w-12 text-center font-bold bg-transparent outline-none" />
-                    <button className="px-4 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">+</button>
-                  </div>
-                  <Button size="lg" className="flex-1 h-12 text-lg font-bold" variant="industrial">
-                    <ShoppingCart className="mr-2 h-5 w-5" />
-                    Add to Cart
-                  </Button>
-                </div>
+                <AddToCartButton product={product} />
+
                 <Button variant="outline" className="w-full h-12 font-bold border-2">
                   Request Bulk Quote (RFQ)
                 </Button>
@@ -108,16 +102,14 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   {product.description}
                 </p>
               </div>
-              
+
               <div>
-                <h3 className="font-bold uppercase tracking-tighter text-lg mb-4">Specifications</h3>
+                <h3 className="font-bold uppercase tracking-tighter text-lg mb-4">Inventory & Specifications</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {Object.entries(product.specs).map(([key, value]) => (
-                    <div key={key} className="flex justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border">
-                      <span className="text-xs font-bold uppercase text-muted-foreground">{key}</span>
-                      <span className="text-sm font-bold">{value}</span>
-                    </div>
-                  ))}
+                  <div className="flex justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg border">
+                    <span className="text-xs font-bold uppercase text-muted-foreground">In Stock</span>
+                    <span className="text-sm font-bold">{product.inventory_count} Units</span>
+                  </div>
                 </div>
               </div>
             </div>

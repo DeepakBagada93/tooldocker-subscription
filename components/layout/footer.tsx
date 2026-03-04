@@ -7,7 +7,7 @@ export function Footer() {
       <div className="container mx-auto px-4 py-12 lg:py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
-          <div className="space-y-6">
+          <div className="space-y-6 md:col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center space-x-2 text-white">
               <div className="bg-primary p-1.5 rounded-lg">
                 <Hammer className="h-6 w-6" />
