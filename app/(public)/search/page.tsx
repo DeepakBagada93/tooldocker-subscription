@@ -1,0 +1,71 @@
+import { PRODUCTS } from '@/lib/mock-data';
+import { ProductCard } from '@/components/product/product-card';
+import { FilterSidebar } from '@/components/product/filter-sidebar';
+import { Button } from '@/components/ui/button';
+import { Search as SearchIcon, SlidersHorizontal } from 'lucide-react';
+
+export default async function SearchPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  const { q } = await searchParams;
+  const query = q || '';
+
+  const results = PRODUCTS.filter(p => 
+    p.name.toLowerCase().includes(query.toLowerCase()) || 
+    p.description.toLowerCase().includes(query.toLowerCase()) ||
+    p.category.toLowerCase().includes(query.toLowerCase())
+  );
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col gap-8">
+        <div className="space-y-4">
+          <h1 className="text-4xl lg:text-6xl font-black tracking-tighter uppercase">
+            Search Results
+          </h1>
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <SearchIcon className="h-4 w-4" />
+            <span>Showing results for <span className="text-foreground font-bold">&quot;{query}&quot;</span></span>
+          </div>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="hidden lg:block w-64 shrink-0">
+            <FilterSidebar />
+          </aside>
+
+          <div className="flex-1 space-y-6">
+            <div className="flex items-center justify-between border-b pb-4">
+              <div className="text-sm font-medium">
+                Found <span className="text-primary">{results.length}</span> matches
+              </div>
+              <Button variant="outline" size="sm" className="lg:hidden">
+                <SlidersHorizontal className="mr-2 h-4 w-4" />
+                Filters
+              </Button>
+            </div>
+
+            {results.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+                {results.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="py-20 text-center space-y-6 bg-slate-50 dark:bg-slate-900 rounded-3xl border-2 border-dashed">
+                <div className="w-20 h-20 bg-slate-200 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto">
+                  <SearchIcon className="h-10 w-10 text-muted-foreground" />
+                </div>
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black tracking-tighter uppercase">No matches found</h3>
+                  <p className="text-muted-foreground max-w-md mx-auto">
+                    We couldn&apos;t find anything matching your search. Try checking for typos or using more general terms.
+                  </p>
+                </div>
+                <Button variant="industrial">Browse All Products</Button>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

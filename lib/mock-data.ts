@@ -1,0 +1,106 @@
+export const CATEGORIES = [
+  { id: '1', name: 'Power Tools', slug: 'power-tools', image: 'https://picsum.photos/seed/powertool/400/300' },
+  { id: '2', name: 'Heavy Machinery', slug: 'heavy-machinery', image: 'https://picsum.photos/seed/machinery/400/300' },
+  { id: '3', name: 'Safety Equipment', slug: 'safety', image: 'https://picsum.photos/seed/safety/400/300' },
+  { id: '4', name: 'Welding & Cutting', slug: 'welding', image: 'https://picsum.photos/seed/welding/400/300' },
+  { id: '5', name: 'Hand Tools', slug: 'hand-tools', image: 'https://picsum.photos/seed/handtool/400/300' },
+  { id: '6', name: 'Pneumatics', slug: 'pneumatics', image: 'https://picsum.photos/seed/pneumatic/400/300' },
+];
+
+export const VENDORS = [
+  { id: 'v1', name: 'Industrial Pro Solutions', rating: 4.8, reviews: 1250, logo: 'https://picsum.photos/seed/v1/100/100', description: 'Leading supplier of heavy-duty industrial equipment since 1995.' },
+  { id: 'v2', name: 'SteelWorks Machinery', rating: 4.5, reviews: 840, logo: 'https://picsum.photos/seed/v2/100/100', description: 'Specializing in metalworking and fabrication tools.' },
+  { id: 'v3', name: 'SafetyFirst Gear', rating: 4.9, reviews: 2100, logo: 'https://picsum.photos/seed/v3/100/100', description: 'Your trusted partner for workplace safety and PPE.' },
+];
+
+export const PRODUCTS = [
+  {
+    id: 'p1',
+    name: 'Industrial Grade Arc Welder 400A',
+    description: 'Heavy-duty arc welder designed for continuous industrial use. Features advanced IGBT inverter technology and digital display.',
+    price: 1299.99,
+    category: 'Welding & Cutting',
+    categoryId: '4',
+    vendorId: 'v2',
+    vendorName: 'SteelWorks Machinery',
+    rating: 4.7,
+    reviews: 45,
+    images: [
+      'https://picsum.photos/seed/welder1/800/600',
+      'https://picsum.photos/seed/welder2/800/600',
+      'https://picsum.photos/seed/welder3/800/600',
+    ],
+    specs: {
+      'Input Voltage': '220V/380V',
+      'Output Current': '20-400A',
+      'Duty Cycle': '60%',
+      'Weight': '15kg',
+    },
+    stock: 12,
+  },
+  {
+    id: 'p2',
+    name: 'Hydraulic Excavator Bucket 24"',
+    description: 'Reinforced steel excavator bucket with replaceable teeth. Compatible with most major excavator brands.',
+    price: 2450.00,
+    category: 'Heavy Machinery',
+    categoryId: '2',
+    vendorId: 'v2',
+    vendorName: 'SteelWorks Machinery',
+    rating: 4.9,
+    reviews: 12,
+    images: [
+      'https://picsum.photos/seed/bucket1/800/600',
+      'https://picsum.photos/seed/bucket2/800/600',
+    ],
+    specs: {
+      'Width': '24 inches',
+      'Capacity': '0.5 cubic yards',
+      'Material': 'High-strength alloy steel',
+    },
+    stock: 5,
+  },
+  {
+    id: 'p3',
+    name: 'Professional Impact Wrench Kit',
+    description: 'High-torque cordless impact wrench with two 5.0Ah batteries and fast charger.',
+    price: 349.99,
+    category: 'Power Tools',
+    categoryId: '1',
+    vendorId: 'v1',
+    vendorName: 'Industrial Pro Solutions',
+    rating: 4.6,
+    reviews: 128,
+    images: [
+      'https://picsum.photos/seed/wrench1/800/600',
+      'https://picsum.photos/seed/wrench2/800/600',
+    ],
+    specs: {
+      'Max Torque': '1000Nm',
+      'Drive Size': '1/2 inch',
+      'Battery': '20V Max Lithium Ion',
+    },
+    stock: 45,
+  },
+  {
+    id: 'p4',
+    name: 'Full Body Safety Harness',
+    description: 'Ergonomic full body harness with 5-point adjustment and breathable padding for all-day comfort.',
+    price: 89.50,
+    category: 'Safety Equipment',
+    categoryId: '3',
+    vendorId: 'v3',
+    vendorName: 'SafetyFirst Gear',
+    rating: 4.8,
+    reviews: 320,
+    images: [
+      'https://picsum.photos/seed/harness1/800/600',
+    ],
+    specs: {
+      'Standard': 'ANSI Z359.11',
+      'Weight Capacity': '140kg',
+      'Material': 'Polyester Webbing',
+    },
+    stock: 150,
+  },
+];
