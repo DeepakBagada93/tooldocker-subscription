@@ -4,12 +4,12 @@ import * as React from 'react';
 import { COMMISSION_TIERS } from '@/lib/admin-mock-data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Plus, 
-  Search, 
-  DollarSign, 
-  Edit2, 
-  Trash2, 
+import {
+  Plus,
+  Search,
+  DollarSign,
+  Edit2,
+  Trash2,
   ChevronRight,
   Settings2,
   MoreVertical,
@@ -48,7 +48,7 @@ export default function CommissionConfigPage() {
                       <div className="space-y-1">
                         <div className="text-lg font-bold">{tier.name} Tier</div>
                         <div className="text-xs text-muted-foreground uppercase font-bold tracking-widest">
-                          Volume: ${tier.minVolume.toLocaleString()} - ${tier.maxVolume.toLocaleString()}
+                          Volume: ${tier.minVolume.toLocaleString('en-US')} - ${tier.maxVolume.toLocaleString('en-US')}
                         </div>
                       </div>
                     </div>
