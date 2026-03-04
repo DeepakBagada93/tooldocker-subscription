@@ -1,10 +1,10 @@
 export const CATEGORIES = [
   { id: '1', name: 'Power Tools', slug: 'power-tools', image: 'https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&q=80&w=800' },
   { id: '2', name: 'Heavy Machinery', slug: 'heavy-machinery', image: 'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&q=80&w=800' },
-  { id: '3', name: 'Safety Equipment', slug: 'safety', image: 'https://images.unsplash.com/photo-1588698188151-512c9c71a396?auto=format&fit=crop&q=80&w=800' },
-  { id: '4', name: 'Welding & Cutting', slug: 'welding', image: 'https://images.unsplash.com/photo-1504917595217-d414ba2023c0?auto=format&fit=crop&q=80&w=800' },
-  { id: '5', name: 'Hand Tools', slug: 'hand-tools', image: 'https://images.unsplash.com/photo-1530124566582-a618bc2615dc?auto=format&fit=crop&q=80&w=800' },
-  { id: '6', name: 'Pneumatics', slug: 'pneumatics', image: 'https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&q=80&w=800' },
+  { id: '3', name: 'Safety Equipment', slug: 'safety', image: 'https://images.unsplash.com/photo-1759159091728-e2c87b9d9315?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHN0b25lJTIwY3V0dGluZyUyMG1hY2hpbmV8ZW58MHx8MHx8fDA%3D' },
+  { id: '4', name: 'Welding & Cutting', slug: 'welding', image: 'https://images.unsplash.com/photo-1759159091728-e2c87b9d9315?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHN0b25lJTIwY3V0dGluZyUyMG1hY2hpbmV8ZW58MHx8MHx8fDA%3D' },
+  { id: '5', name: 'Hand Tools', slug: 'hand-tools', image: 'https://images.unsplash.com/photo-1759159091728-e2c87b9d9315?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHN0b25lJTIwY3V0dGluZyUyMG1hY2hpbmV8ZW58MHx8MHx8fDA%3D' },
+  { id: '6', name: 'Pneumatics', slug: 'pneumatics', image: 'https://images.unsplash.com/photo-1759159091728-e2c87b9d9315?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHN0b25lJTIwY3V0dGluZyUyMG1hY2hpbmV8ZW58MHx8MHx8fDA%3D' },
 ];
 
 export const VENDORS = [
@@ -26,7 +26,7 @@ export const PRODUCTS = [
     rating: 4.9,
     reviews: 64,
     images: [
-      'https://images.unsplash.com/photo-1504917595217-d414ba2023c0?auto=format&fit=crop&q=80&w=800',
+      'https://images.unsplash.com/photo-1759159091728-e2c87b9d9315?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fHN0b25lJTIwY3V0dGluZyUyMG1hY2hpbmV8ZW58MHx8MHx8fDA%3D',
     ],
     specs: {
       'Spindle Power': '5.5kW Water Cooled',
