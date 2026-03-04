@@ -4,9 +4,9 @@ import { FilterSidebar } from '@/components/product/filter-sidebar';
 import { Button } from '@/components/ui/button';
 import { Search as SearchIcon, SlidersHorizontal } from 'lucide-react';
 
-export default async function SearchPage(props: { searchParams: Promise<{ q?: string }> }) {
+export default async function SearchPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
   const params = await props.searchParams;
-  const query = params.q || '';
+  const query = typeof params.q === 'string' ? params.q : '';
 
   const results = PRODUCTS.filter(p =>
     p.name.toLowerCase().includes(query.toLowerCase()) ||
