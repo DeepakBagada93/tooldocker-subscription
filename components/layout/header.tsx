@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/cart-context';
 import { CATEGORIES as MOCK_CATEGORIES } from '@/lib/mock-data';
 import { useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/components/layout/theme-toggle';
 
 export function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = React.useState(false);
@@ -159,6 +160,7 @@ export function Header() {
                 <User className="h-5 w-5" />
               </Button>
             </Link>
+            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"

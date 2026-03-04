@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:is(.dark *));
 
 @theme {
   --color-primary: #E31E33;
@@ -24,13 +25,11 @@
   /* Deep Charcoal Text */
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #1A1A1B;
-    /* Deep Charcoal */
-    --foreground: #F4F4F4;
-    /* Off-White Text */
-  }
+:root.dark {
+  --background: #1A1A1B;
+  /* Deep Charcoal */
+  --foreground: #F4F4F4;
+  /* Off-White Text */
 }
 
 body {
