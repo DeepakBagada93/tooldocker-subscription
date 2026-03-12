@@ -78,7 +78,7 @@ export type AdminProductFormInput = {
   id?: string;
   title: string;
   description: string;
-  vendorId: string;
+  vendorId?: string;
   categoryId: string;
   price: number;
   salePrice?: number | null;

@@ -34,9 +34,18 @@ export async function updateSession(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname
 
+    // Temporary preview mode: dashboard routes are open without auth.
+    const isPreviewDashboardRoute =
+        pathname.startsWith('/admin') ||
+        pathname.startsWith('/vendor') ||
+        pathname.startsWith('/buyer')
+
     // Public routes that don't need protection
     const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup') || pathname.startsWith('/auth')
-    const isPublicRoute = pathname === '/' || pathname.match(/^\/(product|shop|categories)\/.*/)
+    const isPublicRoute =
+        pathname === '/' ||
+        pathname.match(/^\/(product|shop|categories)\/.*/) ||
+        isPreviewDashboardRoute
 
     // 1. Unauthenticated users trying to access protected routes go to /login
     if (!user && !isAuthRoute && !isPublicRoute) {
@@ -58,7 +67,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     // 3. Role-Based Access Control (RBAC) Protection
-    if (user) {
+    if (user && !isPreviewDashboardRoute) {
         const role = user.user_metadata?.role || 'buyer'
 
         // Protect Admin Routes

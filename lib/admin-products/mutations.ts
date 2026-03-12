@@ -7,7 +7,7 @@ import type {
 type ProductPayloadInput = {
   title: string;
   description: string;
-  vendorId: string;
+  vendorId: string | null;
   storeId: string;
   categoryId: string | null;
   price: number;
@@ -29,12 +29,10 @@ export type ProductInsertPayload = ReturnType<typeof buildProductPayload>;
 
 export function validateAdminProductInput(input: AdminProductFormInput) {
   const title = input.title.trim();
-  const vendorId = input.vendorId.trim();
   const categoryId = input.categoryId.trim();
   const sku = input.sku.trim();
 
   if (!title) throw new Error('Product title is required.');
-  if (!vendorId) throw new Error('Vendor is required.');
   if (!categoryId) throw new Error('Category is required.');
   if (!sku) throw new Error('SKU is required.');
   if (!Number.isFinite(input.price) || input.price < 0) throw new Error('Price must be a valid positive number.');
@@ -67,10 +65,42 @@ export async function getVendorStoreByVendorId(supabase: SupabaseClient, vendorI
   return data;
 }
 
+export async function getOrCreateAdminStore(supabase: SupabaseClient, adminUserId: string) {
+  const existingStore = await supabase
+    .from('stores')
+    .select('id, vendor_id, store_name, is_active')
+    .eq('vendor_id', adminUserId)
+    .single();
+
+  if (existingStore.data) {
+    if (!existingStore.data.is_active) {
+      throw new Error('Admin store is inactive.');
+    }
+    return existingStore.data;
+  }
+
+  const { data, error } = await supabase
+    .from('stores')
+    .insert({
+      vendor_id: adminUserId,
+      store_name: 'Tooldocker Admin',
+      description: 'Internal storefront for admin-managed products.',
+      is_active: true,
+    })
+    .select('id, vendor_id, store_name, is_active')
+    .single();
+
+  if (error || !data) {
+    throw new Error(error?.message ?? 'Admin store could not be created.');
+  }
+
+  return data;
+}
+
 export async function ensureCategoryExists(supabase: SupabaseClient, categoryId: string) {
   const { data, error } = await supabase
     .from('categories')
-    .select('id')
+    .select('id, name')
     .eq('id', categoryId)
     .single();
 

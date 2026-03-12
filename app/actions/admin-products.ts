@@ -4,9 +4,11 @@ import { revalidatePath } from 'next/cache';
 import {
   buildProductPayload,
   ensureCategoryExists,
+  getOrCreateAdminStore,
   getVendorStoreByVendorId,
   validateAdminProductInput,
 } from '@/lib/admin-products/mutations';
+import { createPreviewAdminProduct } from '@/lib/admin-products/preview-products';
 import { requireAdmin } from '@/lib/admin-products/server';
 import type {
   AdminBulkEditInput,
@@ -16,20 +18,49 @@ import type {
 
 export async function createAdminProduct(input: AdminProductFormInput): Promise<AdminMutationResult> {
   try {
-    const { supabase } = await requireAdmin();
+    const { supabase, user } = await requireAdmin();
 
     validateAdminProductInput(input);
-    const [store] = await Promise.all([
-      getVendorStoreByVendorId(supabase, input.vendorId),
-      ensureCategoryExists(supabase, input.categoryId),
-    ]);
+    const category = await ensureCategoryExists(supabase, input.categoryId);
+
+    if (!user) {
+      await createPreviewAdminProduct({
+        title: input.title,
+        description: input.description,
+        categoryId: input.categoryId,
+        categoryName: category.name,
+        price: input.price,
+        salePrice: input.salePrice ?? null,
+        sku: input.sku,
+        stockQuantity: input.stockQuantity,
+        condition: input.condition,
+        brand: input.brand,
+        weight: input.weight,
+        length: input.length,
+        width: input.width,
+        height: input.height,
+        images: input.images,
+        tags: input.tags,
+        isPublished: input.isPublished,
+      });
+
+      revalidatePath('/admin/products');
+      return {
+        ok: true,
+        message: 'Preview product created for admin mode.',
+      };
+    }
+
+    const store = input.vendorId
+      ? await getVendorStoreByVendorId(supabase, input.vendorId)
+      : await getOrCreateAdminStore(supabase, user.id);
 
     const payload = buildProductPayload({
       title: input.title,
       description: input.description,
-      vendorId: input.vendorId,
+      vendorId: input.vendorId ?? user.id,
       storeId: store.id,
-      categoryId: input.categoryId,
+      categoryId: category.id,
       price: input.price,
       salePrice: input.salePrice ?? null,
       sku: input.sku,
