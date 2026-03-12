@@ -15,7 +15,7 @@ import {
 const ADMIN_ITEMS = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Vendor Approval', href: '/admin/vendors', icon: ShieldCheck },
-  { name: 'Product Moderation', href: '/admin/products', icon: Box },
+  { name: 'Product Management', href: '/admin/products', icon: Box },
   { name: 'Category Management', href: '/admin/categories', icon: LayoutDashboard },
   { name: 'Commission Config', href: '/admin/commission', icon: Settings },
   { name: 'Dispute Resolution', href: '/admin/disputes', icon: AlertTriangle },

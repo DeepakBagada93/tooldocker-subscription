@@ -18,27 +18,27 @@ export function CategoryAnimatedGrid({ categories }: { categories: any[] }) {
                 >
                     <Link
                         href={`/products?category=${category.slug}`}
-                        className="group block rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm hover:shadow-2xl transition-all duration-300 h-full flex flex-col"
+                        className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.28)]"
                     >
-                        <div className="w-full relative overflow-hidden bg-slate-100 dark:bg-slate-800 h-[200px]">
+                        <div className="relative h-[220px] w-full overflow-hidden bg-[#f3ede4]">
                             {category.image ? (
                                 <Image
                                     src={category.image}
                                     alt={category.name}
                                     fill
-                                    className="object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-700 ease-in-out"
+                                    className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
                                 />
                             ) : (
-                                <div className="absolute inset-0 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center">
-                                    <span className="text-slate-400 dark:text-slate-500 font-bold uppercase tracking-widest">{category.name[0]}</span>
+                                <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#efe6d8] to-[#d8c7b0]">
+                                    <span className="text-xl font-semibold uppercase tracking-[0.28em] text-stone-500">{category.name[0]}</span>
                                 </div>
                             )}
-                            <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mix-blend-multiply dark:mix-blend-overlay" />
+                            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_30%,rgba(15,23,42,0.08)_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         </div>
-                        <div className="p-6 bg-white dark:bg-slate-900 relative flex-1 flex flex-col">
-                            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-orange-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            <h3 className="font-bold text-lg mb-1 text-slate-900 dark:text-white group-hover:text-primary transition-colors tracking-tight">{category.name}</h3>
-                            <p className="text-sm text-slate-500 dark:text-slate-400 line-clamp-2 mt-auto">{category.description || 'Industrial supplies and equipment'}</p>
+                        <div className="relative flex flex-1 flex-col p-7">
+                            <div className="mb-4 text-[11px] font-semibold uppercase tracking-[0.26em] text-stone-400">Category</div>
+                            <h3 className="mb-2 text-xl font-semibold tracking-[-0.03em] text-slate-900 transition-colors group-hover:text-primary">{category.name}</h3>
+                            <p className="mt-auto line-clamp-2 text-sm leading-6 text-stone-500">{category.description || 'Industrial supplies and equipment'}</p>
                         </div>
                     </Link>
                 </motion.div>

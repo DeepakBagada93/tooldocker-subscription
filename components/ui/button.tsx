@@ -19,7 +19,7 @@ const buttonVariants = cva(
           'bg-secondary text-white hover:bg-secondary/80',
         ghost: 'hover:bg-accent hover:text-accent-foreground',
         link: 'text-primary underline-offset-4 hover:underline',
-        industrial: 'bg-workshop-dark text-white border-b-4 border-black active:border-b-0 active:translate-y-1 transition-all',
+        industrial: 'bg-slate-900 text-white shadow-sm hover:bg-slate-800',
       },
       size: {
         default: 'h-10 px-4 py-2',

@@ -2,33 +2,39 @@
 
 import { motion } from 'motion/react';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export function CTASection() {
     return (
-        <section className="py-24 bg-workshop-dark text-white overflow-hidden relative border-t-8 border-primary">
-            <div className="absolute inset-0 opacity-10 industrial-grid" />
-            <div className="absolute top-0 right-1/4 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] mix-blend-screen opacity-30" />
+        <section className="relative overflow-hidden bg-[#f6f1e8] py-24 text-slate-900">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(199,98,44,0.12),transparent_26%)]" />
             <div className="container mx-auto px-4 relative z-10">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 30 }}
                     whileInView={{ opacity: 1, scale: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.7 }}
-                    className="max-w-4xl mx-auto text-center space-y-8"
+                    className="mx-auto max-w-4xl rounded-[2.5rem] border border-white/70 bg-white/80 px-6 py-14 text-center shadow-[0_30px_80px_-45px_rgba(15,23,42,0.32)] backdrop-blur-sm sm:px-10"
                 >
-                    <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-black tracking-tighter uppercase leading-[1.1]">
-                        Ready to Upgrade Your <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-orange-400">Industrial Arsenal?</span>
+                    <div className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-500">Begin with clarity</div>
+                    <h2 className="text-3xl font-semibold leading-[1.05] tracking-[-0.05em] sm:text-4xl lg:text-5xl xl:text-6xl">
+                        A more spacious marketplace for
+                        <br />
+                        modern industrial buying.
                     </h2>
-                    <p className="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto font-medium">
-                        Join thousands of professionals on the world&apos;s fastest-growing industrial marketplace. Get the best tools for your next big project.
+                    <p className="mx-auto max-w-2xl text-lg leading-8 text-stone-600 sm:text-xl">
+                        Move from browsing to purchase with fewer distractions, refined product discovery, and verified vendors that match the pace of professional teams.
                     </p>
-                    <div className="flex flex-col sm:flex-row justify-center gap-4 pt-6 w-full sm:w-auto px-4">
-                        <Button size="lg" className="w-full sm:w-auto h-14 px-8 sm:px-12 text-base sm:text-lg font-bold bg-primary hover:bg-red-700 shadow-[0_4px_14px_0_rgba(227,30,51,0.39)] hover:shadow-[0_6px_20px_rgba(227,30,51,0.23)] hover:-translate-y-0.5 transition-all" variant="industrial">
-                            Start Shopping
+                    <div className="flex w-full flex-col justify-center gap-4 px-4 pt-6 sm:w-auto sm:flex-row">
+                        <Button asChild size="lg" className="h-14 w-full rounded-full bg-slate-900 px-8 text-base font-medium text-white hover:bg-slate-800 sm:w-auto sm:px-12 sm:text-lg">
+                            <Link href="/search">
+                            Start shopping
+                            </Link>
                         </Button>
-                        <Button size="lg" variant="outline" className="w-full sm:w-auto h-14 px-8 sm:px-12 text-base sm:text-lg font-bold border-slate-600 hover:bg-slate-800 text-white hover:-translate-y-0.5 transition-all">
-                            Become a Vendor
+                        <Button asChild size="lg" variant="outline" className="h-14 w-full rounded-full border-stone-300 bg-white px-8 text-base font-medium text-slate-900 hover:bg-stone-100 sm:w-auto sm:px-12 sm:text-lg">
+                            <Link href="/login">
+                            Become a vendor
+                            </Link>
                         </Button>
                     </div>
                 </motion.div>

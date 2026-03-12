@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Store, ShieldCheck, Wrench, Truck, MapPin } from 'lucide-react';
+import { Store, ShieldCheck, Wrench, Truck } from 'lucide-react';
 
 const features = [
     {
@@ -37,34 +37,30 @@ const shops = [
 
 export function WhyTooldocker() {
     return (
-        <section className="py-24 bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors">
-            {/* Decorative Grid Background */}
-            <div className="absolute inset-0 z-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
+        <section className="relative overflow-hidden bg-white py-28">
             <div className="container mx-auto px-4 relative z-10">
-                <div className="text-center mb-16 space-y-4">
+                <div className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-3xl md:text-5xl font-black uppercase tracking-tight text-slate-900 dark:text-white"
+                        className="text-3xl font-semibold tracking-[-0.04em] text-slate-900 md:text-5xl"
                     >
-                        Why Choose <span className="text-primary">Tooldocker?</span>
+                        Why teams choose Tooldocker for a more deliberate buying experience.
                     </motion.h2>
                     <motion.p
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto font-medium"
+                        className="mx-auto max-w-2xl text-lg leading-8 text-stone-600"
                     >
-                        The premier marketplace for industrial tools, connecting professionals with verified vendors globally.
+                        The platform keeps the essentials visible: trusted suppliers, industrial-grade inventory, and a clearer path from discovery to checkout.
                     </motion.p>
                 </div>
 
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    {/* Features Grid */}
-                    <div className="grid sm:grid-cols-2 gap-6">
+                <div className="grid items-center gap-10 lg:grid-cols-2">
+                    <div className="grid gap-5 sm:grid-cols-2">
                         {features.map((feature, idx) => {
                             const Icon = feature.icon;
                             return (
@@ -74,13 +70,13 @@ export function WhyTooldocker() {
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 hover:shadow-md transition-shadow"
+                                    className="rounded-[2rem] border border-stone-200 bg-[#fcfaf7] p-7 transition-shadow hover:shadow-md"
                                 >
-                                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary mb-4">
+                                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-900 shadow-sm">
                                         <Icon className="w-6 h-6" />
                                     </div>
-                                    <h3 className="text-xl font-bold mb-2 text-slate-900 dark:text-white">{feature.title}</h3>
-                                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
+                                    <h3 className="mb-3 text-xl font-semibold tracking-[-0.03em] text-slate-900">{feature.title}</h3>
+                                    <p className="text-sm leading-7 text-stone-600">
                                         {feature.description}
                                     </p>
                                 </motion.div>
@@ -88,18 +84,15 @@ export function WhyTooldocker() {
                         })}
                     </div>
 
-                    {/* World Map Visualization */}
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="relative bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden aspect-square md:aspect-video lg:aspect-square flex items-center justify-center"
+                        className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2.5rem] border border-stone-200 bg-[linear-gradient(180deg,#faf7f1_0%,#f2ece2_100%)] p-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)] md:aspect-video lg:aspect-square"
                     >
-                        {/* Abstract Map Background using simple radial gradients to simulate continents or a global reach */}
-                        <div className="absolute inset-0 bg-slate-50 dark:bg-slate-950 opacity-50"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(199,98,44,0.14),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(15,23,42,0.07),transparent_30%)]" />
 
-                        {/* World Map SVG - Simplified */}
-                        <svg viewBox="0 0 1008 650" className="w-full h-full text-slate-200 dark:text-slate-800 fill-current absolute inset-0 z-0 p-8">
+                        <svg viewBox="0 0 1008 650" className="absolute inset-0 z-0 h-full w-full fill-current p-8 text-stone-300">
                             <path d="M260.5,145.4c-4.2-2.1-15.3-2.1-19.1-1.4c-6.2,1.2-13.8,4.2-16.7,8.3c-2.1,3.1-2.4,9-1.4,14.6c0.5,2.6,2.1,4.2,3.1,3.5
               c1.2-0.9,0.7-3.8-1-5.6c-4.9-5.2-3.1-12.7,4.2-15.6c4-1.6,8.8-1.4,11.8-1.2c5.9,0.5,12,3.3,16,6.6c4,3.3,8.8,3.8,11.4,0.9
               C271.8,152.1,266.3,148.4,260.5,145.4z"/>
@@ -128,8 +121,7 @@ export function WhyTooldocker() {
                             <circle cx="500" cy="400" r="120" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="4 8" opacity="0.3" />
                         </svg>
 
-                        {/* Simulated interactive glowing lines representing connections */}
-                        <svg viewBox="0 0 100 100" className="absolute inset-0 w-full h-full z-10 pointer-events-none opacity-20" preserveAspectRatio="none">
+                        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 z-10 h-full w-full opacity-20" preserveAspectRatio="none">
                             <motion.path
                                 d="M20,30 Q45,20 70,55"
                                 fill="none"
@@ -165,8 +157,7 @@ export function WhyTooldocker() {
                             </defs>
                         </svg>
 
-                        <div className="relative z-20 w-full h-full">
-                            {/* Animated Map Pins/Shops */}
+                        <div className="relative z-20 h-full w-full">
                             {shops.map((shop, idx) => (
                                 <motion.div
                                     key={idx}
@@ -178,18 +169,14 @@ export function WhyTooldocker() {
                                     transition={{ delay: 0.5 + idx * 0.1, type: "spring" }}
                                 >
                                     <div className="relative group cursor-pointer">
-                                        {/* Ping Animation */}
                                         <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping"></div>
 
-                                        {/* Pin/Store Icon */}
-                                        <div className="relative bg-primary text-white p-1.5 md:p-2 rounded-full shadow-lg shadow-primary/30 group-hover:scale-110 transition-transform flex items-center justify-center">
+                                        <div className="relative flex items-center justify-center rounded-full bg-slate-900 p-1.5 text-white shadow-lg transition-transform group-hover:scale-110 md:p-2">
                                             <Store className="w-4 h-4 md:w-5 md:h-5" />
                                         </div>
 
-                                        {/* Tooltip */}
-                                        <div className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-xs font-bold py-1.5 px-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                                        <div className="pointer-events-none absolute bottom-full left-1/2 mb-3 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-900 px-3 py-1.5 text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
                                             {shop.label}
-                                            {/* Triangle pointer */}
                                             <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
                                         </div>
                                     </div>
@@ -197,21 +184,20 @@ export function WhyTooldocker() {
                             ))}
                         </div>
 
-                        {/* Floating Information Card */}
                         <motion.div
                             initial={{ opacity: 0, x: 20 }}
                             whileInView={{ opacity: 1, x: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: 1.2 }}
-                            className="absolute bottom-6 right-6 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md p-4 rounded-xl shadow-lg border border-slate-100 dark:border-slate-800 z-30 hidden sm:block"
+                            className="absolute bottom-6 right-6 z-30 hidden rounded-[1.5rem] border border-white/70 bg-white/85 p-5 shadow-lg backdrop-blur-md sm:block"
                         >
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full flex items-center justify-center">
+                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
                                     <ShieldCheck className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <p className="text-sm font-bold text-slate-900 dark:text-white">150+ Countries</p>
-                                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Verified vendors globally</p>
+                                    <p className="text-sm font-semibold text-slate-900">150+ countries</p>
+                                    <p className="text-xs font-medium text-stone-500">Verified vendors, globally</p>
                                 </div>
                             </div>
                         </motion.div>

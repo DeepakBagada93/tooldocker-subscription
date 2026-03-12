@@ -5,14 +5,14 @@ import { Hammer, ShieldCheck, Truck, Clock } from 'lucide-react';
 
 export function TrustBar() {
     return (
-        <section className="bg-white dark:bg-workshop-dark border-b py-8">
+        <section className="border-b border-stone-200 bg-white py-8">
             <div className="container mx-auto px-4">
-                <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {[
-                        { icon: ShieldCheck, title: "Verified Vendors", desc: "Strict quality control" },
-                        { icon: Truck, title: "Industrial Shipping", desc: "Heavy-duty logistics" },
-                        { icon: Clock, title: "24h Response", desc: "Fast RFQ turnaround" },
-                        { icon: Hammer, title: "Expert Support", desc: "Technical assistance" }
+                        { icon: ShieldCheck, title: "Verified vendors", desc: "Carefully reviewed sellers" },
+                        { icon: Truck, title: "Reliable delivery", desc: "Logistics built for bulky orders" },
+                        { icon: Clock, title: "Simple checkout", desc: "Fast and calm buying flow" },
+                        { icon: Hammer, title: "Expert guidance", desc: "Support for serious buyers" }
                     ].map((item, index) => (
                         <motion.div
                             key={index}
@@ -20,14 +20,14 @@ export function TrustBar() {
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true, margin: "-50px" }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
-                            className="flex items-center space-x-4 bg-white dark:bg-workshop-dark p-4 rounded-xl hover:shadow-lg transition-shadow border border-slate-100 dark:border-slate-800/50"
+                            className="flex items-center space-x-4 rounded-3xl border border-stone-200 bg-[#fcfaf7] p-5 transition-shadow hover:shadow-md"
                         >
-                            <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded-xl">
-                                <item.icon className="h-6 w-6 text-primary" />
+                            <div className="rounded-2xl bg-white p-3 shadow-sm">
+                                <item.icon className="h-5 w-5 text-slate-900" />
                             </div>
                             <div>
-                                <div className="font-bold text-sm tracking-tight">{item.title}</div>
-                                <div className="text-xs text-muted-foreground">{item.desc}</div>
+                                <div className="text-sm font-semibold tracking-tight text-slate-900">{item.title}</div>
+                                <div className="text-xs text-stone-500">{item.desc}</div>
                             </div>
                         </motion.div>
                     ))}

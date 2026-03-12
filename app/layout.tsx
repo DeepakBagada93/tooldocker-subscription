@@ -20,6 +20,10 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: 'Tooldocker | Industrial Marketplace',
   description: 'The premium multivendor industrial marketplace for heavy-duty tools and machinery.',
+  icons: {
+    icon: '/images/tooldocker.png',
+    apple: '/images/tooldocker.png',
+  },
 };
 
 import { ThemeProvider } from '@/context/theme-provider';
@@ -35,8 +39,8 @@ export default function RootLayout({
       <body suppressHydrationWarning className="antialiased">
         <ThemeProvider
           attribute="class"
-          defaultTheme="system"
-          enableSystem
+          defaultTheme="light"
+          enableSystem={false}
           disableTransitionOnChange
         >
           <CartProvider>

@@ -30,9 +30,9 @@ export function ProductCard({ id, name, price, image, category, rating, reviews,
   };
 
   return (
-    <div className="group bg-white dark:bg-workshop-dark rounded-2xl border border-slate-200 dark:border-slate-800 overflow-hidden hover:shadow-2xl transition-all duration-500 flex flex-col h-full">
+    <div className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-stone-200 bg-white transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.28)]">
       {/* Image Container */}
-      <div className="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-900">
+      <div className="relative aspect-square overflow-hidden bg-[#f3ede4]">
         <Image 
           src={image} 
           alt={name} 
@@ -41,7 +41,7 @@ export function ProductCard({ id, name, price, image, category, rating, reviews,
           referrerPolicy="no-referrer"
         />
         <div className="absolute top-3 left-3 flex flex-col gap-2">
-          <Badge variant="secondary" className="bg-white/90 dark:bg-slate-800/90 backdrop-blur text-slate-900 dark:text-white border-none">
+          <Badge variant="secondary" className="border-none bg-white/90 text-slate-900 backdrop-blur">
             {category}
           </Badge>
           {isVerified && (
@@ -53,9 +53,9 @@ export function ProductCard({ id, name, price, image, category, rating, reviews,
       </div>
 
       {/* Content */}
-      <div className="p-5 flex flex-col flex-1">
+      <div className="flex flex-1 flex-col p-5">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">{vendor}</span>
+          <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">{vendor}</span>
           <div className="flex items-center text-amber-500">
             <Star className="h-3 w-3 fill-current" />
             <span className="text-xs font-bold ml-1">{rating}</span>
@@ -63,15 +63,15 @@ export function ProductCard({ id, name, price, image, category, rating, reviews,
         </div>
 
         <Link href={`/product/${id}`} className="flex-1">
-          <h3 className="font-bold text-lg leading-tight group-hover:text-primary transition-colors line-clamp-2 mb-4">
+          <h3 className="mb-4 line-clamp-2 text-lg font-semibold leading-tight tracking-[-0.03em] text-slate-900 transition-colors group-hover:text-primary">
             {name}
           </h3>
         </Link>
 
-        <div className="mt-auto pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
+        <div className="mt-auto flex items-center justify-between border-t border-stone-200 pt-4">
           <div className="flex flex-col">
-            <span className="text-xs text-muted-foreground">Starting at</span>
-            <span className="text-2xl font-black tracking-tighter">${price.toLocaleString()}</span>
+            <span className="text-xs text-stone-500">Starting at</span>
+            <span className="text-2xl font-semibold tracking-[-0.03em] text-slate-900">${price.toLocaleString()}</span>
           </div>
           <Button 
             size="icon" 

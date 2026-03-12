@@ -20,7 +20,7 @@ export function FilterSidebar() {
   return (
     <div className="space-y-8">
       <div>
-        <h3 className="font-bold text-lg mb-4 uppercase tracking-tighter">Categories</h3>
+        <h3 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-slate-900">Categories</h3>
         <div className="space-y-2">
           {CATEGORIES.map((category) => (
             <label key={category.id} className="flex items-center gap-3 cursor-pointer group">
@@ -30,29 +30,31 @@ export function FilterSidebar() {
                 checked={selectedCategories.includes(category.id)}
                 onChange={() => toggleCategory(category.id)}
               />
-              <span className="text-sm group-hover:text-primary transition-colors">{category.name}</span>
+              <span className="text-sm text-slate-700 transition-colors group-hover:text-primary">{category.name}</span>
             </label>
           ))}
         </div>
       </div>
 
       <div>
-        <h3 className="font-bold text-lg mb-4 uppercase tracking-tighter">Price Range</h3>
+        <h3 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-slate-900">Price Range</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <span className="text-xs text-muted-foreground uppercase font-bold">Min</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Min</span>
             <Input 
               type="number" 
               placeholder="$0" 
+              className="border-stone-200 bg-[#fcfaf7]"
               value={priceRange.min}
               onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
             />
           </div>
           <div className="space-y-1">
-            <span className="text-xs text-muted-foreground uppercase font-bold">Max</span>
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Max</span>
             <Input 
               type="number" 
               placeholder="$10k+" 
+              className="border-stone-200 bg-[#fcfaf7]"
               value={priceRange.max}
               onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
             />
@@ -61,22 +63,22 @@ export function FilterSidebar() {
       </div>
 
       <div>
-        <h3 className="font-bold text-lg mb-4 uppercase tracking-tighter">Vendor Rating</h3>
+        <h3 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-slate-900">Vendor Rating</h3>
         <div className="space-y-2">
           {[4, 3, 2].map((rating) => (
             <label key={rating} className="flex items-center gap-3 cursor-pointer group">
               <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" />
-              <span className="text-sm group-hover:text-primary transition-colors">{rating}+ Stars</span>
+              <span className="text-sm text-slate-700 transition-colors group-hover:text-primary">{rating}+ Stars</span>
             </label>
           ))}
         </div>
       </div>
 
-      <Button className="w-full" variant="industrial">
+      <Button className="w-full rounded-full" variant="industrial">
         Apply Filters
       </Button>
       
-      <Button variant="ghost" className="w-full text-xs uppercase font-bold tracking-widest" onClick={() => {
+      <Button variant="ghost" className="w-full text-xs font-semibold uppercase tracking-[0.2em] text-stone-500 hover:bg-stone-100" onClick={() => {
         setPriceRange({ min: '', max: '' });
         setSelectedCategories([]);
       }}>

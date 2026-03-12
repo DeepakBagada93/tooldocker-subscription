@@ -1,6 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ShieldCheck, ArrowRight, Github } from 'lucide-react';
+import { ShieldCheck, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { login, loginWithGoogle } from '@/app/actions/auth';
 
@@ -8,58 +8,57 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
   const params = await props.searchParams;
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
-      <div className="max-w-md w-full space-y-8 bg-white dark:bg-workshop-dark p-10 rounded-3xl border shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-2 bg-primary" />
+    <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
+      <div className="relative w-full max-w-md space-y-8 overflow-hidden rounded-[2rem] border border-stone-200 bg-white p-10 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.32)]">
+        <div className="absolute left-0 top-0 h-2 w-full bg-primary" />
 
-        <div className="text-center space-y-2">
-          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4">
+        <div className="space-y-2 text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3ede4]">
             <ShieldCheck className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase">Welcome Back</h1>
-          <p className="text-muted-foreground">Access your industrial procurement dashboard</p>
+          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-slate-900">Welcome back</h1>
+          <p className="text-stone-600">Access your industrial procurement dashboard</p>
         </div>
 
         <form action={login} className="space-y-6">
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Email Address</label>
-              <Input name="email" type="email" placeholder="name@company.com" className="h-12" required />
+              <label className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">Email Address</label>
+              <Input name="email" type="email" placeholder="name@company.com" className="h-12 border-stone-200 bg-[#fcfaf7]" required />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Password</label>
-                <Link href="#" className="text-xs font-bold text-primary hover:underline">Forgot?</Link>
+                <label className="text-xs font-semibold uppercase tracking-[0.2em] text-stone-500">Password</label>
+                <Link href="#" className="text-xs font-semibold text-primary hover:underline">Forgot?</Link>
               </div>
-              <Input name="password" type="password" placeholder="••••••••" className="h-12" required />
+              <Input name="password" type="password" placeholder="********" className="h-12 border-stone-200 bg-[#fcfaf7]" required />
             </div>
           </div>
 
-          <Button type="submit" className="w-full h-12 text-lg font-bold uppercase tracking-tighter" variant="industrial">
+          <Button type="submit" className="h-12 w-full rounded-full text-lg font-medium" variant="industrial">
             Sign In
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
 
           {params?.message && typeof params.message === 'string' && (
-            <p className="mt-4 p-4 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 text-center text-sm rounded-md font-bold">
+            <p className="mt-4 rounded-md bg-red-100 p-4 text-center text-sm font-semibold text-red-600">
               {params.message}
             </p>
           )}
-
         </form>
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-slate-200 dark:border-slate-800" />
+            <div className="w-full border-t border-stone-200" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase font-bold tracking-widest">
-            <span className="bg-white dark:bg-workshop-dark px-4 text-muted-foreground">Or continue with</span>
+          <div className="relative flex justify-center text-xs font-semibold uppercase tracking-[0.2em]">
+            <span className="bg-white px-4 text-stone-500">Or continue with</span>
           </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
           <form action={loginWithGoogle}>
-            <Button type="submit" variant="outline" className="h-12 font-bold w-full">
+            <Button type="submit" variant="outline" className="h-12 w-full border-stone-200 bg-white font-semibold hover:bg-stone-50">
               <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
                 <path
                   fill="currentColor"
@@ -83,9 +82,9 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
           </form>
         </div>
 
-        <p className="text-center text-sm text-muted-foreground">
+        <p className="text-center text-sm text-stone-500">
           Don&apos;t have an account?{' '}
-          <Link href="/register" className="font-bold text-primary hover:underline">Create one</Link>
+          <Link href="/register" className="font-semibold text-primary hover:underline">Create one</Link>
         </p>
       </div>
     </div>
