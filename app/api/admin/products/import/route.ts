@@ -87,7 +87,7 @@ export async function POST(request: Request) {
     const { data: importRecord, error: importInsertError } = await supabase
       .from('product_imports')
       .insert({
-        created_by: user.id,
+        created_by: user?.id ?? null,
         file_name: spreadsheet.name,
         source_type: sourceType,
         total_products: rows.length,
