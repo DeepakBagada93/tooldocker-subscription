@@ -21,7 +21,7 @@ export async function login(formData: FormData) {
 
     // Redirect based on role
     const role = authData.user?.user_metadata?.role || 'buyer'
-    let targetUrl = '/dashboard'
+    let targetUrl = '/buyer'
     if (role === 'admin') targetUrl = '/admin'
     if (role === 'vendor') targetUrl = '/vendor'
 
