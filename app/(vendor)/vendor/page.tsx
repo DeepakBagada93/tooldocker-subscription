@@ -14,6 +14,7 @@ import {
   Clock3,
   Sparkles,
   ChevronRight,
+  ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,10 +28,10 @@ const currencyFormatter = new Intl.NumberFormat('en-US', {
 
 export default function VendorDashboardPage() {
   const stats = [
-    { name: 'Total Revenue', value: `$${currencyFormatter.format(VENDOR_STATS.totalRevenue)}`, icon: DollarSign, trend: '+12.5%', isUp: true, note: 'Healthy weekly growth' },
+    { name: 'Gross Sales', value: `$${currencyFormatter.format(VENDOR_STATS.grossSales)}`, icon: DollarSign, trend: '+12.5%', isUp: true, note: 'Buyer demand remains strong this month' },
     { name: 'Total Orders', value: VENDOR_STATS.totalOrders, icon: Truck, trend: '+8.2%', isUp: true, note: 'Shipments moving on time' },
     { name: 'Active Products', value: VENDOR_STATS.activeProducts, icon: Package, trend: '+2', isUp: true, note: 'Catalog is actively selling' },
-    { name: 'Pending Payout', value: `$${currencyFormatter.format(VENDOR_STATS.payoutPending)}`, icon: TrendingUp, trend: '-3.1%', isUp: false, note: 'Next transfer scheduled soon' },
+    { name: 'Monthly Plan Cost', value: `$${currencyFormatter.format(VENDOR_STATS.subscriptionSpend)}`, icon: ShieldCheck, trend: 'Growth', isUp: true, note: `${VENDOR_STATS.planUtilization}% of plan capacity is currently used` },
   ];
 
   return (
@@ -42,19 +43,19 @@ export default function VendorDashboardPage() {
               Store health is improving
             </Badge>
             <div className="space-y-2">
-              <h1 className="text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-4xl">A friendlier view of how your store is performing.</h1>
+              <h1 className="text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-4xl">Run your store with clear subscription and catalog visibility.</h1>
               <p className="max-w-2xl text-sm leading-6 text-stone-600 sm:text-base">
-                Track sales, watch payouts, and focus on the next actions that keep your catalog moving. The layout is tuned to stay usable on phones, tablets, and wide screens.
+                Track sales, watch product capacity, and stay ahead of billing renewals before your listing access is interrupted. The layout is tuned to stay usable on phones, tablets, and wide screens.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button variant="industrial" className="h-11 rounded-2xl px-5">Download Report</Button>
-              <Button variant="outline" className="h-11 rounded-2xl border-stone-300 bg-white/80 px-5">Last 30 Days</Button>
+              <Button variant="industrial" className="h-11 rounded-2xl px-5">View Subscription</Button>
+              <Button variant="outline" className="h-11 rounded-2xl border-stone-300 bg-white/80 px-5">Catalog Usage</Button>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
               {[
-                { label: 'Response rate', value: '96%', icon: CircleCheck },
-                { label: 'Avg. prep time', value: '1.4 days', icon: Clock3 },
+                { label: 'Plan status', value: 'Active', icon: CircleCheck },
+                { label: 'Renewal window', value: '19 days', icon: Clock3 },
                 { label: 'Store momentum', value: 'Strong', icon: Sparkles },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/70 bg-white/80 px-4 py-3 shadow-sm">
@@ -72,15 +73,15 @@ export default function VendorDashboardPage() {
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs uppercase tracking-[0.24em] text-white/60">This month</p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight">${integerFormatter.format(Math.round(VENDOR_STATS.totalRevenue / 6))}</h2>
-                <p className="mt-2 text-sm text-white/70">Projected monthly revenue based on your current pace.</p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight">{VENDOR_STATS.planUtilization}%</h2>
+                <p className="mt-2 text-sm text-white/70">Current utilization of your subscription product allowance.</p>
               </div>
-              <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10">+18% pace</Badge>
+              <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10">Growth plan</Badge>
             </div>
             <div className="mt-6 space-y-4">
               {[
                 { label: 'Orders needing action', value: '14', width: 'w-[58%]' },
-                { label: 'Payout readiness', value: '82%', width: 'w-[82%]' },
+                { label: 'Bulk upload access', value: 'Enabled', width: 'w-[100%]' },
                 { label: 'Catalog completeness', value: '91%', width: 'w-[91%]' },
               ].map((row) => (
                 <div key={row.label} className="space-y-2">
@@ -121,8 +122,8 @@ export default function VendorDashboardPage() {
         <div className="rounded-[2rem] border border-stone-200/80 bg-white/90 p-5 shadow-sm sm:p-6">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-black tracking-tight text-slate-900">Revenue Analytics</h2>
-              <p className="mt-1 text-sm text-stone-600">Monthly revenue trend from your current sales window.</p>
+              <h2 className="text-xl font-black tracking-tight text-slate-900">Sales Analytics</h2>
+              <p className="mt-1 text-sm text-stone-600">Monthly sales trend alongside your subscription-led vendor model.</p>
             </div>
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.22em] text-stone-500">
               <div className="flex items-center gap-1">
@@ -185,7 +186,7 @@ export default function VendorDashboardPage() {
               {[
                 { label: 'Review new orders', href: '/vendor/orders' },
                 { label: 'Update product catalog', href: '/vendor/products' },
-                { label: 'Check payout schedule', href: '/vendor/payouts' },
+                { label: 'Manage subscription billing', href: '/vendor/commission' },
               ].map((item) => (
                 <Link key={item.href} href={item.href} className="flex items-center justify-between rounded-2xl border border-stone-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:border-primary hover:text-slate-900">
                   <span>{item.label}</span>

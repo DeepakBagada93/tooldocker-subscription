@@ -23,8 +23,8 @@ export default function VendorApprovalPage() {
     <div className="space-y-8">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase">Vendor Approval System</h1>
-          <p className="text-muted-foreground">Review and verify new industrial suppliers joining the platform.</p>
+          <h1 className="text-3xl font-black tracking-tighter uppercase">Vendor Activation Queue</h1>
+          <p className="text-muted-foreground">Review supplier onboarding, verification, and subscription readiness before catalog access is enabled.</p>
         </div>
         <div className="flex items-center gap-2">
           <Button variant="outline" size="sm">

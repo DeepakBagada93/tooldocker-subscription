@@ -179,11 +179,11 @@ export default function VendorOrdersPage() {
 
               <div className="flex flex-wrap gap-8">
                 <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Commission</div>
-                  <div className="text-sm font-bold text-red-500">${order.commission_amount || '10%'}</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Platform Fee</div>
+                  <div className="text-sm font-bold text-emerald-600">${order.commission_amount ?? 0}</div>
                 </div>
                 <div className="space-y-1">
-                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Net Earnings</div>
+                  <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Vendor Receivable</div>
                   <div className="text-sm font-black tracking-tighter text-emerald-500">${order.net_amount || order.total?.toLocaleString() || '0'}</div>
                 </div>
                 <div className="space-y-1">

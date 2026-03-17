@@ -24,10 +24,10 @@ const integerFormatter = new Intl.NumberFormat('en-US');
 
 export default function AdminDashboardPage() {
   const stats = [
-    { name: 'Global GMV', value: `$${(ADMIN_STATS.gmv / 1000000).toFixed(2)}M`, icon: DollarSign, trend: '+18.5%', isUp: true, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-    { name: 'Total Vendors', value: integerFormatter.format(ADMIN_STATS.totalVendors), icon: ShieldCheck, trend: '+12.2%', isUp: true, color: 'text-blue-500', bg: 'bg-blue-50' },
-    { name: 'Conversion Rate', value: `${ADMIN_STATS.conversionRate}%`, icon: Activity, trend: '+0.4%', isUp: true, color: 'text-amber-500', bg: 'bg-amber-50' },
-    { name: 'Active Users', value: `${(ADMIN_STATS.activeUsers / 1000).toFixed(1)}k`, icon: Users, trend: '-2.1%', isUp: false, color: 'text-indigo-500', bg: 'bg-indigo-50' },
+    { name: 'Monthly Recurring Revenue', value: `$${(ADMIN_STATS.mrr / 1000).toFixed(0)}k`, icon: DollarSign, trend: '+18.5%', isUp: true, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+    { name: 'Active Vendors', value: integerFormatter.format(ADMIN_STATS.activeVendors), icon: ShieldCheck, trend: '+12.2%', isUp: true, color: 'text-blue-500', bg: 'bg-blue-50' },
+    { name: 'Vendor Churn', value: `${ADMIN_STATS.churnRate}%`, icon: Activity, trend: '-0.4%', isUp: false, color: 'text-amber-500', bg: 'bg-amber-50' },
+    { name: 'Active Buyers', value: `${(ADMIN_STATS.activeBuyers / 1000).toFixed(1)}k`, icon: Users, trend: '+2.1%', isUp: true, color: 'text-indigo-500', bg: 'bg-indigo-50' },
   ];
 
   return (
@@ -39,20 +39,20 @@ export default function AdminDashboardPage() {
               Platform operations snapshot
             </Badge>
             <div className="space-y-2">
-              <h1 className="text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-4xl">Admin tools that feel calmer, clearer, and easier to scan.</h1>
+              <h1 className="text-3xl font-black tracking-[-0.05em] text-slate-900 sm:text-4xl">Run vendor subscriptions, moderation, and MRR from one admin hub.</h1>
               <p className="max-w-2xl text-sm leading-6 text-stone-600 sm:text-base">
-                Watch marketplace health, catch urgent queues, and move between approvals and analytics quickly. The responsive layout keeps the same structure from mobile through desktop.
+                Watch recurring revenue, vendor activations, and moderation queues together. The responsive layout keeps the same structure from mobile through desktop.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">
-              <Button variant="industrial" className="h-11 rounded-2xl px-5">Generate Global Report</Button>
-              <Button variant="outline" className="h-11 rounded-2xl border-stone-300 bg-white/80 px-5">System Status: Healthy</Button>
+              <Button variant="industrial" className="h-11 rounded-2xl px-5">Export MRR Report</Button>
+              <Button variant="outline" className="h-11 rounded-2xl border-stone-300 bg-white/80 px-5">Billing Status: Healthy</Button>
             </div>
             <div className="grid gap-3 sm:grid-cols-3">
               {[
                 { label: 'Review SLA', value: '< 2 hrs', icon: Clock3 },
-                { label: 'Trust & safety', value: 'Stable', icon: ShieldAlert },
-                { label: 'Marketplace mood', value: 'Positive', icon: Sparkles },
+                { label: 'Billing health', value: 'Stable', icon: ShieldAlert },
+                { label: 'Vendor growth', value: 'Positive', icon: Sparkles },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 shadow-sm">
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
@@ -69,16 +69,16 @@ export default function AdminDashboardPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.24em] text-white/60">Live command center</p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight">${(ADMIN_STATS.gmv / 1000).toFixed(0)}k</h2>
-                <p className="mt-2 text-sm text-white/70">Gross merchandise volume moving through the platform right now.</p>
+                <h2 className="mt-2 text-2xl font-black tracking-tight">${(ADMIN_STATS.mrr / 1000).toFixed(0)}k</h2>
+                <p className="mt-2 text-sm text-white/70">Monthly recurring revenue currently committed across active vendor plans.</p>
               </div>
               <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10">Healthy</Badge>
             </div>
             <div className="mt-6 space-y-4">
               {[
-                { label: 'Approval queue', value: '12 pending', width: 'w-[48%]' },
+                { label: 'Plan activation queue', value: '12 pending', width: 'w-[48%]' },
                 { label: 'Moderation throughput', value: '76%', width: 'w-[76%]' },
-                { label: 'Support load', value: '31%', width: 'w-[31%]' },
+                { label: 'Past-due accounts', value: '31 vendors', width: 'w-[31%]' },
               ].map((row) => (
                 <div key={row.label} className="space-y-2">
                   <div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/70">
@@ -117,8 +117,8 @@ export default function AdminDashboardPage() {
         <div className="rounded-[2rem] border border-stone-200/80 bg-white/90 p-5 shadow-sm sm:p-6">
           <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h2 className="text-xl font-black tracking-tight text-slate-900">GMV Performance</h2>
-              <p className="mt-1 text-sm text-stone-600">Revenue movement across the recent marketplace period.</p>
+              <h2 className="text-xl font-black tracking-tight text-slate-900">MRR Performance</h2>
+              <p className="mt-1 text-sm text-stone-600">Recurring revenue movement across recent subscription cycles.</p>
             </div>
             <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.22em] text-stone-500">
               <div className="flex items-center gap-1">
@@ -129,7 +129,7 @@ export default function AdminDashboardPage() {
           </div>
           <div className="h-[280px] w-full sm:h-[350px]">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={ADMIN_STATS.gmvData}>
+              <AreaChart data={ADMIN_STATS.mrrData}>
                 <defs>
                   <linearGradient id="colorGmv" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="var(--color-primary, #F27D26)" stopOpacity={0.3} />
@@ -140,7 +140,7 @@ export default function AdminDashboardPage() {
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700 }} />
                 <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700 }} tickFormatter={(value) => `$${value / 1000}k`} />
                 <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                <Area type="monotone" dataKey="gmv" stroke="var(--color-primary, #F27D26)" strokeWidth={3} fillOpacity={1} fill="url(#colorGmv)" />
+                <Area type="monotone" dataKey="mrr" stroke="var(--color-primary, #F27D26)" strokeWidth={3} fillOpacity={1} fill="url(#colorGmv)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -152,9 +152,9 @@ export default function AdminDashboardPage() {
             <p className="mt-1 text-sm text-stone-600">Priority queues that need admin attention next.</p>
             <div className="mt-6 space-y-3">
               {[
-                { title: 'Vendor Approvals', count: 12, color: 'bg-blue-500', href: '/admin/vendors' },
+                { title: 'Vendor Activations', count: 12, color: 'bg-blue-500', href: '/admin/vendors' },
+                { title: 'Plan Management', count: 3, color: 'bg-emerald-500', href: '/admin/commission' },
                 { title: 'Product Moderation', count: 45, color: 'bg-amber-500', href: '/admin/products' },
-                { title: 'Open Disputes', count: 5, color: 'bg-red-500', href: '/admin/disputes' },
               ].map((task) => (
                 <Link key={task.title} href={task.href} className="group flex items-center justify-between rounded-2xl border border-stone-200 bg-stone-50/80 p-4 transition-all hover:border-primary hover:bg-white">
                   <div className="flex items-center gap-3">

@@ -6,8 +6,8 @@ import {
   Package, 
   Settings, 
   BarChart3, 
-  MessageSquare,
-  Users,
+  CreditCard,
+  ShieldCheck,
   Truck
 } from 'lucide-react';
 
@@ -16,8 +16,8 @@ const VENDOR_ITEMS = [
   { name: 'My Products', href: '/vendor/products', icon: Package },
   { name: 'Bulk Upload', href: '/vendor/bulk-upload', icon: BarChart3 },
   { name: 'Orders', href: '/vendor/orders', icon: Truck },
-  { name: 'Payouts', href: '/vendor/payouts', icon: MessageSquare },
-  { name: 'Commission', href: '/vendor/commission', icon: Users },
+  { name: 'Billing', href: '/vendor/payouts', icon: CreditCard },
+  { name: 'Subscription', href: '/vendor/commission', icon: ShieldCheck },
   { name: 'Settings', href: '/vendor/settings', icon: Settings },
 ];
 

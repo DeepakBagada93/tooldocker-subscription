@@ -1,119 +1,105 @@
-'use client';
+import { CheckCircle2, ShieldCheck, Sparkles } from 'lucide-react'
 
-import * as React from 'react';
-import { COMMISSION_BREAKDOWN } from '@/lib/vendor-mock-data';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  Info, 
-  Search, 
-  Filter, 
-  DollarSign, 
-  PieChart, 
-  BarChart3, 
-  ArrowRight,
-  HelpCircle
-} from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { SUBSCRIPTION_PLANS } from '@/lib/subscription-plans'
+import { getVendorSubscriptionStatus } from '@/lib/subscriptions'
 
-export default function CommissionBreakdownPage() {
+export default async function VendorSubscriptionPage() {
+  const subscription = await getVendorSubscriptionStatus()
+
   return (
     <div className="space-y-8">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-black tracking-tighter uppercase">Commission Breakdown</h1>
-          <p className="text-muted-foreground">Understand your earnings and platform fee structure.</p>
+          <h1 className="text-3xl font-black tracking-tighter uppercase">Subscription Plan</h1>
+          <p className="text-muted-foreground">Vendors need an active monthly or yearly subscription to create products and manage catalog imports.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            <HelpCircle className="mr-2 h-4 w-4" />
-            Fee Structure
-          </Button>
-        </div>
+        <Button variant="outline">Open Stripe Billing Portal</Button>
       </div>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="bg-white dark:bg-workshop-dark border rounded-3xl p-8 shadow-sm space-y-6">
-          <h2 className="text-xl font-black tracking-tighter uppercase">Current Fee Tier</h2>
-          <div className="flex items-center gap-6">
-            <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
-              <span className="text-3xl font-black text-primary">10%</span>
-            </div>
-            <div className="space-y-1">
-              <div className="text-lg font-bold">Standard Vendor Tier</div>
-              <p className="text-sm text-muted-foreground">Your commission rate is based on your monthly sales volume.</p>
-              <Badge className="bg-emerald-500 text-[10px] font-bold uppercase tracking-widest mt-2">Active</Badge>
-            </div>
-          </div>
-          <div className="pt-6 border-t space-y-4">
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground font-bold uppercase tracking-widest text-[10px]">Monthly Sales</span>
-              <span className="font-bold">$12,450 / $25,000</span>
-            </div>
-            <div className="h-2 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
-              <div className="h-full bg-primary w-[50%] rounded-full" />
-            </div>
-            <p className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">Reach $25,000 to drop to 8% commission</p>
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.7fr)]">
+        <div className="rounded-3xl border bg-white p-8 shadow-sm">
+          <h2 className="border-b pb-4 text-xl font-black tracking-tighter uppercase">Available Plans</h2>
+          <div className="mt-6 grid gap-4 xl:grid-cols-3">
+            {SUBSCRIPTION_PLANS.map((plan) => {
+              const isCurrentPlan = subscription.plan?.id === plan.id
+              return (
+                <div key={plan.id} className={`rounded-3xl border p-5 ${isCurrentPlan ? 'border-primary bg-primary/5' : 'bg-stone-50/70'}`}>
+                  <div className="flex items-center justify-between gap-3">
+                    <div>
+                      <div className="text-lg font-black text-slate-900">{plan.name}</div>
+                      <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{plan.interval}</div>
+                    </div>
+                    {isCurrentPlan ? <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">Current</Badge> : null}
+                  </div>
+                  <div className="mt-4 text-3xl font-black tracking-tight text-slate-900">${plan.price}</div>
+                  <p className="mt-2 text-sm text-stone-600">{plan.description}</p>
+                  <div className="mt-4 text-sm font-semibold text-slate-900">{plan.productLimit} product slots</div>
+                  <div className="mt-4 space-y-3">
+                    {plan.features.map((feature) => (
+                      <div key={feature.label} className="flex items-start gap-2 text-sm text-stone-600">
+                        <CheckCircle2 className={`mt-0.5 h-4 w-4 shrink-0 ${feature.included ? 'text-emerald-500' : 'text-stone-300'}`} />
+                        <span>{feature.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Button variant={isCurrentPlan ? 'outline' : 'industrial'} className="mt-5 w-full">
+                    {isCurrentPlan ? 'Current Plan' : 'Switch Plan'}
+                  </Button>
+                </div>
+              )
+            })}
           </div>
         </div>
 
-        <div className="bg-white dark:bg-workshop-dark border rounded-3xl p-8 shadow-sm space-y-6">
-          <h2 className="text-xl font-black tracking-tighter uppercase">Earnings Summary</h2>
-          <div className="space-y-4">
-            <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border">
-              <span className="text-sm font-bold">Gross Sales</span>
-              <span className="text-lg font-black tracking-tighter">$125,400.50</span>
-            </div>
-            <div className="flex justify-between items-center p-4 bg-slate-50 dark:bg-slate-900/50 rounded-2xl border">
-              <span className="text-sm font-bold">Total Commission</span>
-              <span className="text-lg font-black tracking-tighter text-red-500">-$12,540.05</span>
-            </div>
-            <div className="flex justify-between items-center p-4 bg-primary/5 rounded-2xl border border-primary/20">
-              <span className="text-sm font-bold text-primary">Net Earnings</span>
-              <span className="text-lg font-black tracking-tighter text-primary">$112,860.45</span>
+        <div className="space-y-6">
+          <div className="rounded-3xl border bg-white p-8 shadow-sm">
+            <h2 className="border-b pb-4 text-xl font-black tracking-tighter uppercase">Current Access</h2>
+            <div className="mt-6 space-y-4">
+              <div className="rounded-2xl border bg-stone-50 p-4">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Status</div>
+                <div className="mt-2 flex items-center gap-2">
+                  <Badge className={subscription.hasActiveSubscription ? 'bg-emerald-100 text-emerald-700 hover:bg-emerald-100' : 'bg-red-100 text-red-700 hover:bg-red-100'}>
+                    {subscription.status}
+                  </Badge>
+                </div>
+              </div>
+              <div className="rounded-2xl border bg-stone-50 p-4">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Products used</div>
+                <div className="mt-2 text-2xl font-black text-slate-900">{subscription.productCount}/{subscription.productLimit}</div>
+                <div className="mt-1 text-sm text-stone-600">{subscription.remainingProductSlots} slots remaining</div>
+              </div>
+              <div className="rounded-2xl border bg-stone-50 p-4">
+                <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Next renewal</div>
+                <div className="mt-2 text-lg font-black text-slate-900">
+                  {subscription.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString() : 'Not scheduled'}
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      {/* Breakdown Table */}
-      <div className="bg-white dark:bg-workshop-dark border rounded-2xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-900/50 border-b">
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Order ID</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Gross Amount</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Commission (10%)</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Platform Fee</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground text-right">Net Amount</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {COMMISSION_BREAKDOWN.map((item) => (
-                <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors group">
-                  <td className="px-6 py-4">
-                    <span className="font-bold font-mono text-sm">{item.id}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-bold">${item.amount.toLocaleString()}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-red-500 font-bold">-${item.commission.toLocaleString()}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-muted-foreground font-bold">-${item.platformFee.toLocaleString()}</span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <span className="font-black tracking-tighter text-emerald-500">${item.net.toLocaleString()}</span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="rounded-3xl border border-primary/20 bg-primary/5 p-6">
+            <div className="flex items-center gap-2 font-bold uppercase tracking-tighter text-primary">
+              <ShieldCheck className="h-5 w-5" />
+              Platform Rule
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              If the subscription becomes inactive or past due, product creation and bulk imports should stop until billing is restored.
+            </p>
+          </div>
+
+          <div className="rounded-3xl border bg-slate-900 p-6 text-white shadow-sm">
+            <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-widest text-white/60">
+              <Sparkles className="h-4 w-4" />
+              Stripe integration note
+            </div>
+            <p className="mt-3 text-sm text-white/75">
+              Connect this page to Stripe Checkout or the Billing Portal so plan upgrades, renewals, and failed-payment recovery stay self-serve.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

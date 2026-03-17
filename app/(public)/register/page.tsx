@@ -70,6 +70,10 @@ export default async function RegisterPage(props: { searchParams: Promise<{ [key
           Already have an account?{' '}
           <Link href="/login" className="font-bold text-primary hover:underline">Sign in</Link>
         </p>
+        <p className="text-center text-sm text-muted-foreground">
+          Need a vendor-ready onboarding flow?{' '}
+          <Link href="/register/vendor" className="font-bold text-primary hover:underline">Apply as a vendor</Link>
+        </p>
       </div>
     </div>
   );

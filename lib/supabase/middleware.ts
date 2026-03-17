@@ -41,7 +41,11 @@ export async function updateSession(request: NextRequest) {
         pathname.startsWith('/buyer')
 
     // Public routes that don't need protection
-    const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/signup') || pathname.startsWith('/auth')
+    const isAuthRoute =
+        pathname.startsWith('/login') ||
+        pathname.startsWith('/signup') ||
+        pathname.startsWith('/register') ||
+        pathname.startsWith('/auth')
     const isPublicRoute =
         pathname === '/' ||
         pathname.match(/^\/(product|shop|categories)\/.*/) ||
@@ -54,7 +58,7 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url)
     }
 
-    // 2. Authenticated users trying to access login/signup go to their dashboard
+    // 2. Authenticated users trying to access login/signup/register go to their dashboard
     if (user && isAuthRoute) {
         const role = user.user_metadata?.role || 'buyer'
         const url = request.nextUrl.clone()

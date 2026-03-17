@@ -39,6 +39,17 @@ export async function signup(formData: FormData) {
     const password = formData.get('password') as string
     const role = formData.get('role') as string || 'buyer' // buyer or vendor
     const fullName = formData.get('full_name') as string
+    const companyName = formData.get('company_name') as string
+    const legalName = formData.get('legal_name') as string
+    const phone = formData.get('phone') as string
+    const taxId = formData.get('tax_id') as string
+    const country = formData.get('country') as string
+    const location = formData.get('location') as string
+    const website = formData.get('website') as string
+    const selectedPlan = formData.get('selected_plan') as string
+    const categoryFocus = formData.get('category_focus') as string
+    const businessAddress = formData.get('business_address') as string
+    const businessSummary = formData.get('business_summary') as string
 
     const { error } = await supabase.auth.signUp({
         email,
@@ -47,7 +58,18 @@ export async function signup(formData: FormData) {
             emailRedirectTo: `${origin}/auth/callback`,
             data: {
                 role: role,
-                full_name: fullName
+                full_name: fullName,
+                company_name: companyName,
+                legal_name: legalName,
+                phone,
+                tax_id: taxId,
+                country,
+                location,
+                website,
+                selected_plan: selectedPlan,
+                category_focus: categoryFocus,
+                business_address: businessAddress,
+                business_summary: businessSummary,
             }
         },
     })

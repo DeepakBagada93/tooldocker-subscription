@@ -69,10 +69,9 @@ export async function createOrder(cartItems: CartItem[], shippingAddress: any) {
 
         // 3. Create Vendor Orders & Order Items
         for (const [storeId, group] of Object.entries(storeGroups)) {
-            // Basic Commission Logic: Fixed 10% global
-            const commissionRate = 0.10;
-            const commissionAmount = group.total * commissionRate;
-            const netAmount = group.total - commissionAmount;
+            // Tooldocker now monetizes via vendor subscriptions, not order commissions.
+            const commissionAmount = 0;
+            const netAmount = group.total;
 
             // Create Vendor Order
             const { data: vendorOrder, error: voError } = await supabase

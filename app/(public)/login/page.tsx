@@ -1,29 +1,25 @@
-import { ShieldCheck, ArrowRight, Store, BriefcaseBusiness, UserRound } from 'lucide-react';
-import Link from 'next/link';
+import { ShieldCheck, ArrowRight, Store, UserRound } from 'lucide-react'
+import Link from 'next/link'
 
 const previewRoles = [
   {
     title: 'Continue as Customer',
     description: 'Open the buyer dashboard and browse the marketplace flow.',
     href: '/buyer',
+    cta: 'Enter dashboard',
     icon: UserRound,
   },
   {
-    title: 'Continue as Vendor',
-    description: 'Jump directly into catalog, orders, and payout views.',
-    href: '/vendor',
+    title: 'Apply as Vendor',
+    description: 'Review plans, create your vendor account, and prepare business verification documents.',
+    href: '/register/vendor',
+    cta: 'Start onboarding',
     icon: Store,
   },
-  {
-    title: 'Continue as Admin',
-    description: 'Open the command center, approvals, and platform tools.',
-    href: '/admin',
-    icon: BriefcaseBusiness,
-  },
-];
+]
 
 export default async function LoginPage(props: { searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
-  const params = await props.searchParams;
+  const params = await props.searchParams
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
@@ -36,7 +32,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
           </div>
           <h1 className="text-3xl font-semibold tracking-[-0.04em] text-slate-900">Preview Access</h1>
           <p className="mx-auto max-w-xl text-stone-600">
-            Authentication is temporarily bypassed for development. Choose a role below and go straight into the matching dashboard.
+            Authentication is temporarily bypassed for development. Buyers can open the storefront directly, while vendors now start from a full onboarding flow.
           </p>
         </div>
 
@@ -46,9 +42,9 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
           </p>
         )}
 
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
           {previewRoles.map((role) => {
-            const Icon = role.icon;
+            const Icon = role.icon
             return (
               <Link
                 key={role.href}
@@ -61,18 +57,18 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
                 <h2 className="mt-5 text-lg font-bold tracking-tight text-slate-900">{role.title}</h2>
                 <p className="mt-2 text-sm leading-6 text-stone-600">{role.description}</p>
                 <div className="mt-5 flex items-center text-sm font-semibold text-primary">
-                  Enter dashboard
+                  {role.cta}
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                 </div>
               </Link>
-            );
+            )
           })}
         </div>
 
         <p className="mt-8 text-center text-sm text-stone-500">
-          Real sign-in can be re-enabled later from the auth flow without changing these dashboard routes.
+          Admin preview has been removed from this screen so vendor onboarding can focus on plan selection and verification first.
         </p>
       </div>
     </div>
-  );
+  )
 }
