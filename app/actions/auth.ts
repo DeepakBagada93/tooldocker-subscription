@@ -82,10 +82,10 @@ export async function signup(formData: FormData) {
     })
 
     if (error) {
-        return redirect('/signup?message=Could not sign up user')
+        return redirect('/register/vendor?message=Could not sign up user: ' + error.message)
     }
 
-    return redirect('/login?message=Check email to continue sign in process')
+    return redirect('/login?message=Registration successful! Please check your email to verify your account before logging in.')
 }
 
 export async function loginWithGoogle() {

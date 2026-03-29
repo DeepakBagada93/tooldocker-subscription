@@ -4,11 +4,14 @@ import { AlertCircle, Eye, Filter, Package, Plus, Search, Trash2, Edit2 } from '
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { getVendorSubscriptionStatus } from '@/lib/subscriptions'
-import { VENDOR_PRODUCTS } from '@/lib/vendor-mock-data'
+import { getVendorProducts } from '@/app/actions/vendor'
 import { cn } from '@/lib/utils'
 
 export default async function VendorProductsPage() {
-  const subscription = await getVendorSubscriptionStatus()
+  const [subscription, products] = await Promise.all([
+    getVendorSubscriptionStatus(),
+    getVendorProducts()
+  ])
 
   return (
     <div className="space-y-8">
@@ -97,52 +100,70 @@ export default async function VendorProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {VENDOR_PRODUCTS.map((product) => (
-                <tr key={product.id} className="transition-colors hover:bg-slate-50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100">
-                        <Package className="h-5 w-5 text-muted-foreground" />
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <tr key={product.id} className="transition-colors hover:bg-slate-50">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 overflow-hidden">
+                          {product.image ? (
+                            <img src={product.image} alt={product.name} className="h-full w-full object-cover" />
+                          ) : (
+                            <Package className="h-5 w-5 text-muted-foreground" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="truncate text-sm font-bold">{product.name}</div>
+                          <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">ID: {product.id.substring(0, 8)}...</div>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <div className="truncate text-sm font-bold">{product.name}</div>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">SKU: {product.id.toUpperCase()}</div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider">
+                        {product.category}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 font-black tracking-tighter">${product.price.toLocaleString()}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className={cn('text-sm font-bold', product.stock === 0 ? 'text-red-500' : 'text-foreground')}>
+                          {product.stock}
+                        </span>
+                        {product.stock < 10 && product.stock > 0 ? <AlertCircle className="h-3 w-3 text-amber-500" /> : null}
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <Badge variant="secondary" className="text-[10px] font-bold uppercase tracking-wider">
-                      {product.category}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4 font-black tracking-tighter">${product.price.toLocaleString()}</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <span className={cn('text-sm font-bold', product.stock === 0 ? 'text-red-500' : 'text-foreground')}>
-                        {product.stock}
-                      </span>
-                      {product.stock < 10 && product.stock > 0 ? <AlertCircle className="h-3 w-3 text-amber-500" /> : null}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <Badge className={cn(
-                      'px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
-                      product.status === 'Active'
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : 'bg-red-100 text-red-700'
-                    )}>
-                      {product.status}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon"><Edit2 className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600"><Trash2 className="h-4 w-4" /></Button>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Badge className={cn(
+                        'px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider',
+                        product.status === 'Active'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : 'bg-stone-100 text-stone-700'
+                      )}>
+                        {product.status}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon"><Edit2 className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600"><Trash2 className="h-4 w-4" /></Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="px-6 py-12 text-center text-muted-foreground">
+                    <div className="flex flex-col items-center gap-2">
+                      <Package className="h-8 w-8 opacity-20" />
+                      <p>No products found in your catalog.</p>
+                      <Button variant="link" className="text-primary font-bold uppercase text-xs" asChild>
+                        <Link href="/vendor/products/new">Add your first product &rarr;</Link>
+                      </Button>
                     </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

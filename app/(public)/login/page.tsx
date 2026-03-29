@@ -1,20 +1,23 @@
-import { ShieldCheck, ArrowRight, Store, UserRound } from 'lucide-react'
+import { ShieldCheck, ArrowRight, Store, UserRound, ArrowLeftRight } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
-const previewRoles = [
+const portals = [
   {
-    title: 'Continue as Customer',
-    description: 'Open the buyer dashboard and browse the marketplace flow.',
-    href: '/buyer',
-    cta: 'Enter dashboard',
+    title: 'Customer Portal',
+    description: 'Track orders, manage your cart, and review purchase history.',
+    href: '/buyer/login',
+    cta: 'Buyer Login',
     icon: UserRound,
+    color: 'bg-[#f3ede4]',
   },
   {
-    title: 'Apply as Vendor',
-    description: 'Review plans, create your vendor account, and prepare business verification documents.',
-    href: '/register/vendor',
-    cta: 'Start onboarding',
+    title: 'Vendor Portal',
+    description: 'Manage your store, products, orders, and subscription.',
+    href: '/vendor/login',
+    cta: 'Vendor Login',
     icon: Store,
+    color: 'bg-orange-50',
   },
 ]
 
@@ -22,52 +25,55 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
   const params = await props.searchParams
 
   return (
-    <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
-      <div className="relative w-full max-w-2xl overflow-hidden rounded-[2rem] border border-stone-200 bg-white p-6 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.32)] sm:p-10">
+    <div className="flex min-h-[90vh] items-center justify-center px-4 py-12 bg-[linear-gradient(180deg,#faf8f4_0%,#ffffff_40%,#f5efe6_100%)]">
+      <div className="relative w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-stone-200 bg-white p-8 shadow-[0_30px_80px_-40px_rgba(15,23,42,0.32)] sm:p-12">
         <div className="absolute left-0 top-0 h-2 w-full bg-primary" />
 
-        <div className="space-y-3 text-center">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3ede4]">
-            <ShieldCheck className="h-8 w-8 text-primary" />
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-stone-100">
+            <ArrowLeftRight className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-semibold tracking-[-0.04em] text-slate-900">Preview Access</h1>
-          <p className="mx-auto max-w-xl text-stone-600">
-            Authentication is temporarily bypassed for development. Buyers can open the storefront directly, while vendors now start from a full onboarding flow.
+          <h1 className="text-4xl font-black tracking-[-0.05em] text-slate-900 uppercase">Select Your Portal</h1>
+          <p className="mx-auto max-w-sm text-stone-600">
+            Tooldocker provides separate experiences for buyers and industrial suppliers.
           </p>
         </div>
 
         {params?.message && typeof params.message === 'string' && (
-          <p className="mt-6 rounded-2xl bg-amber-50 p-4 text-center text-sm font-medium text-amber-700">
+          <p className="mt-8 rounded-2xl bg-amber-50 p-4 text-center text-sm font-medium text-amber-700 border border-amber-200/50">
             {params.message}
           </p>
         )}
 
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
-          {previewRoles.map((role) => {
-            const Icon = role.icon
+        <div className="mt-12 grid gap-6 md:grid-cols-2">
+          {portals.map((portal) => {
+            const Icon = portal.icon
             return (
-              <Link
-                key={role.href}
-                href={role.href}
-                className="group rounded-[1.5rem] border border-stone-200 bg-[linear-gradient(180deg,_#fff,_#faf7f2)] p-5 transition-all hover:-translate-y-0.5 hover:border-primary hover:shadow-lg"
+              <div
+                key={portal.href}
+                className="group flex flex-col rounded-[2rem] border border-stone-100 bg-stone-50/50 p-8 transition-all hover:bg-white hover:border-primary/20 hover:shadow-xl"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-stone-100">
-                  <Icon className="h-5 w-5 text-slate-900" />
+                <div className={`flex h-14 w-14 items-center justify-center rounded-2xl ${portal.color} mb-6 transition-transform group-hover:scale-110`}>
+                  <Icon className="h-7 w-7 text-primary" />
                 </div>
-                <h2 className="mt-5 text-lg font-bold tracking-tight text-slate-900">{role.title}</h2>
-                <p className="mt-2 text-sm leading-6 text-stone-600">{role.description}</p>
-                <div className="mt-5 flex items-center text-sm font-semibold text-primary">
-                  {role.cta}
-                  <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                </div>
-              </Link>
+                <h2 className="text-2xl font-black tracking-tight text-slate-900 uppercase">{portal.title}</h2>
+                <p className="mt-3 text-sm leading-6 text-stone-600 flex-grow">{portal.description}</p>
+                <Button asChild variant="industrial" className="mt-8 h-12 w-full rounded-xl text-sm font-bold uppercase tracking-tight">
+                  <Link href={portal.href}>
+                    {portal.cta}
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Link>
+                </Button>
+              </div>
             )
           })}
         </div>
 
-        <p className="mt-8 text-center text-sm text-stone-500">
-          Admin preview has been removed from this screen so vendor onboarding can focus on plan selection and verification first.
-        </p>
+        <div className="mt-12 text-center">
+          <p className="text-sm text-stone-500">
+            New to Tooldocker? <Link href="/register/vendor" className="font-bold text-primary hover:underline">Register your business as a vendor</Link>
+          </p>
+        </div>
       </div>
     </div>
   )

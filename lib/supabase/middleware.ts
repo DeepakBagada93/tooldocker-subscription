@@ -8,7 +8,7 @@ import {
 import { getUserRole } from '@/lib/supabase/profiles'
 
 const VENDOR_DASHBOARD_PATHS = [
-    '/vendor',
+    '/vendor/dashboard',
     '/vendor/products',
     '/vendor/bulk-upload',
     '/vendor/orders',
@@ -18,6 +18,7 @@ const VENDOR_DASHBOARD_PATHS = [
 ]
 
 function isVendorDashboardRoute(pathname: string) {
+    if (pathname === '/vendor') return true
     return VENDOR_DASHBOARD_PATHS.some(
         (route) => pathname === route || pathname.startsWith(`${route}/`)
     )
@@ -79,6 +80,9 @@ export async function updateSession(request: NextRequest) {
         pathname.startsWith('/login') ||
         pathname.startsWith('/signup') ||
         pathname.startsWith('/register') ||
+        pathname.startsWith('/vendor/login') ||
+        pathname.startsWith('/buyer/login') ||
+        pathname.startsWith('/tooldocker-admin/login') ||
         pathname.startsWith('/auth')
 
     const isPublicRoute =
@@ -91,7 +95,10 @@ export async function updateSession(request: NextRequest) {
 
     if (!user && isProtectedRoute) {
         const url = request.nextUrl.clone()
-        url.pathname = '/login'
+        if (pathname.startsWith('/admin')) url.pathname = '/tooldocker-admin/login'
+        else if (pathname.startsWith('/vendor')) url.pathname = '/vendor/login'
+        else if (pathname.startsWith('/buyer')) url.pathname = '/buyer/login'
+        else url.pathname = '/login'
         return NextResponse.redirect(url)
     }
 
@@ -100,7 +107,7 @@ export async function updateSession(request: NextRequest) {
         const url = request.nextUrl.clone()
 
         if (role === 'admin') url.pathname = '/admin'
-        else if (role === 'vendor') url.pathname = '/vendor'
+        else if (role === 'vendor') url.pathname = '/vendor/dashboard'
         else url.pathname = '/buyer'
 
         return NextResponse.redirect(url)
@@ -108,6 +115,13 @@ export async function updateSession(request: NextRequest) {
 
     if (user && isProtectedRoute) {
         const role = await getUserRole(supabase, user)
+
+        // Redirect /vendor to /vendor/dashboard
+        if (pathname === '/vendor') {
+            const url = request.nextUrl.clone()
+            url.pathname = '/vendor/dashboard'
+            return NextResponse.redirect(url)
+        }
 
         if (isAdminRoute(pathname) && role !== 'admin') {
             const url = request.nextUrl.clone()
@@ -123,14 +137,17 @@ export async function updateSession(request: NextRequest) {
 
         if (isBuyerDashboardRoute(pathname) && role !== 'buyer' && role !== 'admin') {
             const url = request.nextUrl.clone()
-            url.pathname = '/vendor'
+            url.pathname = '/buyer/login' // Correct redirect for buyer dashboard if role mismatch
             return NextResponse.redirect(url)
         }
     }
 
     if (!user && !isAuthRoute && !isPublicRoute && !isProtectedRoute) {
         const url = request.nextUrl.clone()
-        url.pathname = '/login'
+        if (pathname.startsWith('/admin')) url.pathname = '/tooldocker-admin/login'
+        else if (pathname.startsWith('/vendor')) url.pathname = '/vendor/login'
+        else if (pathname.startsWith('/buyer')) url.pathname = '/buyer/login'
+        else url.pathname = '/login'
         return NextResponse.redirect(url)
     }
 

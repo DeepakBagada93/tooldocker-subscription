@@ -16,6 +16,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { createClient } from '@/lib/supabase/client';
+import { signout } from '@/app/actions/auth';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -29,8 +31,35 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children, items, role }: DashboardLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
+  const [userName, setUserName] = React.useState('Loading...');
+  const [userInitials, setUserInitials] = React.useState('??');
+  const [userEmail, setUserEmail] = React.useState('');
   const pathname = usePathname();
+  const supabase = createClient();
   const activeItem = items.find((item) => pathname === item.href) ?? items[0];
+
+  React.useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const name = user.user_metadata?.full_name || user.user_metadata?.company_name || user.email?.split('@')[0] || 'User';
+        setUserName(name);
+        setUserEmail(user.email || '');
+        const initials = name
+          .split(' ')
+          .map((n: string) => n[0])
+          .join('')
+          .toUpperCase()
+          .substring(0, 2);
+        setUserInitials(initials);
+      }
+    };
+    fetchUser();
+  }, []);
+
+  const handleSignOut = async () => {
+    await signout();
+  };
 
   return (
     <div className="flex min-h-screen bg-[radial-gradient(circle_at_top,_rgba(242,125,38,0.08),_transparent_38%),linear-gradient(180deg,_#fcfaf7_0%,_#f6f1e8_100%)]">
@@ -73,11 +102,11 @@ export function DashboardLayout({ children, items, role }: DashboardLayoutProps)
           <div className="border-b border-stone-200/80 px-5 py-5">
             <div className="rounded-3xl border border-stone-200/80 bg-white/85 p-4 shadow-sm">
               <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-sm font-black text-white">
-                  JD
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-slate-900 text-sm font-black text-white uppercase">
+                  {userInitials}
                 </div>
                 <div className="min-w-0">
-                  <p className="truncate text-sm font-semibold text-slate-900">John Doe</p>
+                  <p className="truncate text-sm font-semibold text-slate-900">{userName}</p>
                   <p className="text-xs text-stone-500">Managing {role.toLowerCase()} operations</p>
                 </div>
               </div>
@@ -120,7 +149,11 @@ export function DashboardLayout({ children, items, role }: DashboardLayoutProps)
           </nav>
 
           <div className="border-t border-stone-200 p-4">
-            <Button variant="ghost" className="w-full justify-start rounded-2xl text-red-500 hover:bg-red-50 hover:text-red-600">
+            <Button 
+              variant="ghost" 
+              className="w-full justify-start rounded-2xl text-red-500 hover:bg-red-50 hover:text-red-600"
+              onClick={handleSignOut}
+            >
               <LogOut className="mr-2 h-4 w-4" />
               Sign Out
             </Button>
@@ -167,10 +200,10 @@ export function DashboardLayout({ children, items, role }: DashboardLayoutProps)
             <div className="hidden h-8 w-px bg-stone-200 sm:block" />
             <div className="flex items-center gap-2 rounded-full border border-stone-200 bg-white/80 px-2 py-1 sm:gap-3 sm:px-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white border border-stone-200">
-                <span className="text-xs font-bold">JD</span>
+                <span className="text-xs font-bold uppercase">{userInitials}</span>
               </div>
               <div className="hidden sm:block">
-                <p className="text-sm font-bold leading-none">John Doe</p>
+                <p className="text-sm font-bold leading-none">{userName}</p>
                 <p className="text-xs text-muted-foreground mt-1">{role}</p>
               </div>
             </div>

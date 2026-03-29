@@ -25,6 +25,8 @@ import { useCart } from '@/context/cart-context';
 import { CATEGORIES as MOCK_CATEGORIES } from '@/lib/mock-data';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
+import { createClient } from '@/lib/supabase/client';
+import { getUserRole } from '@/lib/supabase/profiles';
 
 export function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = React.useState(false);
@@ -32,16 +34,55 @@ export function Header() {
   const [searchQuery, setSearchQuery] = React.useState('');
   const [isAISearchLoading, setIsAISearchLoading] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
+  const [userRole, setUserRole] = React.useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  
   const { totalItems } = useCart();
   const router = useRouter();
+  const supabase = createClient();
 
   React.useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setIsLoggedIn(true);
+        const role = await getUserRole(supabase, user);
+        setUserRole(role);
+      } else {
+        setIsLoggedIn(false);
+        setUserRole(null);
+      }
+    };
+
+    checkUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        setIsLoggedIn(true);
+        getUserRole(supabase, session.user).then(setUserRole);
+      } else {
+        setIsLoggedIn(false);
+        setUserRole(null);
+      }
+    });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      subscription.unsubscribe();
+    };
   }, []);
+
+  const getDashboardLink = () => {
+    if (!isLoggedIn) return '/login';
+    if (userRole === 'admin') return '/admin';
+    if (userRole === 'vendor') return '/vendor/dashboard';
+    return '/buyer';
+  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,7 +241,7 @@ export function Header() {
                 )}
               </Button>
             </Link>
-            <Link href="/login" className="hidden sm:flex">
+            <Link href={getDashboardLink()} className="hidden sm:flex">
               <Button variant="ghost" size="icon" className="text-slate-700 hover:bg-slate-100 hover:text-primary">
                 <User className="h-5 w-5" />
               </Button>
@@ -261,9 +302,9 @@ export function Header() {
                 </div>
               </nav>
               <div className="flex flex-col gap-2 border-t border-slate-200 pt-4">
-                <Link href="/login">
+                <Link href={getDashboardLink()} onClick={() => setIsMobileMenuOpen(false)}>
                   <Button variant="outline" className="w-full justify-start">
-                    <User className="mr-2 h-4 w-4" /> Account
+                    <User className="mr-2 h-4 w-4" /> {isLoggedIn ? 'Dashboard' : 'Account'}
                   </Button>
                 </Link>
               </div>

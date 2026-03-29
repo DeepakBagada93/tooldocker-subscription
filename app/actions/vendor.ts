@@ -77,3 +77,34 @@ export async function toggleProductPublishStatus(productId: string, currentStatu
     revalidatePath('/vendor/products')
     return { success: true }
 }
+
+export async function getVendorProducts() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    
+    if (!user) return []
+
+    const { data, error } = await supabase
+        .from('products')
+        .select(`
+            *,
+            category:categories(name)
+        `)
+        .eq('vendor_id', user.id)
+        .order('created_at', { ascending: false })
+
+    if (error) {
+        console.error('Error fetching vendor products:', error)
+        return []
+    }
+
+    return data.map(p => ({
+        id: p.id,
+        name: p.title,
+        price: p.price,
+        stock: p.stock_quantity || p.inventory_count || 0,
+        category: p.category?.name || 'Uncategorized',
+        status: p.is_published ? 'Active' : 'Draft',
+        image: p.images?.[0] || null
+    }))
+}

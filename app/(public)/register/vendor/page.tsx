@@ -233,6 +233,9 @@ export default async function VendorRegisterPage(props: { searchParams: Promise<
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <Button asChild variant="outline" className="h-12 rounded-xl border-stone-300 bg-white px-6 text-base">
+                  <Link href="/vendor/login">Already a Vendor? Sign In</Link>
+                </Button>
+                <Button asChild variant="ghost" className="h-12 rounded-xl px-6 text-base text-stone-500 hover:text-primary">
                   <Link href="/login">Back to access options</Link>
                 </Button>
               </div>
