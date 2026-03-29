@@ -5,7 +5,7 @@ export const ProductQuerySchema = z.object({
   category: z.string().optional(),
   minPrice: z.number().optional(),
   maxPrice: z.number().optional(),
-  specs: z.record(z.string()).optional(),
+  specs: z.record(z.string(), z.string()).optional(),
 })
 
 export const GeneratedProductSchema = z.object({
