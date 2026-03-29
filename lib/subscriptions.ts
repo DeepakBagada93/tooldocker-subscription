@@ -9,6 +9,7 @@ export type VendorSubscriptionStatus = {
   productLimit: number
   productCount: number
   remainingProductSlots: number
+  planUtilization: number
   canCreateProduct: boolean
   canUseBulkUpload: boolean
   billingInterval: 'monthly' | 'yearly' | null
@@ -22,6 +23,7 @@ const MOCK_VENDOR_SUBSCRIPTION: VendorSubscriptionStatus = {
   productLimit: SUBSCRIPTION_PLANS[1].productLimit,
   productCount: 24,
   remainingProductSlots: SUBSCRIPTION_PLANS[1].productLimit - 24,
+  planUtilization: Math.round((24 / SUBSCRIPTION_PLANS[1].productLimit) * 100),
   canCreateProduct: true,
   canUseBulkUpload: true,
   billingInterval: SUBSCRIPTION_PLANS[1].interval,
@@ -41,6 +43,7 @@ function buildSubscriptionStatus(params: {
   const productLimit = plan?.productLimit ?? 0
   const remainingProductSlots = Math.max(productLimit - params.productCount, 0)
   const isActive = Boolean(plan) && (params.status === 'active' || params.status === 'trialing')
+  const planUtilization = productLimit > 0 ? Math.round((params.productCount / productLimit) * 100) : 0
 
   return {
     hasActiveSubscription: isActive,
@@ -50,6 +53,7 @@ function buildSubscriptionStatus(params: {
     productLimit,
     productCount: params.productCount,
     remainingProductSlots,
+    planUtilization,
     canCreateProduct: isActive && remainingProductSlots > 0,
     canUseBulkUpload: isActive && Boolean(plan?.bulkUploadEnabled),
     billingInterval: plan?.interval ?? null,
