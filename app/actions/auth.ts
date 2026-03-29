@@ -4,6 +4,11 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
+import {
+    ensureUserProfile,
+    ensureVendorStoreForUser,
+    getUserRole,
+} from '@/lib/supabase/profiles'
 
 export async function login(formData: FormData) {
     const supabase = await createClient()
@@ -19,8 +24,10 @@ export async function login(formData: FormData) {
         return redirect('/login?message=Could not authenticate user')
     }
 
-    // Redirect based on role
-    const role = authData.user?.user_metadata?.role || 'buyer'
+    await ensureUserProfile(supabase, authData.user)
+    await ensureVendorStoreForUser(supabase, authData.user)
+
+    const role = await getUserRole(supabase, authData.user)
     let targetUrl = '/buyer'
     if (role === 'admin') targetUrl = '/admin'
     if (role === 'vendor') targetUrl = '/vendor'

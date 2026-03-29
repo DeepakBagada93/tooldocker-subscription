@@ -1,5 +1,10 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import {
+    ensureUserProfile,
+    ensureVendorStoreForUser,
+    getUserRole,
+} from '@/lib/supabase/profiles'
 
 export async function GET(request: Request) {
     const { searchParams, origin } = new URL(request.url)
@@ -11,15 +16,16 @@ export async function GET(request: Request) {
         const supabase = await createClient()
         const { error } = await supabase.auth.exchangeCodeForSession(code)
         if (!error) {
-            // Get role for redirect
             const { data: { user } } = await supabase.auth.getUser()
-            const role = user?.user_metadata?.role || 'buyer'
+            await ensureUserProfile(supabase, user)
+            await ensureVendorStoreForUser(supabase, user)
+            const role = await getUserRole(supabase, user)
 
             let targetUrl = `${origin}${next}`
             if (next === '/') {
                 if (role === 'admin') targetUrl = `${origin}/admin`
                 else if (role === 'vendor') targetUrl = `${origin}/vendor`
-                else targetUrl = `${origin}/dashboard`
+                else targetUrl = `${origin}/buyer`
             }
 
             return NextResponse.redirect(targetUrl)

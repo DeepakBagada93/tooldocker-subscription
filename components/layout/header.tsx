@@ -13,7 +13,9 @@ import {
   Wrench,
   ShieldCheck,
   Zap,
-  Box
+  Box,
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +30,7 @@ export function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [isAISearchLoading, setIsAISearchLoading] = React.useState(false);
   const [isScrolled, setIsScrolled] = React.useState(false);
   const { totalItems } = useCart();
   const router = useRouter();
@@ -44,6 +47,29 @@ export function Header() {
     e.preventDefault();
     if (searchQuery.trim()) {
       router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
+
+  const handleAISearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    setIsAISearchLoading(true);
+    try {
+      const res = await fetch('/api/ai/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query: searchQuery }),
+      });
+      const result = await res.json();
+      
+      if (result.data) {
+        // Navigate to search with ai=true flag
+        router.push(`/search?q=${encodeURIComponent(searchQuery)}&ai=true`);
+      }
+    } catch (error) {
+      console.error('AI search failed', error);
+    } finally {
+      setIsAISearchLoading(false);
     }
   };
 
@@ -137,15 +163,30 @@ export function Header() {
           </nav>
 
           {/* Search Bar */}
-          <form onSubmit={handleSearch} className="flex-1 max-w-md hidden md:flex relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by tool, spec or brand..."
-              className="pl-10 border-slate-200 bg-slate-50 focus-visible:ring-primary"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
-          </form>
+          <div className="flex-1 max-w-md hidden md:flex relative group">
+            <form onSubmit={handleSearch} className="w-full relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search by tool, spec or brand..."
+                className="pl-10 pr-12 border-slate-200 bg-slate-50 focus-visible:ring-primary h-10 rounded-full"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <button 
+                type="button"
+                onClick={handleAISearch}
+                disabled={isAISearchLoading}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                title="Search with AI"
+              >
+                {isAISearchLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Sparkles className="h-4 w-4" />
+                )}
+              </button>
+            </form>
+          </div>
 
           {/* Actions */}
           <div className="flex items-center space-x-2 sm:space-x-4">

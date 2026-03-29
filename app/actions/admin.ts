@@ -2,11 +2,13 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
+import { getUserRole } from '@/lib/supabase/profiles'
 
 async function ensureAdmin(supabase: any) {
     try {
         const { data: { user } } = await supabase.auth.getUser()
-        if (!user || user.user_metadata?.role !== 'admin') {
+        const role = await getUserRole(supabase, user)
+        if (!user || role !== 'admin') {
             throw new Error('Unauthorized Access')
         }
         return user

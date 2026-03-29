@@ -38,6 +38,7 @@ export async function createVendorProduct(formData: FormData) {
 
         const productData = {
             store_id: store.id,
+            vendor_id: user.id,
             title: formData.get('title') as string,
             description: formData.get('description') as string,
             price: parseFloat(formData.get('price') as string),
@@ -54,7 +55,6 @@ export async function createVendorProduct(formData: FormData) {
             throw new Error(`Failed to create product: ${error.message}`)
         }
 
-        revalidatePath('/dashboard/products')
         revalidatePath('/vendor/products')
         revalidatePath('/vendor')
     } catch (e: any) {
@@ -73,7 +73,7 @@ export async function toggleProductPublishStatus(productId: string, currentStatu
 
     if (error) throw new Error(error.message)
 
-    revalidatePath('/dashboard/products')
     revalidatePath('/admin')
+    revalidatePath('/vendor/products')
     return { success: true }
 }

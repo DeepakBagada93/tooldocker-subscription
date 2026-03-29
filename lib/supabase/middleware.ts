@@ -1,14 +1,50 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+    isSupabaseConfigured,
+    SUPABASE_ANON_KEY,
+    SUPABASE_URL,
+} from '@/lib/supabase/config'
+import { getUserRole } from '@/lib/supabase/profiles'
+
+const VENDOR_DASHBOARD_PATHS = [
+    '/vendor',
+    '/vendor/products',
+    '/vendor/bulk-upload',
+    '/vendor/orders',
+    '/vendor/payouts',
+    '/vendor/commission',
+    '/vendor/settings',
+]
+
+function isVendorDashboardRoute(pathname: string) {
+    return VENDOR_DASHBOARD_PATHS.some(
+        (route) => pathname === route || pathname.startsWith(`${route}/`)
+    )
+}
+
+function isBuyerDashboardRoute(pathname: string) {
+    return pathname === '/buyer' || pathname.startsWith('/buyer/')
+}
+
+function isAdminRoute(pathname: string) {
+    return pathname === '/admin' || pathname.startsWith('/admin/')
+}
 
 export async function updateSession(request: NextRequest) {
+    if (!isSupabaseConfigured()) {
+        return NextResponse.next({
+            request,
+        })
+    }
+
     let supabaseResponse = NextResponse.next({
         request,
     })
 
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://dummy.supabase.co',
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'dummy_key',
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
         {
             cookies: {
                 getAll() {
@@ -34,68 +70,68 @@ export async function updateSession(request: NextRequest) {
 
     const pathname = request.nextUrl.pathname
 
-    // Temporary preview mode: dashboard routes are open without auth.
-    const isPreviewDashboardRoute =
-        pathname.startsWith('/admin') ||
-        pathname.startsWith('/vendor') ||
-        pathname.startsWith('/buyer')
+    const isProtectedRoute =
+        isAdminRoute(pathname) ||
+        isVendorDashboardRoute(pathname) ||
+        isBuyerDashboardRoute(pathname)
 
-    // Public routes that don't need protection
     const isAuthRoute =
         pathname.startsWith('/login') ||
         pathname.startsWith('/signup') ||
         pathname.startsWith('/register') ||
         pathname.startsWith('/auth')
+
     const isPublicRoute =
         pathname === '/' ||
+        pathname === '/shop' ||
+        pathname === '/categories' ||
+        pathname === '/cart' ||
         pathname.match(/^\/(product|shop|categories)\/.*/) ||
-        isPreviewDashboardRoute
+        pathname.match(/^\/vendor\/[^/]+$/)
 
-    // 1. Unauthenticated users trying to access protected routes go to /login
-    if (!user && !isAuthRoute && !isPublicRoute) {
+    if (!user && isProtectedRoute) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         return NextResponse.redirect(url)
     }
 
-    // 2. Authenticated users trying to access login/signup/register go to their dashboard
     if (user && isAuthRoute) {
-        const role = user.user_metadata?.role || 'buyer'
+        const role = await getUserRole(supabase, user)
         const url = request.nextUrl.clone()
 
         if (role === 'admin') url.pathname = '/admin'
         else if (role === 'vendor') url.pathname = '/vendor'
-        else url.pathname = '/dashboard' // buyer dashboard
+        else url.pathname = '/buyer'
 
         return NextResponse.redirect(url)
     }
 
-    // 3. Role-Based Access Control (RBAC) Protection
-    if (user && !isPreviewDashboardRoute) {
-        const role = user.user_metadata?.role || 'buyer'
+    if (user && isProtectedRoute) {
+        const role = await getUserRole(supabase, user)
 
-        // Protect Admin Routes
-        if (pathname.startsWith('/admin') && role !== 'admin') {
-            const url = request.nextUrl.clone()
-            url.pathname = '/unauthorized' // Or redirect to their specific dashboard
-            return NextResponse.redirect(url)
-        }
-
-        // Protect Vendor Routes (Admins can also view)
-        if (pathname.startsWith('/vendor') && role !== 'vendor' && role !== 'admin') {
+        if (isAdminRoute(pathname) && role !== 'admin') {
             const url = request.nextUrl.clone()
             url.pathname = '/unauthorized'
             return NextResponse.redirect(url)
         }
 
-        // Buyer routes - technically both vendors and admins might need to act as buyers sometimes,
-        // but typically we just restrict if explicit protection is needed.
-        if (pathname.startsWith('/dashboard') && role !== 'buyer' && role !== 'admin') {
-            // Optional: Vendors shouldn't see buyer dash
+        if (isVendorDashboardRoute(pathname) && role !== 'vendor' && role !== 'admin') {
+            const url = request.nextUrl.clone()
+            url.pathname = '/unauthorized'
+            return NextResponse.redirect(url)
+        }
+
+        if (isBuyerDashboardRoute(pathname) && role !== 'buyer' && role !== 'admin') {
             const url = request.nextUrl.clone()
             url.pathname = '/vendor'
             return NextResponse.redirect(url)
         }
+    }
+
+    if (!user && !isAuthRoute && !isPublicRoute && !isProtectedRoute) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        return NextResponse.redirect(url)
     }
 
     return supabaseResponse
