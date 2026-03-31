@@ -1,18 +1,18 @@
 import Link from 'next/link'
-import { ArrowLeft, Info, Layers, Upload } from 'lucide-react'
+import { ArrowLeft, Upload } from 'lucide-react'
 
-import { createVendorProduct } from '@/app/actions/vendor'
+import { getCategories } from '@/app/actions/products'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import { getVendorSubscriptionStatus } from '@/lib/subscriptions'
 
 import { ProductForm } from '@/components/vendor/product-form'
 
-const categories = ['Heavy Machinery', 'Power Tools', 'Welding', 'Safety Gear']
-
 export default async function NewProductPage() {
-  const subscription = await getVendorSubscriptionStatus()
+  const [subscription, categories] = await Promise.all([
+    getVendorSubscriptionStatus(),
+    getCategories(),
+  ])
   const isLocked = !subscription.canCreateProduct
 
   return (
@@ -25,7 +25,7 @@ export default async function NewProductPage() {
         </Button>
         <div>
           <h1 className="text-3xl font-black tracking-tighter uppercase">Add New Product</h1>
-          <p className="text-muted-foreground">An active subscription is required before new catalog items can be submitted.</p>
+          <p className="text-muted-foreground">Approved vendor accounts can add products directly to the storefront.</p>
         </div>
       </div>
 
@@ -54,12 +54,15 @@ export default async function NewProductPage() {
         </div>
       </div>
 
-      <ProductForm isLocked={isLocked} />
+      <ProductForm
+        isLocked={isLocked}
+        categories={categories.map((category) => ({ id: category.id, name: category.name }))}
+      />
 
       <div className="rounded-3xl border border-dashed bg-white p-8 text-center text-sm text-stone-600 shadow-sm">
         <Upload className="mx-auto h-8 w-8 text-primary" />
-        <p className="mt-4 font-semibold text-slate-900">Media uploads can be attached after plan validation.</p>
-        <p className="mt-2">This page is already enforcing the subscription gate before product creation.</p>
+        <p className="mt-4 font-semibold text-slate-900">Approved vendors can publish products directly.</p>
+        <p className="mt-2">Your product appears on the website as soon as your account and plan are active.</p>
       </div>
     </div>
   )

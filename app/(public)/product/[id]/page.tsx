@@ -26,7 +26,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
       <div className="flex flex-col gap-12">
         {/* Breadcrumbs */}
         <div className="text-sm text-muted-foreground">
-          Home / {product.category_id || 'Category'} / <span className="text-foreground font-medium">{product.title}</span>
+          Home / {product.category_name || 'Category'} / <span className="text-foreground font-medium">{product.title}</span>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
@@ -37,7 +37,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
           <div className="space-y-8">
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <Badge variant="secondary" className="px-3 py-1">ID: {product.category_id}</Badge>
+                <Badge variant="secondary" className="px-3 py-1">{product.category_name || 'Marketplace Product'}</Badge>
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="icon" className="rounded-full"><Heart className="h-5 w-5" /></Button>
                   <Button variant="ghost" size="icon" className="rounded-full"><Share2 className="h-5 w-5" /></Button>

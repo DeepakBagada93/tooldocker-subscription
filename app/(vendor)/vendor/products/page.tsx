@@ -61,7 +61,7 @@ export default async function VendorProductsPage() {
                 {subscription.hasActiveSubscription ? 'Active subscription' : 'Subscription required'}
               </Badge>
             </div>
-            <div className="mt-2 text-sm text-stone-600">All new products require an active plan and admin moderation.</div>
+            <div className="mt-2 text-sm text-stone-600">Approved vendor accounts can publish products directly to the storefront.</div>
           </div>
         </div>
       </div>
@@ -144,8 +144,8 @@ export default async function VendorProductsPage() {
                     </td>
                     <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-2">
-                        <Button variant="ghost" size="icon"><Eye className="h-4 w-4" /></Button>
-                        <Button variant="ghost" size="icon"><Edit2 className="h-4 w-4" /></Button>
+                        <Button variant="ghost" size="icon" asChild><Link href={`/product/${product.id}`}><Eye className="h-4 w-4" /></Link></Button>
+                        <Button variant="ghost" size="icon" asChild><Link href={`/vendor/products/${product.id}/edit`}><Edit2 className="h-4 w-4" /></Link></Button>
                         <Button variant="ghost" size="icon" className="text-red-500 hover:text-red-600"><Trash2 className="h-4 w-4" /></Button>
                       </div>
                     </td>

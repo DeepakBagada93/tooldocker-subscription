@@ -1,10 +1,33 @@
 'use client';
 
 import * as React from 'react';
+import { Sparkles, Loader2, Layers, ImagePlus, X } from 'lucide-react';
+
+import { createVendorProduct, updateVendorProduct } from '@/app/actions/vendor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Loader2, Layers, ImagePlus, X } from 'lucide-react';
-import { createVendorProduct } from '@/app/actions/vendor';
+
+type ProductCategoryOption = {
+  id: string;
+  name: string;
+};
+
+type ProductFormValues = {
+  id?: string;
+  title: string;
+  category_id: string;
+  description: string;
+  price: string;
+  inventory: string;
+  image_url: string;
+};
+
+interface ProductFormProps {
+  isLocked: boolean;
+  categories: ProductCategoryOption[];
+  initialValues?: ProductFormValues;
+  mode?: 'create' | 'edit';
+}
 
 async function getResponseMessage(response: Response, fallbackMessage: string) {
   const contentType = response.headers.get('content-type') || '';
@@ -22,23 +45,23 @@ async function getResponseMessage(response: Response, fallbackMessage: string) {
   return fallbackMessage;
 }
 
-const categories = ['Heavy Machinery', 'Power Tools', 'Welding', 'Safety Gear'];
-
-interface ProductFormProps {
-  isLocked: boolean;
-}
-
-export function ProductForm({ isLocked }: ProductFormProps) {
+export function ProductForm({
+  isLocked,
+  categories,
+  initialValues,
+  mode = 'create',
+}: ProductFormProps) {
   const [isGenerating, setIsGenerating] = React.useState(false);
   const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null);
   const [selectedImagePreview, setSelectedImagePreview] = React.useState<string | null>(null);
-  const [formData, setFormData] = React.useState({
-    title: '',
-    category_id: '',
-    description: '',
-    price: '',
-    inventory: '',
-    image_url: '',
+  const [formData, setFormData] = React.useState<ProductFormValues>({
+    id: initialValues?.id,
+    title: initialValues?.title ?? '',
+    category_id: initialValues?.category_id ?? '',
+    description: initialValues?.description ?? '',
+    price: initialValues?.price ?? '',
+    inventory: initialValues?.inventory ?? '',
+    image_url: initialValues?.image_url ?? '',
   });
 
   React.useEffect(() => {
@@ -57,7 +80,7 @@ export function ProductForm({ isLocked }: ProductFormProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,9 +103,9 @@ export function ProductForm({ isLocked }: ProductFormProps) {
       const res = await fetch('/api/ai/generate-product', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           name: formData.title,
-          category: formData.category_id 
+          category: categories.find((category) => category.id === formData.category_id)?.name ?? formData.category_id,
         }),
       });
 
@@ -96,13 +119,12 @@ export function ProductForm({ isLocked }: ProductFormProps) {
       }
 
       const data = await res.json();
-      
+
       if (data.description) {
-        setFormData(prev => ({
+        setFormData((prev) => ({
           ...prev,
           description: data.description,
           price: data.price?.toString() || prev.price,
-          tags: data.tags?.join(', ') || '',
         }));
       }
     } catch (error) {
@@ -114,16 +136,19 @@ export function ProductForm({ isLocked }: ProductFormProps) {
   };
 
   return (
-    <form action={createVendorProduct} className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+    <form action={mode === 'edit' ? updateVendorProduct : createVendorProduct} className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      {mode === 'edit' && formData.id ? <input type="hidden" name="product_id" value={formData.id} /> : null}
+      <input type="hidden" name="current_image_url" value={initialValues?.image_url ?? ''} />
+
       <div className="space-y-8 lg:col-span-2">
         <div className="rounded-3xl border bg-white p-8 shadow-sm">
           <div className="flex items-center justify-between border-b pb-4">
             <h2 className="text-xl font-black tracking-tighter uppercase">Basic Information</h2>
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              className="gap-2 text-primary border-primary/20 hover:bg-primary/5 rounded-full"
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="gap-2 rounded-full border-primary/20 text-primary hover:bg-primary/5"
               onClick={generateWithAI}
               disabled={isLocked || isGenerating || !formData.title}
             >
@@ -135,19 +160,21 @@ export function ProductForm({ isLocked }: ProductFormProps) {
               Generate with AI
             </Button>
           </div>
+
           <div className="mt-6 space-y-4">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Product Name</label>
-              <Input 
-                name="title" 
-                placeholder="e.g. Industrial Hydraulic Press" 
-                className="h-12" 
-                required 
+              <Input
+                name="title"
+                placeholder="e.g. Industrial Hydraulic Press"
+                className="h-12"
+                required
                 disabled={isLocked}
                 value={formData.title}
                 onChange={handleInputChange}
               />
             </div>
+
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Category</label>
@@ -157,15 +184,17 @@ export function ProductForm({ isLocked }: ProductFormProps) {
                   disabled={isLocked}
                   value={formData.category_id}
                   onChange={handleInputChange}
+                  required
                 >
                   <option value="" disabled>Select Category</option>
                   {categories.map((category) => (
-                    <option key={category} value={category.toLowerCase().replace(/\s+/g, '-')}>
-                      {category}
+                    <option key={category.id} value={category.id}>
+                      {category.name}
                     </option>
                   ))}
                 </select>
               </div>
+
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Image URL</label>
                 <Input
@@ -178,6 +207,7 @@ export function ProductForm({ isLocked }: ProductFormProps) {
                 />
               </div>
             </div>
+
             <div className="space-y-3">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Upload Product Image</label>
               <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 p-4">
@@ -226,8 +256,26 @@ export function ProductForm({ isLocked }: ProductFormProps) {
                     </div>
                   </div>
                 ) : null}
+
+                {!selectedImageFile && formData.image_url ? (
+                  <div className="mt-4 rounded-2xl border bg-white p-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={formData.image_url}
+                        alt="Current product preview"
+                        className="h-28 w-28 rounded-xl border object-cover"
+                      />
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-slate-900">Current product image</p>
+                        <p className="mt-1 text-xs text-muted-foreground">You can keep this image or replace it with a new upload.</p>
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
+
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Description</label>
               <textarea
@@ -247,14 +295,14 @@ export function ProductForm({ isLocked }: ProductFormProps) {
           <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Base Price ($)</label>
-              <Input 
-                name="price" 
-                type="number" 
-                min="0" 
-                step="0.01" 
-                placeholder="0.00" 
-                className="h-12" 
-                required 
+              <Input
+                name="price"
+                type="number"
+                min="0"
+                step="0.01"
+                placeholder="0.00"
+                className="h-12"
+                required
                 disabled={isLocked}
                 value={formData.price}
                 onChange={handleInputChange}
@@ -264,13 +312,13 @@ export function ProductForm({ isLocked }: ProductFormProps) {
               <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Stock Quantity</label>
               <div className="relative">
                 <Layers className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input 
-                  name="inventory" 
-                  type="number" 
-                  min="0" 
-                  placeholder="0" 
-                  className="h-12 pl-10" 
-                  required 
+                <Input
+                  name="inventory"
+                  type="number"
+                  min="0"
+                  placeholder="0"
+                  className="h-12 pl-10"
+                  required
                   disabled={isLocked}
                   value={formData.inventory}
                   onChange={handleInputChange}
@@ -287,12 +335,12 @@ export function ProductForm({ isLocked }: ProductFormProps) {
           <div className="mt-6 space-y-4">
             <div className="rounded-2xl border bg-slate-50 p-4">
               <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Submission rule</div>
-              <div className="mt-2 text-sm font-medium text-slate-700">Products stay unpublished until admin moderation is complete.</div>
+              <div className="mt-2 text-sm font-medium text-slate-700">Approved vendor products go live on the storefront immediately.</div>
             </div>
           </div>
           <div className="pt-6 space-y-3">
             <Button type="submit" variant="industrial" className="h-14 w-full text-lg font-bold uppercase tracking-tighter" disabled={isLocked}>
-              {isLocked ? 'Subscription Required' : 'Submit Product'}
+              {isLocked ? 'Subscription Required' : mode === 'edit' ? 'Save Changes' : 'Add Product'}
             </Button>
           </div>
         </div>

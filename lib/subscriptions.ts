@@ -38,11 +38,15 @@ function buildSubscriptionStatus(params: {
   status: VendorSubscriptionStatus['status']
   currentPeriodEnd: string | null
   productCount: number
+  storeIsActive: boolean
 }) {
   const plan = params.plan
   const productLimit = plan?.productLimit ?? 0
   const remainingProductSlots = Math.max(productLimit - params.productCount, 0)
-  const isActive = Boolean(plan) && (params.status === 'active' || params.status === 'trialing')
+  const isActive =
+    params.storeIsActive &&
+    Boolean(plan) &&
+    (params.status === 'active' || params.status === 'trialing')
   const planUtilization = productLimit > 0 ? Math.round((params.productCount / productLimit) * 100) : 0
 
   return {
@@ -71,12 +75,13 @@ export async function getVendorSubscriptionStatus(userId?: string): Promise<Vend
         status: 'inactive',
         currentPeriodEnd: null,
         productCount: 0,
+        storeIsActive: false,
       })
     }
 
     const { data: store } = await supabase
       .from('stores')
-      .select('id')
+      .select('id, is_active')
       .eq('vendor_id', resolvedUserId)
       .single()
 
@@ -86,6 +91,7 @@ export async function getVendorSubscriptionStatus(userId?: string): Promise<Vend
         status: 'inactive',
         currentPeriodEnd: null,
         productCount: 0,
+        storeIsActive: false,
       })
     }
 
@@ -120,6 +126,7 @@ export async function getVendorSubscriptionStatus(userId?: string): Promise<Vend
       status: (subscription?.status as VendorSubscriptionStatus['status']) ?? 'inactive',
       currentPeriodEnd: subscription?.current_period_end ?? null,
       productCount: currentProductCount,
+      storeIsActive: Boolean(store.is_active),
     })
   } catch (error) {
     console.warn('Falling back to mock vendor subscription status', error)

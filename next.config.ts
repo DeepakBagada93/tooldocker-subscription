@@ -1,5 +1,27 @@
 import type { NextConfig } from 'next';
 
+function getSupabaseImagePattern() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  if (!supabaseUrl) {
+    return null;
+  }
+
+  try {
+    const { hostname } = new URL(supabaseUrl);
+    return {
+      protocol: 'https' as const,
+      hostname,
+      port: '',
+      pathname: '/storage/v1/object/public/**',
+    };
+  } catch {
+    return null;
+  }
+}
+
+const supabaseImagePattern = getSupabaseImagePattern();
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   eslint: {
@@ -29,6 +51,7 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      ...(supabaseImagePattern ? [supabaseImagePattern] : []),
     ],
   },
   output: 'standalone',

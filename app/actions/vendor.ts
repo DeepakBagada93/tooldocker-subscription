@@ -1,18 +1,18 @@
 'use server'
 
-import { createClient } from '@/lib/supabase/server'
-import { getVendorSubscriptionStatus } from '@/lib/subscriptions'
+import { redirect } from 'next/navigation'
 import { revalidatePath } from 'next/cache'
+
+import { createClient } from '@/lib/supabase/server'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import { getVendorSubscriptionStatus } from '@/lib/subscriptions'
 
 function sanitizeFileName(fileName: string) {
     return fileName.replace(/[^a-zA-Z0-9._-]/g, '-')
 }
 
 function inferContentType(fileName: string, fallbackType?: string) {
-    if (fallbackType) {
-        return fallbackType
-    }
+    if (fallbackType) return fallbackType
 
     const normalized = fileName.toLowerCase()
     if (normalized.endsWith('.png')) return 'image/png'
@@ -24,10 +24,7 @@ function inferContentType(fileName: string, fallbackType?: string) {
 async function uploadVendorProductImage(params: { file: File; vendorId: string }) {
     const { file, vendorId } = params
 
-    if (!file.size) {
-        return null
-    }
-
+    if (!file.size) return null
     if (!file.type.startsWith('image/')) {
         throw new Error('Only image files can be uploaded.')
     }
@@ -44,82 +41,127 @@ async function uploadVendorProductImage(params: { file: File; vendorId: string }
             upsert: false,
         })
 
-    if (error) {
-        throw new Error(`Image upload failed: ${error.message}`)
-    }
+    if (error) throw new Error(`Image upload failed: ${error.message}`)
 
     const { data } = supabaseAdmin.storage.from('product-images').getPublicUrl(path)
     return data.publicUrl
 }
 
-export async function createVendorProduct(formData: FormData) {
+async function getAuthenticatedVendorContext(requireAvailableSlot: boolean) {
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
-    try {
-        const { data: { user } } = await supabase.auth.getUser()
-        if (!user) {
-            console.warn('Unauthorized vendor creation, proceeding with mock success')
-            return
-        }
+    if (!user) throw new Error('You must be signed in as a vendor.')
 
-        const subscriptionStatus = await getVendorSubscriptionStatus(user.id)
-        if (!subscriptionStatus.hasActiveSubscription) {
-            console.warn('Blocked vendor product creation because no active subscription was found')
-            return
-        }
+    const subscriptionStatus = await getVendorSubscriptionStatus(user.id)
+    if (!subscriptionStatus.hasActiveSubscription) {
+        throw new Error('Your vendor account must be approved and have an active plan before adding products.')
+    }
 
-        if (!subscriptionStatus.canCreateProduct) {
-            console.warn(`Blocked vendor product creation because the plan limit of ${subscriptionStatus.productLimit} products was reached`)
-            return
-        }
+    if (requireAvailableSlot && !subscriptionStatus.canCreateProduct) {
+        throw new Error(`You have reached your current plan limit of ${subscriptionStatus.productLimit} products.`)
+    }
 
-        // Find vendor's store_id
-        const { data: store, error: storeError } = await supabase
-            .from('stores')
-            .select('id')
-            .eq('vendor_id', user.id)
-            .single()
+    const { data: store, error: storeError } = await supabase
+        .from('stores')
+        .select('id, is_active')
+        .eq('vendor_id', user.id)
+        .single()
 
-        if (storeError) throw new Error('Vendor store not found')
+    if (storeError || !store) throw new Error('Vendor store not found.')
+    if (!store.is_active) throw new Error('Your vendor account must be approved before products can go live.')
 
-        const categoryId = formData.get('category_id') as string | null
-        const uploadedImage = formData.get('image_file')
-        const imageUrlInput = String(formData.get('image_url') || '').trim()
-        const uploadedImageUrl =
-            uploadedImage instanceof File && uploadedImage.size > 0
-                ? await uploadVendorProductImage({ file: uploadedImage, vendorId: user.id })
-                : null
+    return { supabase, user, store }
+}
 
-        const productData = {
+export async function createVendorProduct(formData: FormData) {
+    const { supabase, user, store } = await getAuthenticatedVendorContext(true)
+
+    const categoryId = String(formData.get('category_id') || '').trim()
+    const uploadedImage = formData.get('image_file')
+    const imageUrlInput = String(formData.get('image_url') || '').trim()
+    const uploadedImageUrl =
+        uploadedImage instanceof File && uploadedImage.size > 0
+            ? await uploadVendorProductImage({ file: uploadedImage, vendorId: user.id })
+            : null
+
+    const title = String(formData.get('title') || '').trim()
+    const description = String(formData.get('description') || '').trim()
+    const price = Number.parseFloat(String(formData.get('price') || '0'))
+    const inventory = Number.parseInt(String(formData.get('inventory') || '0'), 10)
+
+    if (!title) throw new Error('Product title is required.')
+
+    const { error } = await supabase.from('products').insert([{
+        store_id: store.id,
+        vendor_id: user.id,
+        title,
+        description,
+        price,
+        stock_quantity: inventory,
+        inventory_count: inventory,
+        category_id: categoryId && /^[0-9a-f-]{36}$/i.test(categoryId) ? categoryId : null,
+        is_published: true,
+        images: [uploadedImageUrl, imageUrlInput].filter(Boolean),
+    }])
+
+    if (error) throw new Error(`Failed to create product: ${error.message}`)
+
+    revalidatePath('/vendor/products')
+    revalidatePath('/vendor')
+    revalidatePath('/')
+    revalidatePath('/search')
+    redirect('/vendor/products')
+}
+
+export async function updateVendorProduct(formData: FormData) {
+    const { supabase, user, store } = await getAuthenticatedVendorContext(false)
+
+    const productId = String(formData.get('product_id') || '').trim()
+    if (!productId) throw new Error('Product id is required.')
+
+    const categoryId = String(formData.get('category_id') || '').trim()
+    const currentImageUrl = String(formData.get('current_image_url') || '').trim()
+    const imageUrlInput = String(formData.get('image_url') || '').trim()
+    const uploadedImage = formData.get('image_file')
+    const uploadedImageUrl =
+        uploadedImage instanceof File && uploadedImage.size > 0
+            ? await uploadVendorProductImage({ file: uploadedImage, vendorId: user.id })
+            : null
+
+    const title = String(formData.get('title') || '').trim()
+    const description = String(formData.get('description') || '').trim()
+    const price = Number.parseFloat(String(formData.get('price') || '0'))
+    const inventory = Number.parseInt(String(formData.get('inventory') || '0'), 10)
+
+    const { error } = await supabase
+        .from('products')
+        .update({
             store_id: store.id,
             vendor_id: user.id,
-            title: formData.get('title') as string,
-            description: formData.get('description') as string,
-            price: parseFloat(formData.get('price') as string),
-            inventory_count: parseInt(formData.get('inventory') as string),
+            title,
+            description,
+            price,
+            stock_quantity: inventory,
+            inventory_count: inventory,
             category_id: categoryId && /^[0-9a-f-]{36}$/i.test(categoryId) ? categoryId : null,
-            // Start un-published by default, requiring admin moderation
-            is_published: false,
-            images: [uploadedImageUrl, imageUrlInput].filter(Boolean)
-        }
+            is_published: true,
+            images: [uploadedImageUrl, imageUrlInput, currentImageUrl].filter(Boolean),
+        })
+        .eq('id', productId)
+        .eq('vendor_id', user.id)
 
-        const { error } = await supabase.from('products').insert([productData])
+    if (error) throw new Error(`Failed to update product: ${error.message}`)
 
-        if (error) {
-            throw new Error(`Failed to create product: ${error.message}`)
-        }
-
-        revalidatePath('/vendor/products')
-        revalidatePath('/vendor')
-    } catch (e: any) {
-        console.warn('Failed to create vendor product in Supabase, returning mock success', e.message)
-    }
+    revalidatePath('/vendor/products')
+    revalidatePath('/')
+    revalidatePath('/search')
+    revalidatePath(`/product/${productId}`)
+    redirect('/vendor/products')
 }
 
 export async function toggleProductPublishStatus(productId: string, currentStatus: boolean) {
     const supabase = await createClient()
-
-    // RLS ensures only the Vendor or an Admin can actually execute this update
     const { error } = await supabase
         .from('products')
         .update({ is_published: !currentStatus })
@@ -135,7 +177,7 @@ export async function toggleProductPublishStatus(productId: string, currentStatu
 export async function getVendorProducts() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    
+
     if (!user) return []
 
     const { data, error } = await supabase
@@ -152,13 +194,39 @@ export async function getVendorProducts() {
         return []
     }
 
-    return data.map(p => ({
-        id: p.id,
-        name: p.title,
-        price: p.price,
-        stock: p.stock_quantity || p.inventory_count || 0,
-        category: p.category?.name || 'Uncategorized',
-        status: p.is_published ? 'Active' : 'Draft',
-        image: p.images?.[0] || null
+    return data.map((product) => ({
+        id: product.id,
+        name: product.title,
+        price: Number(product.price ?? 0),
+        stock: product.stock_quantity || product.inventory_count || 0,
+        category: product.category?.name || 'Uncategorized',
+        status: product.is_published ? 'Active' : 'Draft',
+        image: product.images?.[0] || null,
     }))
+}
+
+export async function getVendorProductById(productId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return null
+
+    const { data, error } = await supabase
+        .from('products')
+        .select('id, title, description, price, stock_quantity, inventory_count, category_id, images')
+        .eq('id', productId)
+        .eq('vendor_id', user.id)
+        .maybeSingle()
+
+    if (error || !data) return null
+
+    return {
+        id: data.id,
+        title: data.title ?? '',
+        description: data.description ?? '',
+        price: String(data.price ?? ''),
+        inventory: String(data.stock_quantity ?? data.inventory_count ?? 0),
+        category_id: data.category_id ?? '',
+        image_url: Array.isArray(data.images) ? (data.images[0] ?? '') : '',
+    }
 }
