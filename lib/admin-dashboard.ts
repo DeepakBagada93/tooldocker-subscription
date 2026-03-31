@@ -1,5 +1,4 @@
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
-import { ADMIN_STATS } from '@/lib/admin-mock-data'
 
 type MonthlyPoint = {
   name: string
@@ -62,21 +61,21 @@ export type AdminSubscriptionPlanOption = {
 
 function getFallbackAdminDashboardData(): AdminDashboardData {
   return {
-    mrr: ADMIN_STATS.mrr,
-    activeVendors: ADMIN_STATS.activeVendors,
-    churnRate: ADMIN_STATS.churnRate,
-    activeBuyers: ADMIN_STATS.activeBuyers,
+    mrr: 0,
+    activeVendors: 0,
+    churnRate: 0,
+    activeBuyers: 0,
     pendingVendorActivations: 0,
-    moderationThroughput: 100,
+    moderationThroughput: 0,
     pastDueAccounts: 0,
-    reviewSlaLabel: 'Unavailable',
-    billingHealthLabel: 'Fallback mode',
-    vendorGrowthLabel: 'Check connection',
+    reviewSlaLabel: 'No data',
+    billingHealthLabel: 'No data',
+    vendorGrowthLabel: 'No data',
     mrrTrend: '0%',
     vendorTrend: '0%',
     churnTrend: '0%',
     buyerTrend: '0%',
-    mrrData: ADMIN_STATS.mrrData,
+    mrrData: [],
     actionRequired: {
       vendorActivations: 0,
       planManagement: 0,
@@ -310,6 +309,24 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     console.warn('Falling back to admin dashboard defaults', error)
     return getFallbackAdminDashboardData()
   }
+}
+
+export async function getAdminAnalyticsData() {
+  const dashboardData = await getAdminDashboardData();
+  
+  // Build a default vendor growth series based on DB profiles if possible
+  // For now, reuse buildMrrSeries logic for a simple growth indicator
+  return {
+    vendorGrowth: dashboardData.mrrData.map(point => ({
+      name: point.name,
+      vendors: Math.round(point.mrr / 50) || 0 // Very rough estimate for visualization
+    })),
+    stats: [
+      { name: 'Avg. Order Value', value: '$0.00', trend: '0%', isUp: true },
+      { name: 'Customer LTV', value: '$0.00', trend: '0%', isUp: true },
+      { name: 'Churn Rate', value: `${dashboardData.churnRate}%`, trend: dashboardData.churnTrend, isUp: dashboardData.churnRate < 5 },
+    ]
+  };
 }
 
 function getVendorStatus(store: RawStore | undefined, subscription: RawSubscription | undefined) {

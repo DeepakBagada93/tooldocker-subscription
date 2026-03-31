@@ -74,6 +74,36 @@ async function getAuthenticatedVendorContext(requireAvailableSlot: boolean) {
     return { supabase, user, store }
 }
 
+export async function getVendorBillingData() {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) return null
+
+    const { data: subscription, error: subError } = await supabase
+        .from('vendor_subscriptions')
+        .select('*, subscription_plans(name, price)')
+        .eq('vendor_id', user.id)
+        .maybeSingle()
+
+    if (subError) {
+        console.error('Error fetching vendor subscription:', subError)
+    }
+
+    // Since we don't have an invoices table yet, we'll return an empty list or mock based on subscription
+    const plan = subscription?.subscription_plans as any
+    const overview = {
+        currentPlan: { name: plan?.name || 'No Active Plan' },
+        nextInvoiceAmount: plan?.price || 0,
+        status: subscription?.status || 'Inactive'
+    }
+
+    return {
+        overview,
+        invoices: [] // Real invoices would come from a payments table
+    }
+}
+
 export async function createVendorProduct(formData: FormData) {
     const { supabase, user, store } = await getAuthenticatedVendorContext(true)
 

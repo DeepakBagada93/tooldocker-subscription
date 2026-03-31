@@ -1,4 +1,4 @@
-import { CATEGORIES, PRODUCTS } from '@/lib/mock-data';
+import { getCategories, getPublishedProducts } from '@/app/actions/products';
 import { ProductCard } from '@/components/product/product-card';
 import { FilterSidebar } from '@/components/product/filter-sidebar';
 import { Button } from '@/components/ui/button';
@@ -7,13 +7,14 @@ import { notFound } from 'next/navigation';
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const category = CATEGORIES.find(c => c.slug === slug);
+  const categories = await getCategories();
+  const category = categories.find(c => c.slug === slug);
 
   if (!category) {
     notFound();
   }
 
-  const categoryProducts = PRODUCTS.filter(p => p.categoryId === category.id);
+  const categoryProducts = await getPublishedProducts({ categorySlug: slug });
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -65,10 +66,12 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 ))}
               </div>
             ) : (
-              <div className="py-20 text-center space-y-4">
+              <div className="py-20 text-center space-y-4 border-2 border-dashed rounded-[3rem]">
                 <div className="text-4xl font-black text-slate-200 uppercase tracking-tighter">No Products Found</div>
                 <p className="text-muted-foreground">We couldn&apos;t find any products in this category at the moment.</p>
-                <Button variant="outline">View All Categories</Button>
+                <Button variant="outline" asChild>
+                    <Link href="/search">View All Products</Link>
+                </Button>
               </div>
             )}
           </div>
@@ -77,3 +80,5 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     </div>
   );
 }
+
+import Link from 'next/link';

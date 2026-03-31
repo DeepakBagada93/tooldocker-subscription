@@ -1,15 +1,18 @@
 'use client';
 
 import * as React from 'react';
-import { CATEGORIES } from '@/lib/mock-data';
+import { getCategories, type Category } from '@/app/actions/products';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { X } from 'lucide-react';
 
 export function FilterSidebar() {
   const [priceRange, setPriceRange] = React.useState({ min: '', max: '' });
   const [selectedCategories, setSelectedCategories] = React.useState<string[]>([]);
+  const [categories, setCategories] = React.useState<Category[]>([]);
+
+  React.useEffect(() => {
+    getCategories().then(setCategories);
+  }, []);
 
   const toggleCategory = (id: string) => {
     setSelectedCategories(prev => 
@@ -22,7 +25,7 @@ export function FilterSidebar() {
       <div>
         <h3 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-slate-900">Categories</h3>
         <div className="space-y-2">
-          {CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <label key={category.id} className="flex items-center gap-3 cursor-pointer group">
               <input 
                 type="checkbox" 
@@ -33,6 +36,9 @@ export function FilterSidebar() {
               <span className="text-sm text-slate-700 transition-colors group-hover:text-primary">{category.name}</span>
             </label>
           ))}
+          {categories.length === 0 && (
+            <p className="text-xs text-stone-400 italic">No categories found</p>
+          )}
         </div>
       </div>
 
@@ -59,18 +65,6 @@ export function FilterSidebar() {
               onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
             />
           </div>
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-4 text-lg font-semibold tracking-[-0.03em] text-slate-900">Vendor Rating</h3>
-        <div className="space-y-2">
-          {[4, 3, 2].map((rating) => (
-            <label key={rating} className="flex items-center gap-3 cursor-pointer group">
-              <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" />
-              <span className="text-sm text-slate-700 transition-colors group-hover:text-primary">{rating}+ Stars</span>
-            </label>
-          ))}
         </div>
       </div>
 

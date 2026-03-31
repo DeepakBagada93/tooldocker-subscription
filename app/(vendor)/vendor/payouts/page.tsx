@@ -1,10 +1,17 @@
 import { CreditCard, Download, FileText, Receipt, ShieldCheck } from 'lucide-react'
-
+import { getVendorBillingData } from '@/app/actions/vendor'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { VENDOR_SUBSCRIPTION_INVOICES, VENDOR_SUBSCRIPTION_OVERVIEW } from '@/lib/vendor-mock-data'
 
-export default function BillingHistoryPage() {
+export default async function BillingHistoryPage() {
+  const data = await getVendorBillingData()
+  const overview = data?.overview || {
+    currentPlan: { name: 'No Active Plan' },
+    nextInvoiceAmount: 0,
+    status: 'Inactive'
+  }
+  const invoices = data?.invoices || []
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -17,15 +24,15 @@ export default function BillingHistoryPage() {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
         {[
-          { name: 'Current Plan', value: VENDOR_SUBSCRIPTION_OVERVIEW.currentPlan.name, icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-50' },
-          { name: 'Next Invoice', value: `$${VENDOR_SUBSCRIPTION_OVERVIEW.nextInvoiceAmount.toLocaleString()}`, icon: CreditCard, color: 'text-blue-500', bg: 'bg-blue-50' },
-          { name: 'Billing Status', value: VENDOR_SUBSCRIPTION_OVERVIEW.status, icon: Receipt, color: 'text-amber-500', bg: 'bg-amber-50' },
+          { name: 'Current Plan', value: overview.currentPlan.name, icon: ShieldCheck, color: 'text-emerald-500', bg: 'bg-emerald-50' },
+          { name: 'Next Invoice', value: `$${overview.nextInvoiceAmount.toLocaleString()}`, icon: CreditCard, color: 'text-blue-500', bg: 'bg-blue-50' },
+          { name: 'Billing Status', value: overview.status, icon: Receipt, color: 'text-amber-500', bg: 'bg-amber-50' },
         ].map((stat) => (
           <div key={stat.name} className="rounded-2xl border bg-white p-6 shadow-sm">
             <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg}`}>
               <stat.icon className={`h-5 w-5 ${stat.color}`} />
             </div>
-            <div className="text-2xl font-black tracking-tighter">{stat.value}</div>
+            <div className="text-2xl font-black tracking-tighter uppercase">{stat.value}</div>
             <div className="text-xs font-bold uppercase tracking-widest text-muted-foreground">{stat.name}</div>
           </div>
         ))}
@@ -45,7 +52,7 @@ export default function BillingHistoryPage() {
               </tr>
             </thead>
             <tbody className="divide-y">
-              {VENDOR_SUBSCRIPTION_INVOICES.map((invoice) => (
+              {invoices.map((invoice: any) => (
                 <tr key={invoice.id} className="transition-colors hover:bg-slate-50">
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
@@ -68,6 +75,13 @@ export default function BillingHistoryPage() {
                   </td>
                 </tr>
               ))}
+              {invoices.length === 0 && (
+                <tr>
+                    <td colSpan={6} className="py-12 text-center text-muted-foreground font-bold uppercase tracking-widest text-xs">
+                        No invoice history available
+                    </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

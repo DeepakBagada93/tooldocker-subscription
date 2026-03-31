@@ -2,7 +2,6 @@
 
 import * as React from 'react';
 import { createClient } from '@/lib/supabase/client';
-import { VENDOR_ORDERS } from '@/lib/vendor-mock-data';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -11,10 +10,7 @@ import {
   Truck,
   Package,
   CheckCircle2,
-  Clock,
-  MoreVertical,
-  Eye,
-  ArrowRight
+  Eye
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -34,7 +30,7 @@ export default function VendorOrdersPage() {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
-        setOrders(VENDOR_ORDERS as any[]);
+        setOrders([]);
         setLoading(false);
         return;
       }
@@ -47,7 +43,7 @@ export default function VendorOrdersPage() {
         .single();
 
       if (storeError || !store) {
-        setOrders(VENDOR_ORDERS as any[]);
+        setOrders([]);
         setLoading(false);
         return;
       }
@@ -64,8 +60,8 @@ export default function VendorOrdersPage() {
         setOrders(data);
       }
     } catch (e) {
-      console.warn('Supabase fetch failed (or unconfigured), falling back to mock orders', e);
-      setOrders(VENDOR_ORDERS as any[]);
+      console.warn('Supabase fetch failed:', e);
+      setOrders([]);
     } finally {
       setLoading(false);
     }
@@ -81,7 +77,7 @@ export default function VendorOrdersPage() {
         .on(
           'postgres_changes',
           {
-            event: '*', // Listen to INSERT, UPDATE, DELETE
+            event: '*', 
             schema: 'public',
             table: 'vendor_orders',
           },
@@ -90,21 +86,19 @@ export default function VendorOrdersPage() {
             fetchOrders();
           }
         )
-        .subscribe((status, err) => {
-          if (err) console.warn('Supabase Realtime not connected (using mock data)');
-        });
+        .subscribe();
 
       return () => {
         supabase.removeChannel(channel);
       };
     } catch (e) {
-      console.warn('Realtime subscription skipped due to unconfigured connection');
+      console.warn('Realtime subscription skipped');
     }
   }, [fetchOrders, supabase]);
 
   const filteredOrders = activeFilter === 'All'
     ? orders
-    : orders.filter(o => o.status.toLowerCase() === activeFilter.toLowerCase());
+    : orders.filter(o => o.status?.toLowerCase() === activeFilter.toLowerCase());
 
   return (
     <div className="space-y-8">
@@ -157,7 +151,10 @@ export default function VendorOrdersPage() {
         {loading ? (
           <p className="text-muted-foreground p-4">Loading your orders...</p>
         ) : filteredOrders.length === 0 ? (
-          <p className="text-muted-foreground p-4">No orders found.</p>
+          <div className="py-20 text-center border-2 border-dashed rounded-3xl">
+            <Package className="h-12 w-12 text-stone-200 mx-auto mb-4" />
+            <p className="text-muted-foreground font-bold uppercase tracking-widest text-sm">No orders found.</p>
+          </div>
         ) : filteredOrders.map((order) => (
           <div key={order.id} className="bg-white dark:bg-workshop-dark border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">

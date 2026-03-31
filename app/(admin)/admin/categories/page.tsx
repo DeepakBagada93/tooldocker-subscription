@@ -1,7 +1,5 @@
-'use client';
-
 import * as React from 'react';
-import { CATEGORIES_LIST } from '@/lib/admin-mock-data';
+import { getCategories } from '@/app/actions/products';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -9,14 +7,12 @@ import {
   Search, 
   LayoutDashboard, 
   Edit2, 
-  Trash2, 
-  ChevronRight,
-  Settings2,
-  MoreVertical
+  Trash2
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
-export default function CategoryManagementPage() {
+export default async function CategoryManagementPage() {
+  const categories = await getCategories();
+
   return (
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -42,7 +38,7 @@ export default function CategoryManagementPage() {
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-        {CATEGORIES_LIST.map((cat) => (
+        {categories.map((cat) => (
           <div key={cat.id} className="bg-white dark:bg-workshop-dark border rounded-2xl p-6 shadow-sm hover:shadow-md transition-all group">
             <div className="flex items-start justify-between mb-4">
               <div className="w-12 h-12 rounded-xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
@@ -62,14 +58,20 @@ export default function CategoryManagementPage() {
             <div className="mt-6 pt-6 border-t flex items-center justify-between">
               <div className="space-y-1">
                 <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Products</div>
-                <div className="text-sm font-black tracking-tighter">{cat.productCount.toLocaleString()}</div>
+                <div className="text-sm font-black tracking-tighter">0</div>
               </div>
               <Badge className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400 text-[10px] font-bold uppercase tracking-widest">
-                {cat.status}
+                Active
               </Badge>
             </div>
           </div>
         ))}
+
+        {categories.length === 0 && (
+          <div className="col-span-full py-20 text-center border-2 border-dashed rounded-3xl">
+            <p className="text-muted-foreground font-bold uppercase tracking-widest">No categories found in database.</p>
+          </div>
+        )}
       </div>
     </div>
   );

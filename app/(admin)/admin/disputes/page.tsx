@@ -1,22 +1,11 @@
 'use client';
 
 import * as React from 'react';
-import { ADMIN_DISPUTES } from '@/lib/admin-mock-data';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { 
   Search, 
-  Filter, 
-  AlertTriangle, 
-  MessageSquare, 
-  CheckCircle2, 
-  XCircle, 
-  Eye, 
-  Calendar,
-  MoreVertical,
-  Scale
+  Filter
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 
 export default function DisputeResolutionPage() {
   return (
@@ -52,61 +41,14 @@ export default function DisputeResolutionPage() {
         </div>
       </div>
 
-      {/* Disputes Table */}
+      {/* Disputes Table - Empty State */}
       <div className="bg-white dark:bg-workshop-dark border rounded-2xl overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-slate-50 dark:bg-slate-900/50 border-b">
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Dispute ID</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Parties</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Reason</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Date Opened</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Status</th>
-                <th className="px-6 py-4 text-xs font-bold uppercase tracking-widest text-muted-foreground text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {ADMIN_DISPUTES.map((dispute) => (
-                <tr key={dispute.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/30 transition-colors group">
-                  <td className="px-6 py-4">
-                    <span className="font-bold font-mono text-sm">{dispute.id}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-bold">{dispute.buyer}</div>
-                    <div className="text-[10px] text-muted-foreground uppercase font-bold tracking-widest">vs {dispute.vendor}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm font-medium">{dispute.reason}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-sm text-muted-foreground">
-                      {new Date(dispute.date).toLocaleDateString()}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <Badge className={cn(
-                      "px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider",
-                      dispute.status === 'Open' ? 'bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-400'
-                    )}>
-                      {dispute.status}
-                    </Badge>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" title="View Dispute"><Eye className="h-4 w-4" /></Button>
-                      <Button variant="ghost" size="icon" className="text-primary hover:text-primary/80" title="Mediate">
-                        <Scale className="h-4 w-4" />
-                      </Button>
-                      <Button variant="ghost" size="icon" title="Messages">
-                        <MessageSquare className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="py-24 text-center">
+            <div className="mx-auto w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                <Search className="h-8 w-8 text-stone-300" />
+            </div>
+            <h3 className="text-xl font-black uppercase tracking-tighter">No active disputes</h3>
+            <p className="text-sm text-muted-foreground max-w-xs mx-auto mt-2">All conflicts have been resolved or no new reports have been filed.</p>
         </div>
       </div>
     </div>
