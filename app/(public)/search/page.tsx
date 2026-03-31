@@ -10,7 +10,7 @@ export default async function SearchPage(props: { searchParams: Promise<{ [key: 
 
   // Fetch products from Supabase (with fallback to mock data implemented in the action)
   const allProducts = await getPublishedProducts();
-
+  
   const results = allProducts.filter(p =>
     p.title.toLowerCase().includes(query.toLowerCase()) ||
     p.description.toLowerCase().includes(query.toLowerCase()) ||
@@ -19,7 +19,7 @@ export default async function SearchPage(props: { searchParams: Promise<{ [key: 
 
   return (
     <div className="container mx-auto px-4 py-8">
-...
+      <div className="flex flex-col gap-8">
         <div className="space-y-4">
           <h1 className="text-4xl font-semibold tracking-[-0.05em] text-slate-900 lg:text-6xl">
             Search Results
