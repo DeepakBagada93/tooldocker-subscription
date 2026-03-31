@@ -1,4 +1,4 @@
-import { ShieldCheck, LogIn, Store, ArrowLeft } from 'lucide-react'
+import { LogIn, Store, ArrowLeft } from 'lucide-react'
 import Link from 'next/link'
 import { login } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ export default async function VendorLoginPage(props: { searchParams: Promise<{ [
         </div>
 
         {params?.message && typeof params.message === 'string' && (
-          <p className="mt-6 rounded-2xl bg-amber-50 p-4 text-center text-sm font-medium text-amber-700 border border-amber-200/50">
+          <p className="mt-6 rounded-2xl border border-amber-200/50 bg-amber-50 p-4 text-center text-sm font-medium text-amber-700">
             {params.message}
           </p>
         )}
@@ -31,12 +31,12 @@ export default async function VendorLoginPage(props: { searchParams: Promise<{ [
         <form action={login} className="mt-8 space-y-4">
           <input type="hidden" name="redirectTo" value="/vendor/dashboard" />
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-[0.22em] text-stone-500 ml-1">Vendor Email</label>
+            <label className="ml-1 text-xs font-bold uppercase tracking-[0.22em] text-stone-500">Vendor Email</label>
             <Input name="email" type="email" placeholder="vendor@company.com" className="h-12 rounded-xl" required />
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-[0.22em] text-stone-500 ml-1">Password</label>
-            <Input name="password" type="password" placeholder="••••••••" className="h-12 rounded-xl" required />
+            <label className="ml-1 text-xs font-bold uppercase tracking-[0.22em] text-stone-500">Password</label>
+            <Input name="password" type="password" placeholder="........" className="h-12 rounded-xl" required />
           </div>
           <Button type="submit" variant="industrial" className="h-12 w-full rounded-xl text-base font-bold uppercase tracking-tight">
             Sign In to Dashboard
@@ -57,9 +57,9 @@ export default async function VendorLoginPage(props: { searchParams: Promise<{ [
             </Link>
           </Button>
         </div>
-        
+
         <p className="mt-8 text-center text-sm text-stone-500">
-          <Link href="/login" className="inline-flex items-center font-bold text-stone-400 hover:text-primary transition-colors">
+          <Link href="/login" className="inline-flex items-center font-bold text-stone-400 transition-colors hover:text-primary">
             <ArrowLeft className="mr-2 h-4 w-4" /> Not a vendor? Customer Login
           </Link>
         </p>

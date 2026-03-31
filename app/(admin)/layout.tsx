@@ -7,15 +7,12 @@ import {
   Settings,
   ShieldCheck,
   BarChart3,
-  MessageSquare,
-  Box,
   AlertTriangle
 } from 'lucide-react';
 
 const ADMIN_ITEMS = [
   { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
   { name: 'Vendors', href: '/admin/vendors', icon: ShieldCheck },
-  { name: 'Product Management', href: '/admin/products', icon: Box },
   { name: 'Category Management', href: '/admin/categories', icon: LayoutDashboard },
   { name: 'Plans & Billing', href: '/admin/commission', icon: Settings },
   { name: 'Dispute Resolution', href: '/admin/disputes', icon: AlertTriangle },

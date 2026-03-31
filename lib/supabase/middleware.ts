@@ -25,6 +25,7 @@ function isVendorDashboardRoute(pathname: string) {
 }
 
 function isBuyerDashboardRoute(pathname: string) {
+    if (pathname === '/buyer/login') return false
     return pathname === '/buyer' || pathname.startsWith('/buyer/')
 }
 

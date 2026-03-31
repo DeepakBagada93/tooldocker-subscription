@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { ADMIN_STATS } from '@/lib/admin-mock-data'
 
 type MonthlyPoint = {
@@ -38,9 +38,26 @@ export type AdminVendorQueueItem = {
   country: string
   appliedDate: string
   type: string
+  subscriptionId: string | null
+  subscriptionPlanKey: string | null
   subscriptionName: string
+  subscriptionStatus: string
   status: string
+  productAccess: 'approved' | 'pending' | 'blocked'
+  productAccessLabel: string
+  productLimit: number
+  billingInterval: 'monthly' | 'yearly' | null
+  bulkUploadEnabled: boolean
   isStoreActive: boolean
+}
+
+export type AdminSubscriptionPlanOption = {
+  id: string
+  planKey: string
+  name: string
+  billingInterval: 'monthly' | 'yearly'
+  productLimit: number
+  bulkUploadEnabled: boolean
 }
 
 function getFallbackAdminDashboardData(): AdminDashboardData {
@@ -85,6 +102,7 @@ type RawStore = {
 }
 
 type RawSubscription = {
+  id: string
   vendor_id: string
   status: 'trialing' | 'active' | 'past_due' | 'canceled' | 'inactive'
   created_at: string
@@ -191,7 +209,7 @@ function computePeriodChange(current: number, previous: number) {
 
 export async function getAdminDashboardData(): Promise<AdminDashboardData> {
   try {
-    const supabase = await createClient()
+    const supabase = getSupabaseAdmin()
 
     const [
       vendorProfilesResult,
@@ -199,7 +217,6 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       subscriptionsResult,
       buyersCountResult,
       productsCountResult,
-      unpublishedProductsCountResult,
     ] = await Promise.all([
       supabase
         .from('profiles')
@@ -221,10 +238,6 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       supabase
         .from('products')
         .select('id', { count: 'exact', head: true }),
-      supabase
-        .from('products')
-        .select('id', { count: 'exact', head: true })
-        .eq('is_published', false),
     ])
 
     if (vendorProfilesResult.error) throw new Error(vendorProfilesResult.error.message)
@@ -232,7 +245,6 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     if (subscriptionsResult.error) throw new Error(subscriptionsResult.error.message)
     if (buyersCountResult.error) throw new Error(buyersCountResult.error.message)
     if (productsCountResult.error) throw new Error(productsCountResult.error.message)
-    if (unpublishedProductsCountResult.error) throw new Error(unpublishedProductsCountResult.error.message)
 
     const vendorProfiles = (vendorProfilesResult.data ?? []) as RawProfile[]
     const stores = (storesResult.data ?? []) as RawStore[]
@@ -246,10 +258,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       (subscription) => subscription.status === 'active' || subscription.status === 'trialing'
     )
     const mrr = committedSubscriptions.reduce((sum, subscription) => sum + monthlyRevenueAmount(subscription), 0)
-    const moderationThroughput =
-      (productsCountResult.count ?? 0) > 0
-        ? Math.round((((productsCountResult.count ?? 0) - (unpublishedProductsCountResult.count ?? 0)) / (productsCountResult.count ?? 0)) * 100)
-        : 100
+    const moderationThroughput = 100
 
     const pendingVendorActivations = vendorProfiles.filter((profile) => {
       const store = stores.find((entry) => entry.vendor_id === profile.id)
@@ -294,7 +303,7 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       actionRequired: {
         vendorActivations: pendingVendorActivations,
         planManagement: pastDueAccounts,
-        productModeration: unpublishedProductsCountResult.count ?? 0,
+        productModeration: 0,
       },
     }
   } catch (error) {
@@ -313,9 +322,70 @@ function getVendorStatus(store: RawStore | undefined, subscription: RawSubscript
   return 'Needs review'
 }
 
+function getProductAccessState(store: RawStore | undefined, subscription: RawSubscription | undefined) {
+  if (!store || !store.is_active) {
+    return {
+      state: 'blocked' as const,
+      label: 'Store inactive',
+    }
+  }
+
+  if (!subscription) {
+    return {
+      state: 'pending' as const,
+      label: 'Plan required',
+    }
+  }
+
+  if (subscription.status === 'active' || subscription.status === 'trialing') {
+    return {
+      state: 'approved' as const,
+      label: 'Can add products',
+    }
+  }
+
+  if (subscription.status === 'past_due') {
+    return {
+      state: 'blocked' as const,
+      label: 'Billing issue',
+    }
+  }
+
+  return {
+    state: 'pending' as const,
+    label: 'Awaiting approval',
+  }
+}
+
+export async function getAdminSubscriptionPlanOptions(): Promise<AdminSubscriptionPlanOption[]> {
+  try {
+    const supabase = getSupabaseAdmin()
+    const { data, error } = await supabase
+      .from('subscription_plans')
+      .select('id, plan_key, name, billing_interval, product_limit, bulk_upload_enabled')
+      .order('price', { ascending: true })
+
+    if (error) {
+      throw new Error(error.message)
+    }
+
+    return (data ?? []).map((plan) => ({
+      id: String(plan.id),
+      planKey: String(plan.plan_key),
+      name: String(plan.name),
+      billingInterval: plan.billing_interval as 'monthly' | 'yearly',
+      productLimit: Number(plan.product_limit ?? 0),
+      bulkUploadEnabled: Boolean(plan.bulk_upload_enabled),
+    }))
+  } catch (error) {
+    console.warn('Unable to load subscription plans for admin queue', error)
+    return []
+  }
+}
+
 export async function getAdminVendorQueue(): Promise<AdminVendorQueueItem[]> {
   try {
-    const supabase = await createClient()
+    const supabase = getSupabaseAdmin()
 
     const [vendorProfilesResult, storesResult, subscriptionsResult] = await Promise.all([
       supabase
@@ -329,7 +399,7 @@ export async function getAdminVendorQueue(): Promise<AdminVendorQueueItem[]> {
         .order('created_at', { ascending: false }),
       supabase
         .from('vendor_subscriptions')
-        .select('vendor_id, status, created_at, billing_interval, current_period_end, subscription_plans(name, price, billing_interval)')
+        .select('id, vendor_id, status, created_at, billing_interval, current_period_end, subscription_plans(plan_key, name, price, billing_interval, product_limit, bulk_upload_enabled)')
         .order('created_at', { ascending: false }),
     ])
 
@@ -346,6 +416,12 @@ export async function getAdminVendorQueue(): Promise<AdminVendorQueueItem[]> {
       const subscription = latestSubscriptions.get(profile.id)
       const plan = subscription ? getPlanDetails(subscription) : null
       const name = store?.store_name || profile.company_name || profile.full_name || profile.email || 'Unnamed vendor'
+      const productAccess = getProductAccessState(store, subscription)
+      const rawPlan = subscription
+        ? (Array.isArray(subscription.subscription_plans)
+            ? subscription.subscription_plans[0]
+            : subscription.subscription_plans)
+        : null
 
       return {
         id: profile.id,
@@ -356,8 +432,25 @@ export async function getAdminVendorQueue(): Promise<AdminVendorQueueItem[]> {
         country: 'Not provided',
         appliedDate: store?.created_at || profile.created_at,
         type: store ? 'Storefront' : 'Profile only',
+        subscriptionId: subscription?.id ?? null,
+        subscriptionPlanKey:
+          rawPlan && typeof rawPlan === 'object' && 'plan_key' in rawPlan
+            ? String(rawPlan.plan_key)
+            : null,
         subscriptionName: plan?.name ?? 'No plan',
+        subscriptionStatus: subscription?.status ?? 'inactive',
         status: getVendorStatus(store, subscription),
+        productAccess: productAccess.state,
+        productAccessLabel: productAccess.label,
+        productLimit:
+          rawPlan && typeof rawPlan === 'object' && 'product_limit' in rawPlan
+            ? Number(rawPlan.product_limit ?? 0)
+            : 0,
+        billingInterval: subscription?.billing_interval ?? null,
+        bulkUploadEnabled:
+          rawPlan && typeof rawPlan === 'object' && 'bulk_upload_enabled' in rawPlan
+            ? Boolean(rawPlan.bulk_upload_enabled)
+            : false,
         isStoreActive: store?.is_active ?? false,
       }
     })

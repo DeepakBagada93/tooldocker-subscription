@@ -3,6 +3,54 @@
 import { createClient } from '@/lib/supabase/server'
 import { getVendorSubscriptionStatus } from '@/lib/subscriptions'
 import { revalidatePath } from 'next/cache'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
+
+function sanitizeFileName(fileName: string) {
+    return fileName.replace(/[^a-zA-Z0-9._-]/g, '-')
+}
+
+function inferContentType(fileName: string, fallbackType?: string) {
+    if (fallbackType) {
+        return fallbackType
+    }
+
+    const normalized = fileName.toLowerCase()
+    if (normalized.endsWith('.png')) return 'image/png'
+    if (normalized.endsWith('.webp')) return 'image/webp'
+    if (normalized.endsWith('.gif')) return 'image/gif'
+    return 'image/jpeg'
+}
+
+async function uploadVendorProductImage(params: { file: File; vendorId: string }) {
+    const { file, vendorId } = params
+
+    if (!file.size) {
+        return null
+    }
+
+    if (!file.type.startsWith('image/')) {
+        throw new Error('Only image files can be uploaded.')
+    }
+
+    const supabaseAdmin = getSupabaseAdmin()
+    const extension = file.name.includes('.') ? file.name.split('.').pop() : 'jpg'
+    const path = `vendors/${vendorId}/${Date.now()}-${crypto.randomUUID()}.${sanitizeFileName(extension || 'jpg')}`
+    const fileBuffer = Buffer.from(await file.arrayBuffer())
+
+    const { error } = await supabaseAdmin.storage
+        .from('product-images')
+        .upload(path, fileBuffer, {
+            contentType: inferContentType(file.name, file.type),
+            upsert: false,
+        })
+
+    if (error) {
+        throw new Error(`Image upload failed: ${error.message}`)
+    }
+
+    const { data } = supabaseAdmin.storage.from('product-images').getPublicUrl(path)
+    return data.publicUrl
+}
 
 export async function createVendorProduct(formData: FormData) {
     const supabase = await createClient()
@@ -35,6 +83,12 @@ export async function createVendorProduct(formData: FormData) {
         if (storeError) throw new Error('Vendor store not found')
 
         const categoryId = formData.get('category_id') as string | null
+        const uploadedImage = formData.get('image_file')
+        const imageUrlInput = String(formData.get('image_url') || '').trim()
+        const uploadedImageUrl =
+            uploadedImage instanceof File && uploadedImage.size > 0
+                ? await uploadVendorProductImage({ file: uploadedImage, vendorId: user.id })
+                : null
 
         const productData = {
             store_id: store.id,
@@ -46,7 +100,7 @@ export async function createVendorProduct(formData: FormData) {
             category_id: categoryId && /^[0-9a-f-]{36}$/i.test(categoryId) ? categoryId : null,
             // Start un-published by default, requiring admin moderation
             is_published: false,
-            images: [formData.get('image_url') as string].filter(Boolean)
+            images: [uploadedImageUrl, imageUrlInput].filter(Boolean)
         }
 
         const { error } = await supabase.from('products').insert([productData])

@@ -1,4 +1,4 @@
-import { ShieldCheck, LogIn, Lock } from 'lucide-react'
+import { LogIn, Lock } from 'lucide-react'
 import Link from 'next/link'
 import { login } from '@/app/actions/auth'
 import { Button } from '@/components/ui/button'
@@ -16,14 +16,14 @@ export default async function AdminLoginPage(props: { searchParams: Promise<{ [k
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
             <Lock className="h-8 w-8 text-primary" />
           </div>
-          <h1 className="text-3xl font-black tracking-[-0.04em] text-white uppercase">Admin Terminal</h1>
+          <h1 className="text-3xl font-black uppercase tracking-[-0.04em] text-white">Admin Terminal</h1>
           <p className="mx-auto max-w-sm text-slate-400">
             Secure administrative access for Tooldocker marketplace management.
           </p>
         </div>
 
         {params?.message && typeof params.message === 'string' && (
-          <p className="mt-6 rounded-2xl bg-amber-500/10 p-4 text-center text-sm font-medium text-amber-500 border border-amber-500/20">
+          <p className="mt-6 rounded-2xl border border-amber-500/20 bg-amber-500/10 p-4 text-center text-sm font-medium text-amber-500">
             {params.message}
           </p>
         )}
@@ -31,33 +31,33 @@ export default async function AdminLoginPage(props: { searchParams: Promise<{ [k
         <form action={login} className="mt-8 space-y-4">
           <input type="hidden" name="redirectTo" value="/admin" />
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500 ml-1">Admin Email</label>
-            <Input 
-              name="email" 
-              type="email" 
-              placeholder="admin@tooldocker.com" 
-              className="h-12 rounded-xl bg-slate-800 border-slate-700 text-white focus:border-primary" 
-              required 
+            <label className="ml-1 text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Admin Email</label>
+            <Input
+              name="email"
+              type="email"
+              placeholder="admin@tooldocker.com"
+              className="h-12 rounded-xl border-slate-700 bg-slate-800 text-white focus:border-primary"
+              required
             />
           </div>
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-[0.22em] text-slate-500 ml-1">Secure Password</label>
-            <Input 
-              name="password" 
-              type="password" 
-              placeholder="••••••••" 
-              className="h-12 rounded-xl bg-slate-800 border-slate-700 text-white focus:border-primary" 
-              required 
+            <label className="ml-1 text-xs font-bold uppercase tracking-[0.22em] text-slate-500">Secure Password</label>
+            <Input
+              name="password"
+              type="password"
+              placeholder="........"
+              className="h-12 rounded-xl border-slate-700 bg-slate-800 text-white focus:border-primary"
+              required
             />
           </div>
-          <Button type="submit" variant="industrial" className="h-12 w-full rounded-xl text-base font-bold uppercase tracking-tight mt-4">
+          <Button type="submit" variant="industrial" className="mt-4 h-12 w-full rounded-xl text-base font-bold uppercase tracking-tight">
             Authorize Entry
             <LogIn className="ml-2 h-5 w-5" />
           </Button>
         </form>
 
-        <div className="mt-10 pt-6 border-t border-slate-800 text-center">
-          <Link href="/" className="text-xs font-bold uppercase tracking-widest text-slate-600 hover:text-primary transition-colors">
+        <div className="mt-10 border-t border-slate-800 pt-6 text-center">
+          <Link href="/" className="text-xs font-bold uppercase tracking-widest text-slate-600 transition-colors hover:text-primary">
             Return to Public Site
           </Link>
         </div>

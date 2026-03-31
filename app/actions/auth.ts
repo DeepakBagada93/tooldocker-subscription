@@ -10,6 +10,11 @@ import {
     ensureVendorStoreForUser,
     normalizeAppRole,
 } from '@/lib/supabase/profiles'
+import {
+    compactUserAuthMetadataIfNeeded,
+    getCompactAuthMetadataFromSource,
+} from '@/lib/supabase/auth-metadata'
+import { clearSupabaseAuthCookies } from '@/lib/supabase/auth-cookies'
 
 function getLoginRouteForRedirectTarget(redirectTo: FormDataEntryValue | null) {
     if (typeof redirectTo !== 'string') {
@@ -57,10 +62,23 @@ export async function login(formData: FormData) {
         return redirect(`${loginRoute}?message=${message}`)
     }
 
-    const profile = await ensureUserProfile(supabase, authData.user)
-    const role = normalizeAppRole(profile?.role ?? authData.user?.user_metadata?.role)
+    await compactUserAuthMetadataIfNeeded(supabase, authData.user)
 
-    await ensureVendorStoreForUser(supabase, authData.user, role)
+    await clearSupabaseAuthCookies()
+
+    const { error: refreshedLoginError, data: refreshedAuthData } =
+        await supabase.auth.signInWithPassword(data)
+
+    if (refreshedLoginError) {
+        const message = encodeURIComponent(refreshedLoginError.message || 'Could not refresh user session')
+        return redirect(`${loginRoute}?message=${message}`)
+    }
+
+    const activeUser = refreshedAuthData.user ?? authData.user
+    const profile = await ensureUserProfile(supabase, activeUser)
+    const role = normalizeAppRole(profile?.role ?? activeUser?.user_metadata?.role)
+
+    await ensureVendorStoreForUser(supabase, activeUser, role)
 
     revalidatePath('/', 'layout')
     redirect(resolvePostLoginRoute(role, redirectTo))
@@ -77,37 +95,19 @@ export async function signup(formData: FormData) {
     const role = formData.get('role') as string || 'buyer' // buyer or vendor
     const fullName = formData.get('full_name') as string
     const companyName = formData.get('company_name') as string
-    const legalName = formData.get('legal_name') as string
     const phone = formData.get('phone') as string
-    const taxId = formData.get('tax_id') as string
-    const country = formData.get('country') as string
-    const location = formData.get('location') as string
-    const website = formData.get('website') as string
-    const selectedPlan = formData.get('selected_plan') as string
-    const categoryFocus = formData.get('category_focus') as string
-    const businessAddress = formData.get('business_address') as string
-    const businessSummary = formData.get('business_summary') as string
 
     const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
             emailRedirectTo: `${origin}/auth/callback`,
-            data: {
-                role: role,
+            data: getCompactAuthMetadataFromSource({
+                role,
                 full_name: fullName,
                 company_name: companyName,
-                legal_name: legalName,
                 phone,
-                tax_id: taxId,
-                country,
-                location,
-                website,
-                selected_plan: selectedPlan,
-                category_focus: categoryFocus,
-                business_address: businessAddress,
-                business_summary: businessSummary,
-            }
+            }),
         },
     })
 

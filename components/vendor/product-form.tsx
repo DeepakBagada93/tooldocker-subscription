@@ -3,7 +3,7 @@
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Sparkles, Loader2, Layers } from 'lucide-react';
+import { Sparkles, Loader2, Layers, ImagePlus, X } from 'lucide-react';
 import { createVendorProduct } from '@/app/actions/vendor';
 
 async function getResponseMessage(response: Response, fallbackMessage: string) {
@@ -30,17 +30,43 @@ interface ProductFormProps {
 
 export function ProductForm({ isLocked }: ProductFormProps) {
   const [isGenerating, setIsGenerating] = React.useState(false);
+  const [selectedImageFile, setSelectedImageFile] = React.useState<File | null>(null);
+  const [selectedImagePreview, setSelectedImagePreview] = React.useState<string | null>(null);
   const [formData, setFormData] = React.useState({
     title: '',
     category_id: '',
     description: '',
     price: '',
     inventory: '',
+    image_url: '',
   });
+
+  React.useEffect(() => {
+    if (!selectedImageFile) {
+      setSelectedImagePreview(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(selectedImageFile);
+    setSelectedImagePreview(objectUrl);
+
+    return () => {
+      URL.revokeObjectURL(objectUrl);
+    };
+  }, [selectedImageFile]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0] ?? null;
+    setSelectedImageFile(file);
+  };
+
+  const clearSelectedImage = () => {
+    setSelectedImageFile(null);
   };
 
   const generateWithAI = async () => {
@@ -142,7 +168,64 @@ export function ProductForm({ isLocked }: ProductFormProps) {
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Image URL</label>
-                <Input name="image_url" placeholder="https://example.com/product-image.jpg" className="h-12" disabled={isLocked} />
+                <Input
+                  name="image_url"
+                  placeholder="https://example.com/product-image.jpg"
+                  className="h-12"
+                  disabled={isLocked}
+                  value={formData.image_url}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="space-y-3">
+              <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Upload Product Image</label>
+              <div className="rounded-2xl border border-dashed border-stone-300 bg-stone-50/60 p-4">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white shadow-sm">
+                      <ImagePlus className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">Choose an image from your computer</p>
+                      <p className="text-xs text-muted-foreground">PNG, JPG, WEBP, or GIF. Uploaded image is used first if both fields are filled.</p>
+                    </div>
+                  </div>
+                  <label className={`inline-flex h-11 cursor-pointer items-center justify-center rounded-xl border px-4 text-sm font-semibold transition-colors ${isLocked ? 'cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400' : 'border-primary/20 bg-white text-primary hover:bg-primary/5'}`}>
+                    <input
+                      type="file"
+                      name="image_file"
+                      accept="image/*"
+                      className="hidden"
+                      disabled={isLocked}
+                      onChange={handleImageSelection}
+                    />
+                    Select Image
+                  </label>
+                </div>
+
+                {selectedImageFile ? (
+                  <div className="mt-4 rounded-2xl border bg-white p-4">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+                      {selectedImagePreview ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={selectedImagePreview}
+                          alt="Selected product preview"
+                          className="h-28 w-28 rounded-xl border object-cover"
+                        />
+                      ) : null}
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-slate-900">{selectedImageFile.name}</p>
+                        <p className="mt-1 text-xs text-muted-foreground">{Math.round(selectedImageFile.size / 1024)} KB</p>
+                      </div>
+                      <Button type="button" variant="ghost" size="sm" onClick={clearSelectedImage} disabled={isLocked}>
+                        <X className="mr-2 h-4 w-4" />
+                        Remove
+                      </Button>
+                    </div>
+                  </div>
+                ) : null}
               </div>
             </div>
             <div className="space-y-2">
