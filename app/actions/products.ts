@@ -70,40 +70,67 @@ export async function getPublishedProducts(options?: { categorySlug?: string, li
         if (options?.limit) query = query.limit(options.limit)
 
         const { data, error } = await query
-        if (error) throw new Error(error.message)
+        if (error) {
+            console.error('Supabase error fetching products:', error)
+            throw new Error(error.message)
+        }
 
-        const normalizedProducts = (data ?? []).map((product: any) => {
-            const category = Array.isArray(product.categories) ? product.categories[0] : product.categories
-            const store = Array.isArray(product.stores) ? product.stores[0] : product.stores
+        if (data && data.length > 0) {
+            const normalizedProducts = data.map((product: any) => {
+                const category = Array.isArray(product.categories) ? product.categories[0] : product.categories
+                const store = Array.isArray(product.stores) ? product.stores[0] : product.stores
 
-            return {
-                id: product.id,
-                store_id: product.store_id,
-                category_id: product.category_id,
-                title: product.title,
-                description: product.description ?? '',
-                price: Number(product.price ?? 0),
-                inventory_count: Number(product.inventory_count ?? 0),
-                images: Array.isArray(product.images) ? product.images : [],
-                is_published: Boolean(product.is_published),
-                category_name: category?.name ?? null,
-                stores: store
-                    ? {
-                        store_name: store.store_name,
-                        logo_url: store.logo_url,
-                    }
-                    : undefined,
-            } satisfies Product
-        })
+                return {
+                    id: product.id,
+                    store_id: product.store_id,
+                    category_id: product.category_id,
+                    title: product.title,
+                    description: product.description ?? '',
+                    price: Number(product.price ?? 0),
+                    inventory_count: Number(product.inventory_count ?? 0),
+                    images: Array.isArray(product.images) ? product.images : [],
+                    is_published: Boolean(product.is_published),
+                    category_name: category?.name ?? null,
+                    stores: store
+                        ? {
+                            store_name: store.store_name,
+                            logo_url: store.logo_url,
+                        }
+                        : undefined,
+                } satisfies Product
+            })
 
-        return normalizedProducts.filter((product) =>
-            !options?.categorySlug || categorySlugify(product.category_name) === options.categorySlug
-        )
+            return normalizedProducts.filter((product) =>
+                !options?.categorySlug || categorySlugify(product.category_name) === options.categorySlug
+            )
+        }
     } catch (error) {
-        console.warn('Unable to load published products from Supabase', error)
+        console.warn('Unable to load published products from Supabase, falling back to mock data', error)
     }
 
-    return []
+    // Fallback to mock products if Supabase fails or returns no data
+    const mockProducts = (MOCK_PRODUCTS as any[]).map(p => ({
+        id: p.id,
+        store_id: p.vendorId,
+        category_id: p.categoryId,
+        title: p.name,
+        description: p.description,
+        price: p.price,
+        inventory_count: p.stock,
+        images: p.images,
+        is_published: true,
+        category_name: p.category,
+        stores: {
+            store_name: p.vendorName,
+            logo_url: `https://picsum.photos/seed/${p.vendorId}/100/100`
+        }
+    }))
+
+    const filteredMock = mockProducts.filter((product) =>
+        !options?.categorySlug || categorySlugify(product.category_name) === options.categorySlug
+    )
+    
+    return options?.limit ? filteredMock.slice(0, options.limit) : filteredMock
 }
 
 export async function getProductById(id: string) {
@@ -155,7 +182,28 @@ export async function getProductById(id: string) {
             } as Product
         }
     } catch (error) {
-        console.warn('Unable to load product detail from Supabase', error)
+        console.warn('Unable to load product detail from Supabase, checking mock data', error)
+    }
+
+    // Fallback to mock data if not found in Supabase
+    const mockProduct = MOCK_PRODUCTS.find(p => p.id === id)
+    if (mockProduct) {
+        return {
+            id: mockProduct.id,
+            store_id: mockProduct.vendorId,
+            category_id: mockProduct.categoryId,
+            title: mockProduct.name,
+            description: mockProduct.description,
+            price: mockProduct.price,
+            inventory_count: mockProduct.stock,
+            images: mockProduct.images,
+            is_published: true,
+            category_name: mockProduct.category,
+            stores: {
+                store_name: mockProduct.vendorName,
+                logo_url: `https://picsum.photos/seed/${mockProduct.vendorId}/100/100`
+            }
+        } as Product
     }
 
     return null
