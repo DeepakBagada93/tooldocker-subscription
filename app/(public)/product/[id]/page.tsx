@@ -18,6 +18,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   }
 
   const vendor = product.stores;
+  const vendorHref = `/vendor/${product.vendor_id || vendor?.vendor_id || product.store_id}`;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -60,7 +61,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   <span className="ml-2 text-sm font-bold">4.8 (124 reviews)</span>
                 </div>
                 <div className="h-4 w-px bg-slate-200" />
-                <Link href={`/vendor/${product.store_id}`} className="text-sm font-bold text-primary hover:underline">
+                <Link href={vendorHref} className="text-sm font-bold text-primary hover:underline">
                   By {vendor?.store_name || 'Verified Vendor'}
                 </Link>
               </div>
@@ -135,7 +136,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 </div>
                 <p className="text-muted-foreground max-w-2xl">Verified industrial supplier on Tooldocker.</p>
                 <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-                  <Link href={`/vendor/${product.store_id}`}>
+                  <Link href={vendorHref}>
                     <Button variant="outline" size="sm">Visit Storefront</Button>
                   </Link>
                   <Button variant="ghost" size="sm">Contact Supplier</Button>

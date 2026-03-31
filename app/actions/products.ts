@@ -1,5 +1,7 @@
 'use server'
 
+import { unstable_noStore as noStore } from 'next/cache'
+
 import { createClient } from '@/lib/supabase/server'
 
 export type Category = {
@@ -11,6 +13,7 @@ export type Category = {
 
 export type Product = {
     id: string
+    vendor_id?: string | null
     store_id: string
     category_id: string | null
     title: string
@@ -21,12 +24,73 @@ export type Product = {
     is_published: boolean
     category_name?: string | null
     stores?: {
+        vendor_id?: string
         store_name: string
         logo_url: string
     }
 }
 
+type ProductRow = {
+    id: string
+    vendor_id: string | null
+    store_id: string
+    category_id: string | null
+    title: string
+    description: string | null
+    price: number | string | null
+    inventory_count: number | string | null
+    images: string[] | null
+    is_published: boolean | null
+}
+
+async function enrichProducts(supabase: Awaited<ReturnType<typeof createClient>>, rows: ProductRow[]) {
+    const storeIds = Array.from(new Set(rows.map((row) => row.store_id).filter(Boolean)))
+    const categoryIds = Array.from(new Set(rows.map((row) => row.category_id).filter(Boolean))) as string[]
+
+    const [storesResult, categoriesResult] = await Promise.all([
+        storeIds.length
+            ? supabase.from('stores').select('id, vendor_id, store_name, logo_url').in('id', storeIds)
+            : Promise.resolve({ data: [], error: null }),
+        categoryIds.length
+            ? supabase.from('categories').select('id, name, slug').in('id', categoryIds)
+            : Promise.resolve({ data: [], error: null }),
+    ])
+
+    if (storesResult.error) throw new Error(storesResult.error.message)
+    if (categoriesResult.error) throw new Error(categoriesResult.error.message)
+
+    const storesById = new Map((storesResult.data ?? []).map((store) => [store.id, store]))
+    const categoriesById = new Map((categoriesResult.data ?? []).map((category) => [category.id, category]))
+
+    return rows.map((product) => {
+        const store = storesById.get(product.store_id)
+        const category = product.category_id ? categoriesById.get(product.category_id) : null
+
+        return {
+            id: product.id,
+            vendor_id: product.vendor_id,
+            store_id: product.store_id,
+            category_id: product.category_id,
+            title: product.title,
+            description: product.description ?? '',
+            price: Number(product.price ?? 0),
+            inventory_count: Number(product.inventory_count ?? 0),
+            images: Array.isArray(product.images) ? product.images : [],
+            is_published: Boolean(product.is_published),
+            category_name: category?.name ?? null,
+            stores: store
+                ? {
+                    vendor_id: store.vendor_id,
+                    store_name: store.store_name,
+                    logo_url: store.logo_url,
+                }
+                : undefined,
+        } satisfies Product
+    })
+}
+
 export async function getCategories() {
+    noStore()
     const supabase = await createClient()
 
     try {
@@ -44,24 +108,13 @@ export async function getCategories() {
 }
 
 export async function getPublishedProducts(options?: { categorySlug?: string, limit?: number }) {
+    noStore()
     const supabase = await createClient()
 
     try {
         let query = supabase
             .from('products')
-            .select(`
-                id,
-                store_id,
-                category_id,
-                title,
-                description,
-                price,
-                inventory_count,
-                images,
-                is_published,
-                stores:stores(store_name, logo_url),
-                categories:categories(name, slug)
-            `)
+            .select('id, vendor_id, store_id, category_id, title, description, price, inventory_count, images, is_published')
             .eq('is_published', true)
             .order('created_at', { ascending: false })
 
@@ -73,29 +126,7 @@ export async function getPublishedProducts(options?: { categorySlug?: string, li
             throw new Error(error.message)
         }
 
-        const normalizedProducts = (data ?? []).map((product: any) => {
-            const category = Array.isArray(product.categories) ? product.categories[0] : product.categories
-            const store = Array.isArray(product.stores) ? product.stores[0] : product.stores
-
-            return {
-                id: product.id,
-                store_id: product.store_id,
-                category_id: product.category_id,
-                title: product.title,
-                description: product.description ?? '',
-                price: Number(product.price ?? 0),
-                inventory_count: Number(product.inventory_count ?? 0),
-                images: Array.isArray(product.images) ? product.images : [],
-                is_published: Boolean(product.is_published),
-                category_name: category?.name ?? null,
-                stores: store
-                    ? {
-                        store_name: store.store_name,
-                        logo_url: store.logo_url,
-                    }
-                    : undefined,
-            } satisfies Product
-        })
+        const normalizedProducts = await enrichProducts(supabase, (data ?? []) as ProductRow[])
 
         if (options?.categorySlug) {
             return normalizedProducts.filter((product) =>
@@ -111,24 +142,13 @@ export async function getPublishedProducts(options?: { categorySlug?: string, li
 }
 
 export async function getProductById(id: string) {
+    noStore()
     const supabase = await createClient()
 
     try {
         const { data, error } = await supabase
             .from('products')
-            .select(`
-                id,
-                store_id,
-                category_id,
-                title,
-                description,
-                price,
-                inventory_count,
-                images,
-                is_published,
-                stores:stores(store_name, logo_url),
-                categories:categories(name, slug)
-            `)
+            .select('id, vendor_id, store_id, category_id, title, description, price, inventory_count, images, is_published')
             .eq('id', id)
             .eq('is_published', true)
             .maybeSingle()
@@ -136,27 +156,8 @@ export async function getProductById(id: string) {
         if (error) throw new Error(error.message)
 
         if (data) {
-            const category = Array.isArray(data.categories) ? data.categories[0] : data.categories
-            const store = Array.isArray(data.stores) ? data.stores[0] : data.stores
-
-            return {
-                id: data.id,
-                store_id: data.store_id,
-                category_id: data.category_id,
-                title: data.title,
-                description: data.description ?? '',
-                price: Number(data.price ?? 0),
-                inventory_count: Number(data.inventory_count ?? 0),
-                images: Array.isArray(data.images) ? data.images : [],
-                is_published: Boolean(data.is_published),
-                category_name: category?.name ?? null,
-                stores: store
-                    ? {
-                        store_name: store.store_name,
-                        logo_url: store.logo_url,
-                    }
-                    : undefined,
-            } as Product
+            const [product] = await enrichProducts(supabase, [data as ProductRow])
+            return product ?? null
         }
     } catch (error) {
         console.error('Unable to load product detail from Supabase:', error)
@@ -166,6 +167,7 @@ export async function getProductById(id: string) {
 }
 
 export async function getVendorStoreAndProducts(vendorId: string) {
+    noStore()
     const supabase = await createClient()
 
     try {
@@ -184,19 +186,7 @@ export async function getVendorStoreAndProducts(vendorId: string) {
         // 2. Try to find products for this store in DB
         const { data: dbProducts, error: productsError } = await supabase
             .from('products')
-            .select(`
-                id,
-                store_id,
-                category_id,
-                title,
-                description,
-                price,
-                inventory_count,
-                images,
-                is_published,
-                stores:stores(store_name, logo_url),
-                categories:categories(name, slug)
-            `)
+            .select('id, vendor_id, store_id, category_id, title, description, price, inventory_count, images, is_published')
             .eq('vendor_id', vendorId)
             .eq('is_published', true)
             .order('created_at', { ascending: false })
@@ -204,33 +194,7 @@ export async function getVendorStoreAndProducts(vendorId: string) {
         if (productsError) throw new Error(productsError.message)
 
         if (store) {
-            // Normalize DB products
-            const normalizedProducts = (dbProducts ?? []).map((product: any) => {
-                const category = Array.isArray(product.categories) ? product.categories[0] : product.categories
-                const storeInfo = Array.isArray(product.stores) ? product.stores[0] : product.stores
-
-                return {
-                    id: product.id,
-                    store_id: product.store_id,
-                    category_id: product.category_id,
-                    title: product.title,
-                    description: product.description ?? '',
-                    price: Number(product.price ?? 0),
-                    inventory_count: Number(product.inventory_count ?? 0),
-                    images: Array.isArray(product.images) ? product.images : [],
-                    is_published: Boolean(product.is_published),
-                    category_name: category?.name ?? null,
-                    stores: storeInfo
-                        ? {
-                            store_name: storeInfo.store_name,
-                            logo_url: storeInfo.logo_url,
-                        }
-                        : {
-                            store_name: store?.store_name ?? 'Vendor Store',
-                            logo_url: store?.logo_url ?? '',
-                        },
-                } satisfies Product
-            })
+            const normalizedProducts = await enrichProducts(supabase, (dbProducts ?? []) as ProductRow[])
 
             // Return DB store info
             return {
@@ -257,6 +221,7 @@ export async function getVendorStoreAndProducts(vendorId: string) {
 }
 
 export async function getAllVendors() {
+    noStore()
     const supabase = await createClient()
 
     try {
