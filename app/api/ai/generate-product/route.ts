@@ -1,4 +1,4 @@
-import { groq } from '@/lib/groq'
+import { getGroqClient } from '@/lib/groq'
 import { GeneratedProductSchema } from '@/lib/schemas'
 
 export async function POST(req: Request) {
@@ -9,6 +9,7 @@ export async function POST(req: Request) {
       return Response.json({ error: 'Product name is required' }, { status: 400 })
     }
 
+    const groq = getGroqClient()
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
       messages: [
@@ -29,6 +30,9 @@ export async function POST(req: Request) {
     return Response.json(parsed)
   } catch (error) {
     console.error('AI Product Generation Error:', error)
-    return Response.json({ error: 'Failed to generate product' }, { status: 500 })
+    return Response.json(
+      { error: error instanceof Error ? error.message : 'Failed to generate product' },
+      { status: 500 }
+    )
   }
 }

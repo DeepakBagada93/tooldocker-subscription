@@ -5,13 +5,45 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
 import {
+    type AppRole,
     ensureUserProfile,
     ensureVendorStoreForUser,
-    getUserRole,
+    normalizeAppRole,
 } from '@/lib/supabase/profiles'
+
+function getLoginRouteForRedirectTarget(redirectTo: FormDataEntryValue | null) {
+    if (typeof redirectTo !== 'string') {
+        return '/login'
+    }
+
+    if (redirectTo.startsWith('/admin')) return '/tooldocker-admin/login'
+    if (redirectTo.startsWith('/vendor')) return '/vendor/login'
+    if (redirectTo.startsWith('/buyer')) return '/buyer/login'
+    return '/login'
+}
+
+function getDefaultPostLoginRoute(role: AppRole) {
+    if (role === 'admin') return '/admin'
+    if (role === 'vendor') return '/vendor/dashboard'
+    return '/buyer'
+}
+
+function resolvePostLoginRoute(role: AppRole, redirectTo: FormDataEntryValue | null) {
+    if (typeof redirectTo !== 'string') {
+        return getDefaultPostLoginRoute(role)
+    }
+
+    if (role === 'admin' && redirectTo.startsWith('/admin')) return '/admin'
+    if (role === 'vendor' && redirectTo.startsWith('/vendor')) return '/vendor/dashboard'
+    if (role === 'buyer' && redirectTo.startsWith('/buyer')) return '/buyer'
+
+    return getDefaultPostLoginRoute(role)
+}
 
 export async function login(formData: FormData) {
     const supabase = await createClient()
+    const redirectTo = formData.get('redirectTo')
+    const loginRoute = getLoginRouteForRedirectTarget(redirectTo)
 
     const data = {
         email: formData.get('email') as string,
@@ -21,19 +53,17 @@ export async function login(formData: FormData) {
     const { error, data: authData } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
-        return redirect('/login?message=Could not authenticate user')
+        const message = encodeURIComponent(error.message || 'Could not authenticate user')
+        return redirect(`${loginRoute}?message=${message}`)
     }
 
-    await ensureUserProfile(supabase, authData.user)
-    await ensureVendorStoreForUser(supabase, authData.user)
+    const profile = await ensureUserProfile(supabase, authData.user)
+    const role = normalizeAppRole(profile?.role ?? authData.user?.user_metadata?.role)
 
-    const role = await getUserRole(supabase, authData.user)
-    let targetUrl = '/buyer'
-    if (role === 'admin') targetUrl = '/admin'
-    if (role === 'vendor') targetUrl = '/vendor'
+    await ensureVendorStoreForUser(supabase, authData.user, role)
 
     revalidatePath('/', 'layout')
-    redirect(targetUrl)
+    redirect(resolvePostLoginRoute(role, redirectTo))
 }
 
 export async function signup(formData: FormData) {
@@ -93,7 +123,7 @@ export async function loginWithGoogle() {
     const headersList = await headers()
     const origin = headersList.get('origin')
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { data } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
             redirectTo: `${origin}/auth/callback`,

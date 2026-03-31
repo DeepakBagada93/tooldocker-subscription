@@ -3,7 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import {
     ensureUserProfile,
     ensureVendorStoreForUser,
-    getUserRole,
+    normalizeAppRole,
 } from '@/lib/supabase/profiles'
 
 export async function GET(request: Request) {
@@ -17,14 +17,15 @@ export async function GET(request: Request) {
         const { error } = await supabase.auth.exchangeCodeForSession(code)
         if (!error) {
             const { data: { user } } = await supabase.auth.getUser()
-            await ensureUserProfile(supabase, user)
-            await ensureVendorStoreForUser(supabase, user)
-            const role = await getUserRole(supabase, user)
+            const profile = await ensureUserProfile(supabase, user)
+            const role = normalizeAppRole(profile?.role ?? user?.user_metadata?.role)
+
+            await ensureVendorStoreForUser(supabase, user, role)
 
             let targetUrl = `${origin}${next}`
             if (next === '/') {
                 if (role === 'admin') targetUrl = `${origin}/admin`
-                else if (role === 'vendor') targetUrl = `${origin}/vendor`
+                else if (role === 'vendor') targetUrl = `${origin}/vendor/dashboard`
                 else targetUrl = `${origin}/buyer`
             }
 

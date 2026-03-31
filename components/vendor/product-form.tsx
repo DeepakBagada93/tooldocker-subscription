@@ -6,6 +6,22 @@ import { Input } from '@/components/ui/input';
 import { Sparkles, Loader2, Layers } from 'lucide-react';
 import { createVendorProduct } from '@/app/actions/vendor';
 
+async function getResponseMessage(response: Response, fallbackMessage: string) {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    const payload = await response.json().catch(() => null);
+    if (payload && typeof payload === 'object' && 'error' in payload && typeof payload.error === 'string') {
+      return payload.error;
+    }
+    if (payload && typeof payload === 'object' && 'message' in payload && typeof payload.message === 'string') {
+      return payload.message;
+    }
+  }
+
+  return fallbackMessage;
+}
+
 const categories = ['Heavy Machinery', 'Power Tools', 'Welding', 'Safety Gear'];
 
 interface ProductFormProps {
@@ -43,6 +59,16 @@ export function ProductForm({ isLocked }: ProductFormProps) {
           category: formData.category_id 
         }),
       });
+
+      if (!res.ok) {
+        throw new Error(await getResponseMessage(res, 'AI generation is unavailable right now.'));
+      }
+
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('AI generation returned an unexpected response.');
+      }
+
       const data = await res.json();
       
       if (data.description) {
@@ -55,6 +81,7 @@ export function ProductForm({ isLocked }: ProductFormProps) {
       }
     } catch (error) {
       console.error('AI generation failed', error);
+      alert(error instanceof Error ? error.message : 'AI generation failed. Please try again.');
     } finally {
       setIsGenerating(false);
     }

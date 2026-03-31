@@ -27,21 +27,27 @@ export default async function VendorDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   const subscription = await getVendorSubscriptionStatus();
 
+  const { data: store } = await supabase
+    .from('stores')
+    .select('id')
+    .eq('vendor_id', user?.id)
+    .maybeSingle();
+
   // Fetch real stats
   const { count: productCount } = await supabase
     .from('products')
     .select('*', { count: 'exact', head: true })
     .eq('vendor_id', user?.id);
 
-  // In a real app, we'd fetch orders and revenue here. 
-  // For now, we'll show 0 or actual data if available.
-  const { data: orders } = await supabase
-    .from('orders') // Assuming an orders table exists or using a mock for now if not
-    .select('total_amount')
-    .eq('vendor_id', user?.id);
+  const { data: orders } = store?.id
+    ? await supabase
+        .from('vendor_orders')
+        .select('total_amount, net_amount')
+        .eq('store_id', store.id)
+    : { data: [] as Array<{ total_amount: number | null; net_amount: number | null }> };
 
   const totalOrders = orders?.length || 0;
-  const grossSales = orders?.reduce((acc, order) => acc + (order.total_amount || 0), 0) || 0;
+  const grossSales = orders?.reduce((acc, order) => acc + (order.net_amount ?? order.total_amount ?? 0), 0) || 0;
 
   const currencyFormatter = new Intl.NumberFormat('en-US', {
     style: 'currency',

@@ -52,9 +52,24 @@ export async function ensureUserProfile(
     return null
   }
 
-  const role = normalizeAppRole(user.user_metadata?.role)
+  const { data: existingProfile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .maybeSingle()
 
-  const payload = {
+  const role = existingProfile?.role
+    ? normalizeAppRole(existingProfile.role)
+    : normalizeAppRole(user.user_metadata?.role)
+
+  const payload: {
+    id: string
+    email: string | null
+    role: AppRole
+    full_name: string | null
+    phone: string | null
+    company_name: string | null
+  } = {
     id: user.id,
     email: user.email ?? null,
     role,
@@ -82,14 +97,15 @@ export async function ensureUserProfile(
 
 export async function ensureVendorStoreForUser(
   supabase: SupabaseLikeClient,
-  user: User | null | undefined
+  user: User | null | undefined,
+  role?: AppRole
 ) {
   if (!user) {
     return null
   }
 
-  const role = normalizeAppRole(user.user_metadata?.role)
-  if (role !== 'vendor') {
+  const resolvedRole = role ?? (await getUserRole(supabase, user))
+  if (resolvedRole !== 'vendor') {
     return null
   }
 

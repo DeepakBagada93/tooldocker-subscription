@@ -70,6 +70,11 @@ export async function updateSession(request: NextRequest) {
     } = await supabase.auth.getUser()
 
     const pathname = request.nextUrl.pathname
+    const isApiRoute = pathname === '/api' || pathname.startsWith('/api/')
+
+    if (isApiRoute) {
+        return supabaseResponse
+    }
 
     const isProtectedRoute =
         isAdminRoute(pathname) ||

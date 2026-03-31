@@ -27,24 +27,45 @@ interface DashboardLayoutProps {
     icon: React.ElementType;
   }[];
   role: 'Buyer' | 'Vendor' | 'Admin';
+  initialUserName?: string;
+  initialUserEmail?: string;
+  initialUserInitials?: string;
 }
 
-export function DashboardLayout({ children, items, role }: DashboardLayoutProps) {
+export function DashboardLayout({
+  children,
+  items,
+  role,
+  initialUserName = '',
+  initialUserInitials = '',
+}: DashboardLayoutProps) {
+  const fallbackUserName = initialUserName || `${role} Workspace`;
+  const fallbackInitials = initialUserInitials || role.slice(0, 1).toUpperCase();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [userName, setUserName] = React.useState('Loading...');
-  const [userInitials, setUserInitials] = React.useState('??');
-  const [userEmail, setUserEmail] = React.useState('');
+  const [userName, setUserName] = React.useState(fallbackUserName);
+  const [userInitials, setUserInitials] = React.useState(fallbackInitials);
   const pathname = usePathname();
-  const supabase = createClient();
+  const supabase = React.useMemo(() => createClient(), []);
   const activeItem = items.find((item) => pathname === item.href) ?? items[0];
 
   React.useEffect(() => {
     const fetchUser = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const name = user.user_metadata?.full_name || user.user_metadata?.company_name || user.email?.split('@')[0] || 'User';
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name, company_name')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        const name =
+          profile?.full_name ||
+          profile?.company_name ||
+          user.user_metadata?.full_name ||
+          user.user_metadata?.company_name ||
+          user.email?.split('@')[0] ||
+          'User';
         setUserName(name);
-        setUserEmail(user.email || '');
         const initials = name
           .split(' ')
           .map((n: string) => n[0])

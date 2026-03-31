@@ -1,5 +1,5 @@
-import { groq } from '@/lib/groq'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { getGroqClient } from '@/lib/groq'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { ProductQuerySchema } from '@/lib/schemas'
 
 export async function POST(req: Request) {
@@ -9,6 +9,8 @@ export async function POST(req: Request) {
     if (!query) {
       return Response.json({ error: 'Query is required' }, { status: 400 })
     }
+
+    const supabaseAdmin = getSupabaseAdmin()
 
     // 1. Check AI Cache
     const { data: cacheHit } = await supabaseAdmin
@@ -23,6 +25,7 @@ export async function POST(req: Request) {
       parsed = cacheHit.output;
     } else {
       // 2. Call Groq
+      const groq = getGroqClient()
       const completion = await groq.chat.completions.create({
         model: 'llama-3.3-70b-versatile',
         messages: [
@@ -66,6 +69,9 @@ export async function POST(req: Request) {
     return Response.json({ data, parameters: parsed })
   } catch (error) {
     console.error('AI Search Error:', error)
-    return Response.json({ error: 'Internal server error' }, { status: 500 })
+    return Response.json(
+      { error: error instanceof Error ? error.message : 'Internal server error' },
+      { status: 500 }
+    )
   }
 }

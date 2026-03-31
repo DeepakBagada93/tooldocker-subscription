@@ -28,6 +28,22 @@ import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { createClient } from '@/lib/supabase/client';
 import { getUserRole } from '@/lib/supabase/profiles';
 
+async function getResponseMessage(response: Response, fallbackMessage: string) {
+  const contentType = response.headers.get('content-type') || '';
+
+  if (contentType.includes('application/json')) {
+    const payload = await response.json().catch(() => null);
+    if (payload && typeof payload === 'object' && 'error' in payload && typeof payload.error === 'string') {
+      return payload.error;
+    }
+    if (payload && typeof payload === 'object' && 'message' in payload && typeof payload.message === 'string') {
+      return payload.message;
+    }
+  }
+
+  return fallbackMessage;
+}
+
 export function Header() {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
@@ -39,7 +55,7 @@ export function Header() {
   
   const { totalItems } = useCart();
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = React.useMemo(() => createClient(), []);
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -75,7 +91,7 @@ export function Header() {
       window.removeEventListener('scroll', handleScroll);
       subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   const getDashboardLink = () => {
     if (!isLoggedIn) return '/login';
@@ -101,14 +117,28 @@ export function Header() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ query: searchQuery }),
       });
+
+      if (!res.ok) {
+        throw new Error(await getResponseMessage(res, 'AI search is unavailable right now.'));
+      }
+
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('AI search returned an unexpected response.');
+      }
+
       const result = await res.json();
       
       if (result.data) {
         // Navigate to search with ai=true flag
         router.push(`/search?q=${encodeURIComponent(searchQuery)}&ai=true`);
+        return;
       }
+
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     } catch (error) {
       console.error('AI search failed', error);
+      router.push(`/search?q=${encodeURIComponent(searchQuery)}`);
     } finally {
       setIsAISearchLoading(false);
     }
