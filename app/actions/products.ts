@@ -72,12 +72,11 @@ export async function getPublishedProducts(options?: { categorySlug?: string, li
         const { data, error } = await query
         if (error) throw new Error(error.message)
 
-        const filtered = (data ?? []).filter((product: any) =>
-            !options?.categorySlug || product.categories?.slug === options.categorySlug
-        )
+        const normalizedProducts = (data ?? []).map((product: any) => {
+            const category = Array.isArray(product.categories) ? product.categories[0] : product.categories
+            const store = Array.isArray(product.stores) ? product.stores[0] : product.stores
 
-        if (filtered.length) {
-            return filtered.map((product: any) => ({
+            return {
                 id: product.id,
                 store_id: product.store_id,
                 category_id: product.category_id,
@@ -87,44 +86,24 @@ export async function getPublishedProducts(options?: { categorySlug?: string, li
                 inventory_count: Number(product.inventory_count ?? 0),
                 images: Array.isArray(product.images) ? product.images : [],
                 is_published: Boolean(product.is_published),
-                category_name: product.categories?.name ?? null,
-                stores: product.stores
+                category_name: category?.name ?? null,
+                stores: store
                     ? {
-                        store_name: product.stores.store_name,
-                        logo_url: product.stores.logo_url,
+                        store_name: store.store_name,
+                        logo_url: store.logo_url,
                     }
                     : undefined,
-            })) as Product[]
-        }
-    } catch (error) {
-        console.warn('Falling back to mock published products', error)
-    }
+            } satisfies Product
+        })
 
-    let mockData = MOCK_PRODUCTS.map((product) => ({
-        id: product.id,
-        store_id: product.vendorId,
-        category_id: product.categoryId,
-        title: product.name,
-        description: product.description,
-        price: product.price,
-        inventory_count: product.stock,
-        images: product.images,
-        is_published: true,
-        category_name: product.category,
-        stores: {
-            store_name: product.vendorName,
-            logo_url: product.images[0],
-        },
-    })) as Product[]
-
-    if (options?.categorySlug) {
-        mockData = mockData.filter((product) =>
-            product.category_name?.toLowerCase().replace(/[^a-z0-9]+/g, '-') === options.categorySlug
+        return normalizedProducts.filter((product) =>
+            !options?.categorySlug || categorySlugify(product.category_name) === options.categorySlug
         )
+    } catch (error) {
+        console.warn('Unable to load published products from Supabase', error)
     }
 
-    if (options?.limit) mockData = mockData.slice(0, options.limit)
-    return mockData
+    return []
 }
 
 export async function getProductById(id: string) {
@@ -176,25 +155,12 @@ export async function getProductById(id: string) {
             } as Product
         }
     } catch (error) {
-        console.warn('Falling back to mock product detail', error)
+        console.warn('Unable to load product detail from Supabase', error)
     }
 
-    const product = MOCK_PRODUCTS.find((entry) => entry.id === id) || MOCK_PRODUCTS[0]
+    return null
+}
 
-    return {
-        id: product.id,
-        store_id: product.vendorId,
-        category_id: product.categoryId,
-        title: product.name,
-        description: product.description,
-        price: product.price,
-        inventory_count: product.stock,
-        images: product.images,
-        is_published: true,
-        category_name: product.category,
-        stores: {
-            store_name: product.vendorName,
-            logo_url: product.images[0],
-        },
-    } as Product
+function categorySlugify(value: string | null | undefined) {
+    return (value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
 }
