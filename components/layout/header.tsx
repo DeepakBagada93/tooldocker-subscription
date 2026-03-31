@@ -144,6 +144,8 @@ export function Header() {
     }
   };
 
+  const aiSearchDisabled = isAISearchLoading || !searchQuery.trim();
+
   return (
     <header
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled
@@ -239,23 +241,32 @@ export function Header() {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by tool, spec or brand..."
-                className="pl-10 pr-12 border-slate-200 bg-slate-50 focus-visible:ring-primary h-10 rounded-full"
+                className="pl-10 pr-24 border-slate-200 bg-slate-50 focus-visible:ring-primary h-10 rounded-full"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
-              <button 
+              <motion.button
                 type="button"
                 onClick={handleAISearch}
-                disabled={isAISearchLoading}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-full bg-primary/10 text-primary hover:bg-primary/20 transition-colors disabled:opacity-50"
+                disabled={aiSearchDisabled}
                 title="Search with AI"
+                whileHover={aiSearchDisabled ? undefined : { scale: 1.04, rotate: -2 }}
+                whileTap={aiSearchDisabled ? undefined : { scale: 0.97 }}
+                className="absolute right-2 top-1/2 inline-flex h-8 -translate-y-1/2 items-center gap-1 rounded-full border border-primary/20 bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(255,236,223,0.95))] px-2.5 text-[11px] font-black uppercase tracking-[0.2em] text-primary shadow-[0_8px_24px_-12px_rgba(249,115,22,0.75)] transition-all hover:border-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 {isAISearchLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
                 ) : (
-                  <Sparkles className="h-4 w-4" />
+                  <motion.span
+                    animate={{ rotate: [0, 8, -6, 0], scale: [1, 1.06, 1] }}
+                    transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                    className="inline-flex"
+                  >
+                    <Sparkles className="h-3.5 w-3.5" />
+                  </motion.span>
                 )}
-              </button>
+                <span>AI</span>
+              </motion.button>
             </form>
           </div>
 
@@ -303,10 +314,32 @@ export function Header() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search tools..."
-                  className="pl-10 border-slate-200 bg-slate-50"
+                  className="h-12 pl-10 pr-24 border-slate-200 bg-slate-50 rounded-full"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
+                <motion.button
+                  type="button"
+                  onClick={handleAISearch}
+                  disabled={aiSearchDisabled}
+                  title="Search with AI"
+                  whileHover={aiSearchDisabled ? undefined : { scale: 1.04, rotate: -2 }}
+                  whileTap={aiSearchDisabled ? undefined : { scale: 0.97 }}
+                  className="absolute right-2 top-1/2 inline-flex h-9 -translate-y-1/2 items-center gap-1 rounded-full border border-primary/20 bg-[linear-gradient(135deg,rgba(255,255,255,0.98),rgba(255,236,223,0.95))] px-3 text-[11px] font-black uppercase tracking-[0.2em] text-primary shadow-[0_8px_24px_-12px_rgba(249,115,22,0.75)] transition-all hover:border-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {isAISearchLoading ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <motion.span
+                      animate={{ rotate: [0, 8, -6, 0], scale: [1, 1.06, 1] }}
+                      transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
+                      className="inline-flex"
+                    >
+                      <Sparkles className="h-3.5 w-3.5" />
+                    </motion.span>
+                  )}
+                  <span>AI</span>
+                </motion.button>
               </form>
               <nav className="grid gap-4">
                 <div className="font-bold text-sm uppercase tracking-wider text-slate-500">Categories</div>
