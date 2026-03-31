@@ -209,6 +209,126 @@ export async function getProductById(id: string) {
     return null
 }
 
+export async function getVendorStoreAndProducts(vendorId: string) {
+    const supabase = await createClient()
+
+    try {
+        // 1. Try to find the vendor's store in DB
+        const { data: store, error: storeError } = await supabase
+            .from('stores')
+            .select(`
+                *,
+                profiles:profiles(full_name, role)
+            `)
+            .eq('vendor_id', vendorId)
+            .maybeSingle()
+
+        if (storeError) throw new Error(storeError.message)
+
+        // 2. Try to find products for this store in DB
+        const { data: dbProducts, error: productsError } = await supabase
+            .from('products')
+            .select(`
+                id,
+                store_id,
+                category_id,
+                title,
+                description,
+                price,
+                inventory_count,
+                images,
+                is_published,
+                stores:stores(store_name, logo_url),
+                categories:categories(name, slug)
+            `)
+            .eq('vendor_id', vendorId)
+            .eq('is_published', true)
+            .order('created_at', { ascending: false })
+
+        if (productsError) throw new Error(productsError.message)
+
+        if (store || (dbProducts && dbProducts.length > 0)) {
+            // Normalize DB products
+            const normalizedProducts = (dbProducts ?? []).map((product: any) => {
+                const category = Array.isArray(product.categories) ? product.categories[0] : product.categories
+                const storeInfo = Array.isArray(product.stores) ? product.stores[0] : product.stores
+
+                return {
+                    id: product.id,
+                    store_id: product.store_id,
+                    category_id: product.category_id,
+                    title: product.title,
+                    description: product.description ?? '',
+                    price: Number(product.price ?? 0),
+                    inventory_count: Number(product.inventory_count ?? 0),
+                    images: Array.isArray(product.images) ? product.images : [],
+                    is_published: Boolean(product.is_published),
+                    category_name: category?.name ?? null,
+                    stores: storeInfo
+                        ? {
+                            store_name: storeInfo.store_name,
+                            logo_url: storeInfo.logo_url,
+                        }
+                        : {
+                            store_name: store?.store_name ?? 'Vendor Store',
+                            logo_url: store?.logo_url ?? '',
+                        },
+                } satisfies Product
+            })
+
+            // Return DB store info
+            return {
+                vendor: store ? {
+                    id: store.vendor_id,
+                    name: store.store_name,
+                    description: store.description || 'No description provided.',
+                    logo: store.logo_url || 'https://picsum.photos/seed/vendor/100/100',
+                    rating: 5.0, // Mock rating for now
+                    reviews: 0,
+                    isVerified: store.is_active
+                } : null,
+                products: normalizedProducts
+            }
+        }
+    } catch (error) {
+        console.warn('Unable to load vendor products from Supabase, checking mock data', error)
+    }
+
+    // Fallback to mock data if nothing found in DB
+    const mockVendor = (require('@/lib/mock-data').VENDORS as any[]).find(v => v.id === vendorId)
+    const mockProducts = (require('@/lib/mock-data').PRODUCTS as any[])
+        .filter(p => p.vendorId === vendorId)
+        .map(p => ({
+            id: p.id,
+            store_id: p.vendorId,
+            category_id: p.categoryId,
+            title: p.name,
+            description: p.description,
+            price: p.price,
+            inventory_count: p.stock,
+            images: p.images,
+            is_published: true,
+            category_name: p.category,
+            stores: {
+                store_name: p.vendorName,
+                logo_url: `https://picsum.photos/seed/${p.vendorId}/100/100`
+            }
+        }))
+
+    return {
+        vendor: mockVendor ? {
+            id: mockVendor.id,
+            name: mockVendor.name,
+            description: mockVendor.description,
+            logo: mockVendor.logo,
+            rating: mockVendor.rating,
+            reviews: mockVendor.reviews,
+            isVerified: true
+        } : null,
+        products: mockProducts
+    }
+}
+
 function categorySlugify(value: string | null | undefined) {
     return (value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-')
 }

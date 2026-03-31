@@ -1,4 +1,4 @@
-import { VENDORS, PRODUCTS } from '@/lib/mock-data';
+import { getVendorStoreAndProducts } from '@/app/actions/products';
 import { ProductCard } from '@/components/product/product-card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -8,13 +8,11 @@ import Image from 'next/image';
 
 export default async function VendorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const vendor = VENDORS.find(v => v.id === id);
+  const { vendor, products: vendorProducts } = await getVendorStoreAndProducts(id);
 
   if (!vendor) {
     notFound();
   }
-
-  const vendorProducts = PRODUCTS.filter(p => p.vendorId === vendor.id);
 
   return (
     <div className="flex flex-col">
@@ -73,7 +71,9 @@ export default async function VendorPage({ params }: { params: Promise<{ id: str
               <div className="space-y-4 pt-4">
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold uppercase text-muted-foreground">Verification</span>
-                  <Badge className="bg-emerald-500">Verified</Badge>
+                  <Badge className={vendor.isVerified ? "bg-emerald-500" : "bg-slate-400"}>
+                    {vendor.isVerified ? "Verified" : "Pending"}
+                  </Badge>
                 </div>
                 <div className="flex items-center justify-between text-xs">
                   <span className="font-bold uppercase text-muted-foreground">Response Time</span>
@@ -101,7 +101,7 @@ export default async function VendorPage({ params }: { params: Promise<{ id: str
           {/* Main Content */}
           <div className="lg:col-span-3 space-y-8">
             <div className="flex items-center justify-between">
-              <h2 className="text-2xl font-black tracking-tighter uppercase">Featured Products</h2>
+              <h2 className="text-2xl font-black tracking-tighter uppercase">Products</h2>
               <div className="flex items-center gap-2">
                 <span className="text-xs font-bold uppercase text-muted-foreground">Sort By:</span>
                 <select className="bg-transparent text-sm font-bold outline-none cursor-pointer">
