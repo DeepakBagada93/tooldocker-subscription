@@ -25,6 +25,8 @@ export function ProductCard({ product }: ProductCardProps) {
       price: product.price,
       quantity: 1,
       image: product.images?.[0] || 'https://picsum.photos/seed/fallback/800/600', // fallback
+      store_id: product.store_id,
+      store_name: product.stores?.store_name
     });
   };
 

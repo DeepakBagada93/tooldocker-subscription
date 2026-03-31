@@ -17,6 +17,8 @@ export function AddToCartButton({ product }: { product: Product }) {
             price: product.price,
             quantity: quantity,
             image: product.images?.[0] || 'https://picsum.photos/seed/fallback/800/600',
+            store_id: product.store_id,
+            store_name: product.stores?.store_name
         });
     };
 
