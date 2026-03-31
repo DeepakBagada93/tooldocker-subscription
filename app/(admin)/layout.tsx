@@ -1,5 +1,3 @@
-'use client';
-
 import { DashboardLayout } from '@/components/layout/dashboard-layout';
 import {
   LayoutDashboard,
@@ -19,6 +17,8 @@ const ADMIN_ITEMS = [
   { name: 'Role Management', href: '/admin/roles', icon: Users },
   { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
 ];
+
+export const dynamic = 'force-dynamic';
 
 export default function AdminLayout({
   children,
