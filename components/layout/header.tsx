@@ -22,11 +22,11 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/cart-context';
-import { getCategories, type Category } from '@/app/actions/products';
+import { type Category } from '@/app/actions/products';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { createClient } from '@/lib/supabase/client';
-import { getUserRole } from '@/lib/supabase/profiles';
+import { normalizeAppRole } from '@/lib/supabase/profiles';
 
 async function getResponseMessage(response: Response, fallbackMessage: string) {
   const contentType = response.headers.get('content-type') || '';
@@ -44,7 +44,7 @@ async function getResponseMessage(response: Response, fallbackMessage: string) {
   return fallbackMessage;
 }
 
-export function Header() {
+export function Header({ initialCategories }: { initialCategories: Category[] }) {
   const [isMegaMenuOpen, setIsMegaMenuOpen] = React.useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -52,7 +52,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [userRole, setUserRole] = React.useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [categories, setCategories] = React.useState<Category[]>([]);
+  const [categories] = React.useState<Category[]>(initialCategories);
   
   const { totalItems } = useCart();
   const router = useRouter();
@@ -68,26 +68,19 @@ export function Header() {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setIsLoggedIn(true);
-        const role = await getUserRole(supabase, user);
-        setUserRole(role);
+        setUserRole(normalizeAppRole(user.user_metadata?.role));
       } else {
         setIsLoggedIn(false);
         setUserRole(null);
       }
     };
 
-    const fetchCategories = async () => {
-      const data = await getCategories();
-      setCategories(data);
-    };
-
     checkUser();
-    fetchCategories();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setIsLoggedIn(true);
-        getUserRole(supabase, session.user).then(setUserRole);
+        setUserRole(normalizeAppRole(session.user.user_metadata?.role));
       } else {
         setIsLoggedIn(false);
         setUserRole(null);

@@ -40,6 +40,39 @@ export async function updateSession(request: NextRequest) {
         })
     }
 
+    const pathname = request.nextUrl.pathname
+    const isApiRoute = pathname === '/api' || pathname.startsWith('/api/')
+
+    const isProtectedRoute =
+        isAdminRoute(pathname) ||
+        isVendorDashboardRoute(pathname) ||
+        isBuyerDashboardRoute(pathname)
+
+    const isAuthRoute =
+        pathname.startsWith('/login') ||
+        pathname.startsWith('/signup') ||
+        pathname.startsWith('/register') ||
+        pathname.startsWith('/vendor/login') ||
+        pathname.startsWith('/buyer/login') ||
+        pathname.startsWith('/tooldocker-admin/login') ||
+        pathname.startsWith('/auth')
+
+    const isPublicRoute =
+        pathname === '/' ||
+        pathname === '/shop' ||
+        pathname === '/search' ||
+        pathname === '/categories' ||
+        pathname === '/cart' ||
+        pathname.match(/^\/category\/[^/]+$/) ||
+        pathname.match(/^\/product\/[^/]+$/) ||
+        pathname.match(/^\/vendor\/[^/]+$/)
+
+    if (isApiRoute || (!isProtectedRoute && !isAuthRoute)) {
+        return NextResponse.next({
+            request,
+        })
+    }
+
     let supabaseResponse = NextResponse.next({
         request,
     })
@@ -69,35 +102,6 @@ export async function updateSession(request: NextRequest) {
     const {
         data: { user },
     } = await supabase.auth.getUser()
-
-    const pathname = request.nextUrl.pathname
-    const isApiRoute = pathname === '/api' || pathname.startsWith('/api/')
-
-    if (isApiRoute) {
-        return supabaseResponse
-    }
-
-    const isProtectedRoute =
-        isAdminRoute(pathname) ||
-        isVendorDashboardRoute(pathname) ||
-        isBuyerDashboardRoute(pathname)
-
-    const isAuthRoute =
-        pathname.startsWith('/login') ||
-        pathname.startsWith('/signup') ||
-        pathname.startsWith('/register') ||
-        pathname.startsWith('/vendor/login') ||
-        pathname.startsWith('/buyer/login') ||
-        pathname.startsWith('/tooldocker-admin/login') ||
-        pathname.startsWith('/auth')
-
-    const isPublicRoute =
-        pathname === '/' ||
-        pathname === '/shop' ||
-        pathname === '/categories' ||
-        pathname === '/cart' ||
-        pathname.match(/^\/(product|shop|categories)\/.*/) ||
-        pathname.match(/^\/vendor\/[^/]+$/)
 
     if (!user && isProtectedRoute) {
         const url = request.nextUrl.clone()

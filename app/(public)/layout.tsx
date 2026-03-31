@@ -1,20 +1,21 @@
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { FloatingButtons } from '@/components/layout/floating-buttons';
-import { PromoPopup } from '@/components/ui/promo-popup';
+import { getCategories } from '@/app/actions/products';
+import { PublicLayoutEnhancements } from '@/components/layout/public-layout-enhancements';
 
-export default function PublicLayout({
+export default async function PublicLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const categories = await getCategories();
+
   return (
     <div className="flex min-h-screen flex-col relative">
-      <Header />
+      <Header initialCategories={categories} />
       <main className="flex-1">{children}</main>
       <Footer />
-      <FloatingButtons />
-      <PromoPopup />
+      <PublicLayoutEnhancements />
     </div>
   );
 }
