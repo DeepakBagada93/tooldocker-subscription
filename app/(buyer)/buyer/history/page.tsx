@@ -7,6 +7,7 @@ import {
   Filter, 
   Package
 } from 'lucide-react';
+import Link from 'next/link';
 
 export default function OrderHistoryPage() {
   const orders: any[] = [];
@@ -52,5 +53,3 @@ export default function OrderHistoryPage() {
     </div>
   );
 }
-
-import Link from 'next/link';

@@ -4,6 +4,7 @@ import { FilterSidebar } from '@/components/product/filter-sidebar';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, SlidersHorizontal } from 'lucide-react';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -80,5 +81,3 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     </div>
   );
 }
-
-import Link from 'next/link';
