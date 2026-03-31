@@ -22,7 +22,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/cart-context';
-import { CATEGORIES as MOCK_CATEGORIES } from '@/lib/mock-data';
+import { getCategories, type Category } from '@/app/actions/products';
 import { useRouter } from 'next/navigation';
 import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { createClient } from '@/lib/supabase/client';
@@ -52,6 +52,7 @@ export function Header() {
   const [isScrolled, setIsScrolled] = React.useState(false);
   const [userRole, setUserRole] = React.useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [categories, setCategories] = React.useState<Category[]>([]);
   
   const { totalItems } = useCart();
   const router = useRouter();
@@ -75,7 +76,13 @@ export function Header() {
       }
     };
 
+    const fetchCategories = async () => {
+      const data = await getCategories();
+      setCategories(data);
+    };
+
     checkUser();
+    fetchCategories();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
@@ -198,7 +205,7 @@ export function Header() {
                         <Box className="w-4 h-4" /> All Categories
                       </h3>
                       <div className="grid grid-cols-2 gap-x-6 gap-y-4">
-                        {MOCK_CATEGORIES.map((cat) => (
+                        {categories.map((cat) => (
                           <Link
                             key={cat.id}
                             href={`/category/${cat.slug}`}
@@ -214,6 +221,11 @@ export function Header() {
                             </div>
                           </Link>
                         ))}
+                        {categories.length === 0 && (
+                          <div className="col-span-2 py-4 text-center text-xs text-stone-400">
+                            No categories found
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -344,7 +356,7 @@ export function Header() {
               <nav className="grid gap-4">
                 <div className="font-bold text-sm uppercase tracking-wider text-slate-500">Categories</div>
                 <div className="grid grid-cols-2 gap-2">
-                  {MOCK_CATEGORIES.map((cat) => (
+                  {categories.map((cat) => (
                     <Link
                       key={cat.id}
                       href={`/category/${cat.slug}`}

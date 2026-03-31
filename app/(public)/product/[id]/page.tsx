@@ -1,10 +1,9 @@
 import { getProductById } from '@/app/actions/products';
-import { VENDORS } from '@/lib/mock-data';
 import { ImageGallery } from '@/components/product/image-gallery';
 import { AddToCartButton } from '@/components/product/add-to-cart-button';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Star, ShieldCheck, Truck, ShoppingCart, Heart, Share2 } from 'lucide-react';
+import { Star, ShieldCheck, Truck, Heart, Share2 } from 'lucide-react';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -18,8 +17,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     notFound();
   }
 
-  // Currently mocking vendor info, but eventually this would join from DB 'stores'
-  const vendor = VENDORS.find(v => v.id === product.store_id) || VENDORS[0];
+  const vendor = product.stores;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -55,7 +53,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                       key={i}
                       className={cn(
                         "h-4 w-4",
-                        i < 4 ? "fill-primary text-primary" : "text-slate-300" // using static 4 for now
+                        i < 4 ? "fill-primary text-primary" : "text-slate-300" 
                       )}
                     />
                   ))}
@@ -63,7 +61,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 </div>
                 <div className="h-4 w-px bg-slate-200" />
                 <Link href={`/vendor/${product.store_id}`} className="text-sm font-bold text-primary hover:underline">
-                  By {product.stores?.store_name || vendor?.name}
+                  By {vendor?.store_name || 'Verified Vendor'}
                 </Link>
               </div>
             </div>
@@ -117,41 +115,45 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* Vendor Info Section */}
-        <section className="bg-white dark:bg-workshop-dark border rounded-3xl p-8 lg:p-12">
-          <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
-            <div className="w-24 h-24 relative rounded-2xl overflow-hidden border-4 border-slate-100 shrink-0">
-              <Image src={vendor?.logo || ''} alt={vendor?.name || ''} fill className="object-cover" referrerPolicy="no-referrer" />
-            </div>
-            <div className="flex-1 text-center lg:text-left space-y-4">
-              <div className="flex flex-col lg:flex-row lg:items-center gap-4">
-                <h2 className="text-3xl font-black tracking-tighter uppercase">{vendor?.name}</h2>
-                <div className="flex items-center justify-center lg:justify-start gap-2">
-                  <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
-                    <ShieldCheck className="h-3 w-3 mr-1" /> Verified Vendor
-                  </Badge>
-                  <div className="flex items-center gap-1 text-sm font-bold">
-                    <Star className="h-4 w-4 fill-primary text-primary" /> {vendor?.rating}
+        {vendor && (
+          <section className="bg-white dark:bg-workshop-dark border rounded-3xl p-8 lg:p-12">
+            <div className="flex flex-col lg:flex-row gap-8 items-center lg:items-start">
+              <div className="w-24 h-24 relative rounded-2xl overflow-hidden border-4 border-slate-100 shrink-0">
+                <Image src={vendor.logo_url || 'https://picsum.photos/seed/vendor/100/100'} alt={vendor.store_name} fill className="object-cover" referrerPolicy="no-referrer" />
+              </div>
+              <div className="flex-1 text-center lg:text-left space-y-4">
+                <div className="flex flex-col lg:flex-row lg:items-center gap-4">
+                  <h2 className="text-3xl font-black tracking-tighter uppercase">{vendor.store_name}</h2>
+                  <div className="flex items-center justify-center lg:justify-start gap-2">
+                    <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-400">
+                      <ShieldCheck className="h-3 w-3 mr-1" /> Verified Vendor
+                    </Badge>
+                    <div className="flex items-center gap-1 text-sm font-bold">
+                      <Star className="h-4 w-4 fill-primary text-primary" /> 5.0
+                    </div>
                   </div>
                 </div>
+                <p className="text-muted-foreground max-w-2xl">Verified industrial supplier on Tooldocker.</p>
+                <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                  <Link href={`/vendor/${product.store_id}`}>
+                    <Button variant="outline" size="sm">Visit Storefront</Button>
+                  </Link>
+                  <Button variant="ghost" size="sm">Contact Supplier</Button>
+                </div>
               </div>
-              <p className="text-muted-foreground max-w-2xl">{vendor?.description}</p>
-              <div className="flex flex-wrap justify-center lg:justify-start gap-4">
-                <Button variant="outline" size="sm">Visit Storefront</Button>
-                <Button variant="ghost" size="sm">Contact Supplier</Button>
+              <div className="grid grid-cols-2 gap-4 shrink-0">
+                <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl text-center">
+                  <div className="text-2xl font-black tracking-tighter">98%</div>
+                  <div className="text-[10px] font-bold uppercase text-muted-foreground">Response Rate</div>
+                </div>
+                <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl text-center">
+                  <div className="text-2xl font-black tracking-tighter">24h</div>
+                  <div className="text-[10px] font-bold uppercase text-muted-foreground">Avg. Shipping</div>
+                </div>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-4 shrink-0">
-              <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl text-center">
-                <div className="text-2xl font-black tracking-tighter">98%</div>
-                <div className="text-[10px] font-bold uppercase text-muted-foreground">Response Rate</div>
-              </div>
-              <div className="p-4 bg-slate-50 dark:bg-slate-900 rounded-xl text-center">
-                <div className="text-2xl font-black tracking-tighter">24h</div>
-                <div className="text-[10px] font-bold uppercase text-muted-foreground">Avg. Shipping</div>
-              </div>
-            </div>
-          </div>
-        </section>
+          </section>
+        )}
       </div>
     </div>
   );
