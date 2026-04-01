@@ -2,6 +2,7 @@
 
 import { unstable_noStore as noStore } from 'next/cache'
 
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 
 export type Category = {
@@ -89,9 +90,17 @@ async function enrichProducts(supabase: Awaited<ReturnType<typeof createClient>>
     })
 }
 
+function getPublicReadClient() {
+    try {
+        return getSupabaseAdmin()
+    } catch {
+        return null
+    }
+}
+
 export async function getCategories() {
     noStore()
-    const supabase = await createClient()
+    const supabase = getPublicReadClient() ?? await createClient()
 
     try {
         const { data, error } = await supabase
@@ -109,7 +118,7 @@ export async function getCategories() {
 
 export async function getPublishedProducts(options?: { categorySlug?: string, limit?: number }) {
     noStore()
-    const supabase = await createClient()
+    const supabase = getPublicReadClient() ?? await createClient()
 
     try {
         let query = supabase
@@ -143,7 +152,7 @@ export async function getPublishedProducts(options?: { categorySlug?: string, li
 
 export async function getProductById(id: string) {
     noStore()
-    const supabase = await createClient()
+    const supabase = getPublicReadClient() ?? await createClient()
 
     try {
         const { data, error } = await supabase
@@ -168,22 +177,17 @@ export async function getProductById(id: string) {
 
 export async function getVendorStoreAndProducts(vendorId: string) {
     noStore()
-    const supabase = await createClient()
+    const supabase = getPublicReadClient() ?? await createClient()
 
     try {
-        // 1. Try to find the vendor's store in DB
         const { data: store, error: storeError } = await supabase
             .from('stores')
-            .select(`
-                *,
-                profiles:profiles(full_name, role)
-            `)
+            .select('id, vendor_id, store_name, description, logo_url, is_active')
             .eq('vendor_id', vendorId)
             .maybeSingle()
 
         if (storeError) throw new Error(storeError.message)
 
-        // 2. Try to find products for this store in DB
         const { data: dbProducts, error: productsError } = await supabase
             .from('products')
             .select('id, vendor_id, store_id, category_id, title, description, price, inventory_count, images, is_published')
@@ -222,7 +226,7 @@ export async function getVendorStoreAndProducts(vendorId: string) {
 
 export async function getAllVendors() {
     noStore()
-    const supabase = await createClient()
+    const supabase = getPublicReadClient() ?? await createClient()
 
     try {
         const { data, error } = await supabase

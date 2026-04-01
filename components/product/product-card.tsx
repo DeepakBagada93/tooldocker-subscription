@@ -43,10 +43,10 @@ export function ProductCard({ product }: ProductCardProps) {
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           referrerPolicy="no-referrer"
         />
-        {product.category_id && (
+        {product.category_name && (
           <div className="absolute top-2 left-2">
             <Badge variant="secondary" className="bg-white/90 backdrop-blur-sm text-slate-700">
-              Category ID: {product.category_id}
+              {product.category_name}
             </Badge>
           </div>
         )}
