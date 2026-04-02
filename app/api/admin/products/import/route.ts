@@ -1,5 +1,6 @@
 import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
+import { enhanceImportRowsWithAi } from '@/lib/admin-products/ai';
 import {
   buildFailedReportRows,
   detectSourceType,
@@ -33,6 +34,7 @@ export async function POST(request: Request) {
     const mode = formData.get('mode');
     const spreadsheet = formData.get('spreadsheet');
     const imagesZip = formData.get('imagesZip');
+    const enhanceWithAi = formData.get('enhanceWithAi') === 'true';
 
     if (mode !== 'preview' && mode !== 'confirm') {
       return NextResponse.json({ message: 'Invalid import mode.' }, { status: 400 });
@@ -59,13 +61,16 @@ export async function POST(request: Request) {
 
     const { categoryOptions, vendorOptions, existingSkus } = await getAdminProductLookupsWithClient(supabase);
     const zipSummary = await summarizeZipFile(zipFile);
-    const { preparedRows, readyRows, failedRows } = prepareImportRows({
+    const preparedResult = prepareImportRows({
       rows,
       vendors: vendorOptions,
       categories: categoryOptions,
       existingSkus,
       zipSummary,
     });
+    const preparedRows = await enhanceImportRowsWithAi(preparedResult.preparedRows, enhanceWithAi);
+    const readyRows = preparedRows.filter((row) => row.status === 'ready').length;
+    const failedRows = preparedRows.filter((row) => row.status === 'invalid').length;
 
     if (mode === 'preview') {
       const previewResponse: ProductImportResponse = {
@@ -115,6 +120,9 @@ export async function POST(request: Request) {
       payload: buildProductPayload({
         title: row.title,
         description: row.description,
+        specifications: row.specifications,
+        seoTitle: row.seoTitle,
+        seoDescription: row.seoDescription,
         vendorId: row.vendorId,
         storeId: row.storeId,
         categoryId: row.categoryId,
@@ -234,6 +242,9 @@ function serializePreparedRow(row: PreparedImportRow, images: string[]) {
   return {
     title: row.title,
     description: row.description,
+    specifications: row.specifications,
+    seo_title: row.seoTitle,
+    seo_description: row.seoDescription,
     vendor_id: row.vendorId,
     store_id: row.storeId,
     category_id: row.categoryId,

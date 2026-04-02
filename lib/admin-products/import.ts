@@ -13,6 +13,9 @@ type RawRow = Record<string, unknown>;
 
 export type PreparedImportRow = ProductImportPreviewRow & {
   description: string;
+  specifications: Record<string, string>;
+  seoTitle: string;
+  seoDescription: string;
   storeId: string;
   salePrice: number | null;
   condition: ProductCondition;
@@ -129,6 +132,9 @@ export function prepareImportRows(params: {
     const weight = getStringCell(row, 'weight');
     const imagesInput = splitPipeList(getStringCell(row, 'images'));
     const tags = splitPipeList(getStringCell(row, 'tags'));
+    const specifications = parseSpecifications(getStringCell(row, 'specifications'));
+    const seoTitle = getStringCell(row, 'seo_title');
+    const seoDescription = getStringCell(row, 'seo_description');
     const vendor = vendorMap.get(vendorId);
     const category = categoryMap.get(categoryId);
     const errors: string[] = [];
@@ -170,6 +176,9 @@ export function prepareImportRows(params: {
       rowNumber: index + 2,
       title,
       description: getStringCell(row, 'description'),
+      specifications,
+      seoTitle,
+      seoDescription,
       vendorId,
       vendorName: vendor?.label ?? 'Unknown vendor',
       storeId: vendor?.storeId ?? '',
@@ -189,7 +198,7 @@ export function prepareImportRows(params: {
       },
       imagesInput,
       tags,
-      isPublished: true,
+      isPublished: normalizeStatus(getStringCell(row, 'status')),
       status: errors.length ? 'invalid' : 'ready',
       errors,
     };
@@ -366,6 +375,24 @@ function inferContentType(fileName: string) {
   if (lower.endsWith('.gif')) return 'image/gif';
   if (lower.endsWith('.svg')) return 'image/svg+xml';
   return 'application/octet-stream';
+}
+
+function parseSpecifications(value: string) {
+  return Object.fromEntries(
+    value
+      .split('|')
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .map((item) => {
+        const [key, ...rest] = item.split(':');
+        return [key?.trim() ?? '', rest.join(':').trim()];
+      })
+      .filter(([key, specValue]) => key && specValue),
+  );
+}
+
+function normalizeStatus(value: string) {
+  return value.trim().toLowerCase() !== 'draft';
 }
 
 function escapeCsvValue(value: string | number | null) {

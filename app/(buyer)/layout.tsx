@@ -1,22 +1,13 @@
 'use client';
 
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { 
-  LayoutDashboard, 
-  ShoppingCart, 
-  Settings, 
-  Package, 
-  MessageSquare,
-  Heart,
-  History
-} from 'lucide-react';
+import { DashboardLayout, type DashboardNavItem } from '@/components/layout/dashboard-layout';
 
-const BUYER_ITEMS = [
-  { name: 'Dashboard', href: '/buyer', icon: LayoutDashboard },
-  { name: 'Order History', href: '/buyer/history', icon: History },
-  { name: 'Returns & Disputes', href: '/buyer/disputes', icon: MessageSquare },
-  { name: 'Saved Vendors', href: '/buyer/vendors', icon: Heart },
-  { name: 'Settings', href: '/buyer/settings', icon: Settings },
+const BUYER_ITEMS: DashboardNavItem[] = [
+  { name: 'Dashboard', href: '/buyer', icon: 'layout-dashboard' },
+  { name: 'Order History', href: '/buyer/history', icon: 'history' },
+  { name: 'Returns & Disputes', href: '/buyer/disputes', icon: 'message-square' },
+  { name: 'Saved Vendors', href: '/buyer/vendors', icon: 'heart' },
+  { name: 'Settings', href: '/buyer/settings', icon: 'settings' },
 ];
 
 export default function BuyerLayout({

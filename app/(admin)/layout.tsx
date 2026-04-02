@@ -1,21 +1,14 @@
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import {
-  LayoutDashboard,
-  Users,
-  Settings,
-  ShieldCheck,
-  BarChart3,
-  AlertTriangle
-} from 'lucide-react';
+import { DashboardLayout, type DashboardNavItem } from '@/components/layout/dashboard-layout';
 
-const ADMIN_ITEMS = [
-  { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
-  { name: 'Vendors', href: '/admin/vendors', icon: ShieldCheck },
-  { name: 'Category Management', href: '/admin/categories', icon: LayoutDashboard },
-  { name: 'Plans & Billing', href: '/admin/commission', icon: Settings },
-  { name: 'Dispute Resolution', href: '/admin/disputes', icon: AlertTriangle },
-  { name: 'Role Management', href: '/admin/roles', icon: Users },
-  { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+const ADMIN_ITEMS: DashboardNavItem[] = [
+  { name: 'Dashboard', href: '/admin', icon: 'layout-dashboard' },
+  { name: 'Vendors', href: '/admin/vendors', icon: 'shield-check' },
+  { name: 'Products', href: '/admin/products', icon: 'package' },
+  { name: 'Category Management', href: '/admin/categories', icon: 'layout-dashboard' },
+  { name: 'Plans & Billing', href: '/admin/commission', icon: 'settings' },
+  { name: 'Dispute Resolution', href: '/admin/disputes', icon: 'alert-triangle' },
+  { name: 'Role Management', href: '/admin/roles', icon: 'users' },
+  { name: 'Analytics', href: '/admin/analytics', icon: 'bar-chart-3' },
 ];
 
 export const dynamic = 'force-dynamic';

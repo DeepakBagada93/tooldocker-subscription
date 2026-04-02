@@ -110,7 +110,8 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
   const [productsResult, categoriesResult, storesResult, importsResult, previewProducts] = await Promise.all([
     supabase
       .from('products')
-      .select('id, title, description, vendor_id, store_id, category_id, price, sale_price, sku, stock_quantity, inventory_count, condition, brand, weight, dimensions, images, tags, is_published, created_at, categories(name), stores(store_name)')
+      .select('id, title, description, specifications, seo_title, seo_description, vendor_id, store_id, category_id, price, sale_price, sku, stock_quantity, inventory_count, condition, brand, weight, dimensions, images, tags, is_published, created_at, categories(name), stores(store_name)')
+      .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .limit(500),
     supabase.from('categories').select('id, name').order('name'),
@@ -127,6 +128,9 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
     id: product.id,
     title: product.title ?? 'Untitled product',
     description: product.description ?? '',
+    specifications: isStringRecord(product.specifications) ? product.specifications : {},
+    seoTitle: product.seo_title ?? '',
+    seoDescription: product.seo_description ?? '',
     vendorId: product.vendor_id ?? null,
     vendorName: product.stores?.store_name ?? 'Unknown vendor',
     storeId: product.store_id ?? null,
@@ -146,6 +150,7 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
     tags: Array.isArray(product.tags) ? product.tags : [],
     isPublished: Boolean(product.is_published),
     createdAt: product.created_at ?? new Date().toISOString(),
+    isPreview: false,
   }));
 
   const products: AdminProductTableRow[] = [...previewProducts, ...productsFromDb];
@@ -180,4 +185,8 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
     vendors,
     importHistory,
   };
+}
+
+function isStringRecord(value: unknown): value is Record<string, string> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
 }

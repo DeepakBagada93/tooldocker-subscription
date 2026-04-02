@@ -13,6 +13,7 @@ export const GeneratedProductSchema = z.object({
   description: z.string(),
   price: z.number(),
   tags: z.array(z.string()).optional().default([]),
+  specifications: z.record(z.string(), z.string()).optional().default({}),
   seo_title: z.string().optional(),
   seo_description: z.string().optional(),
   sku: z.string().optional(),

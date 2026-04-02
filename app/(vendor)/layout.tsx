@@ -1,24 +1,15 @@
 'use client';
 
-import { DashboardLayout } from '@/components/layout/dashboard-layout';
-import { 
-  LayoutDashboard, 
-  Package, 
-  Settings, 
-  BarChart3, 
-  CreditCard,
-  ShieldCheck,
-  Truck
-} from 'lucide-react';
+import { DashboardLayout, type DashboardNavItem } from '@/components/layout/dashboard-layout';
 
-const VENDOR_ITEMS = [
-  { name: 'Overview', href: '/vendor', icon: LayoutDashboard },
-  { name: 'My Products', href: '/vendor/products', icon: Package },
-  { name: 'Bulk Upload', href: '/vendor/bulk-upload', icon: BarChart3 },
-  { name: 'Orders', href: '/vendor/orders', icon: Truck },
-  { name: 'Billing', href: '/vendor/payouts', icon: CreditCard },
-  { name: 'Subscription', href: '/vendor/commission', icon: ShieldCheck },
-  { name: 'Settings', href: '/vendor/settings', icon: Settings },
+const VENDOR_ITEMS: DashboardNavItem[] = [
+  { name: 'Overview', href: '/vendor', icon: 'layout-dashboard' },
+  { name: 'My Products', href: '/vendor/products', icon: 'package' },
+  { name: 'Bulk Upload', href: '/vendor/bulk-upload', icon: 'bar-chart-3' },
+  { name: 'Orders', href: '/vendor/orders', icon: 'truck' },
+  { name: 'Billing', href: '/vendor/payouts', icon: 'credit-card' },
+  { name: 'Subscription', href: '/vendor/commission', icon: 'shield-check' },
+  { name: 'Settings', href: '/vendor/settings', icon: 'settings' },
 ];
 
 export default function VendorLayout({

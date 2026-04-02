@@ -7,6 +7,9 @@ import type {
 type ProductPayloadInput = {
   title: string;
   description: string;
+  specifications: Record<string, string>;
+  seoTitle: string;
+  seoDescription: string;
   vendorId: string | null;
   storeId: string;
   categoryId: string | null;
@@ -83,7 +86,7 @@ export async function getOrCreateAdminStore(supabase: SupabaseClient, adminUserI
     .from('stores')
     .insert({
       vendor_id: adminUserId,
-      store_name: 'Tooldocker Admin',
+      store_name: 'Tooldocker',
       description: 'Internal storefront for admin-managed products.',
       is_active: true,
     })
@@ -118,6 +121,9 @@ export function buildProductPayload(input: ProductPayloadInput) {
     category_id: input.categoryId,
     title: input.title.trim(),
     description: input.description.trim() || null,
+    specifications: sanitizeSpecifications(input.specifications),
+    seo_title: input.seoTitle.trim() || null,
+    seo_description: input.seoDescription.trim() || null,
     price: input.price,
     sale_price: input.salePrice,
     sku: input.sku.trim(),
@@ -190,4 +196,12 @@ export async function insertProductsInChunks(params: {
 
 export function sanitizeTextArray(values: string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+}
+
+export function sanitizeSpecifications(specifications: Record<string, string>) {
+  return Object.fromEntries(
+    Object.entries(specifications)
+      .map(([key, value]) => [key.trim(), value.trim()])
+      .filter(([key, value]) => key && value),
+  );
 }

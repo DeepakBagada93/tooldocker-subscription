@@ -10,7 +10,18 @@ import {
   Bell, 
   Search,
   MessageSquare,
-  ChevronRight
+  ChevronRight,
+  LayoutDashboard,
+  Users,
+  Settings,
+  ShieldCheck,
+  BarChart3,
+  AlertTriangle,
+  History,
+  Heart,
+  Package,
+  Truck,
+  CreditCard,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -21,16 +32,47 @@ import { signout } from '@/app/actions/auth';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  items: {
-    name: string;
-    href: string;
-    icon: React.ElementType;
-  }[];
+  items: DashboardNavItem[];
   role: 'Buyer' | 'Vendor' | 'Admin';
   initialUserName?: string;
   initialUserEmail?: string;
   initialUserInitials?: string;
 }
+
+export type DashboardIconName =
+  | 'layout-dashboard'
+  | 'users'
+  | 'settings'
+  | 'shield-check'
+  | 'bar-chart-3'
+  | 'alert-triangle'
+  | 'history'
+  | 'heart'
+  | 'package'
+  | 'truck'
+  | 'credit-card'
+  | 'message-square'
+
+export type DashboardNavItem = {
+  name: string;
+  href: string;
+  icon: DashboardIconName;
+}
+
+const dashboardIconMap: Record<DashboardIconName, React.ElementType> = {
+  'layout-dashboard': LayoutDashboard,
+  users: Users,
+  settings: Settings,
+  'shield-check': ShieldCheck,
+  'bar-chart-3': BarChart3,
+  'alert-triangle': AlertTriangle,
+  history: History,
+  heart: Heart,
+  package: Package,
+  truck: Truck,
+  'credit-card': CreditCard,
+  'message-square': MessageSquare,
+};
 
 export function DashboardLayout({
   children,
@@ -145,7 +187,7 @@ export function DashboardLayout({
               </h2>
               <div className="space-y-1">
                 {items.map((item) => {
-                  const Icon = item.icon;
+                  const Icon = dashboardIconMap[item.icon];
                   const isActive = pathname === item.href;
                   return (
                     <Link

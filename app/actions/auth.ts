@@ -14,7 +14,6 @@ import {
     compactUserAuthMetadataIfNeeded,
     getCompactAuthMetadataFromSource,
 } from '@/lib/supabase/auth-metadata'
-import { clearSupabaseAuthCookies } from '@/lib/supabase/auth-cookies'
 
 function getLoginRouteForRedirectTarget(redirectTo: FormDataEntryValue | null) {
     if (typeof redirectTo !== 'string') {
@@ -62,19 +61,8 @@ export async function login(formData: FormData) {
         return redirect(`${loginRoute}?message=${message}`)
     }
 
-    await compactUserAuthMetadataIfNeeded(supabase, authData.user)
-
-    await clearSupabaseAuthCookies()
-
-    const { error: refreshedLoginError, data: refreshedAuthData } =
-        await supabase.auth.signInWithPassword(data)
-
-    if (refreshedLoginError) {
-        const message = encodeURIComponent(refreshedLoginError.message || 'Could not refresh user session')
-        return redirect(`${loginRoute}?message=${message}`)
-    }
-
-    const activeUser = refreshedAuthData.user ?? authData.user
+    const activeUser = authData.user
+    await compactUserAuthMetadataIfNeeded(supabase, activeUser)
     const profile = await ensureUserProfile(supabase, activeUser)
     const role = normalizeAppRole(profile?.role ?? activeUser?.user_metadata?.role)
 

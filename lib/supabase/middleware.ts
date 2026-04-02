@@ -34,6 +34,22 @@ function isAdminRoute(pathname: string) {
 }
 
 export async function updateSession(request: NextRequest) {
+    if (request.method === 'OPTIONS') {
+        const origin = request.headers.get('origin') ?? '*'
+        const requestedHeaders = request.headers.get('access-control-request-headers')
+
+        return new NextResponse(null, {
+            status: 204,
+            headers: {
+                'Access-Control-Allow-Origin': origin,
+                'Access-Control-Allow-Methods': 'GET,POST,PUT,PATCH,DELETE,OPTIONS',
+                'Access-Control-Allow-Headers': requestedHeaders ?? 'Content-Type, Authorization, X-Requested-With',
+                'Access-Control-Allow-Credentials': 'true',
+                Vary: 'Origin, Access-Control-Request-Headers',
+            },
+        })
+    }
+
     if (!isSupabaseConfigured()) {
         return NextResponse.next({
             request,

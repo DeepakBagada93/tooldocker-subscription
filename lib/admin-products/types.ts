@@ -15,6 +15,10 @@ export const PRODUCT_IMPORT_HEADERS = [
   'height',
   'images',
   'tags',
+  'specifications',
+  'seo_title',
+  'seo_description',
+  'status',
 ] as const;
 
 export type ProductImportHeader = (typeof PRODUCT_IMPORT_HEADERS)[number];
@@ -42,6 +46,9 @@ export type AdminProductTableRow = {
   id: string;
   title: string;
   description: string;
+  specifications: Record<string, string>;
+  seoTitle: string;
+  seoDescription: string;
   vendorId: string | null;
   vendorName: string;
   storeId: string | null;
@@ -61,6 +68,7 @@ export type AdminProductTableRow = {
   tags: string[];
   isPublished: boolean;
   createdAt: string;
+  isPreview?: boolean;
 };
 
 export type AdminImportHistoryItem = {
@@ -78,6 +86,9 @@ export type AdminProductFormInput = {
   id?: string;
   title: string;
   description: string;
+  specifications: Record<string, string>;
+  seoTitle: string;
+  seoDescription: string;
   vendorId?: string;
   categoryId: string;
   price: number;
@@ -146,4 +157,5 @@ export type AdminMutationResult = {
   ok: boolean;
   message: string;
   updatedCount?: number;
+  productId?: string;
 };
