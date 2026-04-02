@@ -36,6 +36,8 @@ type ProductFormState = {
   isPublished: boolean;
 };
 
+type AdminProductsSection = 'dashboard' | 'editor' | 'import' | 'history';
+
 const createInitial: ProductFormState = {
   title: '',
   description: '',
@@ -102,6 +104,7 @@ export function AdminProductsManager({
   const [isBulkPending, startBulk] = React.useTransition();
   const [isRowActionPending, startRowAction] = React.useTransition();
   const [bulkForm, setBulkForm] = React.useState(bulkInitial);
+  const [activeSection, setActiveSection] = React.useState<AdminProductsSection>('dashboard');
 
   const filtered = React.useMemo(() => products.filter((product) => {
     const query = search.trim().toLowerCase();
@@ -159,6 +162,7 @@ export function AdminProductsManager({
       setCreateFeedback(result);
       if (result.ok) {
         resetEditor();
+        setActiveSection('dashboard');
         router.refresh();
       }
     });
@@ -186,6 +190,7 @@ export function AdminProductsManager({
   };
 
   const handleEdit = (product: AdminProductTableRow) => {
+    setActiveSection('editor');
     setEditingId(product.id);
     setCreateFeedback(null);
     setFormState({
@@ -363,7 +368,42 @@ export function AdminProductsManager({
 
       {rowFeedback ? <Feedback result={rowFeedback} /> : null}
 
-      <div className="grid gap-6 2xl:grid-cols-[minmax(0,1.35fr)_minmax(460px,0.95fr)]">
+      <div className="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)]">
+        <Card className="h-fit rounded-[2rem] border-stone-200 bg-white/90 shadow-sm">
+          <CardHeader className="border-b border-stone-100">
+            <CardTitle className="text-lg">Product Workspace</CardTitle>
+            <CardDescription>Move between catalog management, product creation, import tools, and history.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-2 pt-6">
+            <SectionNavButton
+              active={activeSection === 'dashboard'}
+              label="Products Dashboard"
+              description="Browse, filter, edit, and bulk manage products."
+              onClick={() => setActiveSection('dashboard')}
+            />
+            <SectionNavButton
+              active={activeSection === 'editor'}
+              label={editingId ? 'Edit Product' : 'Add Product'}
+              description="Create a new product or update a selected one."
+              onClick={() => setActiveSection('editor')}
+            />
+            <SectionNavButton
+              active={activeSection === 'import'}
+              label="Bulk Upload"
+              description="Upload spreadsheets, preview, and confirm import."
+              onClick={() => setActiveSection('import')}
+            />
+            <SectionNavButton
+              active={activeSection === 'history'}
+              label="Import History"
+              description="Review previous upload jobs and outcomes."
+              onClick={() => setActiveSection('history')}
+            />
+          </CardContent>
+        </Card>
+
+        <div className="space-y-6">
+        {activeSection === 'dashboard' ? (
         <Card className="rounded-[2rem] border-stone-200 bg-white/90 shadow-sm">
           <CardHeader className="border-b border-stone-100">
             <CardTitle className="text-xl">Products Dashboard</CardTitle>
@@ -509,8 +549,9 @@ export function AdminProductsManager({
             </div>
           </CardContent>
         </Card>
+        ) : null}
 
-        <div className="space-y-6">
+        {activeSection === 'editor' ? (
           <Card className="sticky top-24 rounded-[2rem] border-stone-200 bg-white/95 shadow-sm">
             <CardHeader className="border-b border-stone-100">
               <CardTitle className="text-xl">{editingId ? 'Edit Product' : 'Add Product'}</CardTitle>
@@ -596,7 +637,9 @@ export function AdminProductsManager({
               </form>
             </CardContent>
           </Card>
+        ) : null}
 
+        {activeSection === 'import' ? (
           <Card className="rounded-[2rem] border-stone-200">
             <CardHeader>
               <CardTitle className="text-xl">Bulk Upload</CardTitle>
@@ -654,7 +697,9 @@ export function AdminProductsManager({
               ) : null}
             </CardContent>
           </Card>
+        ) : null}
 
+        {activeSection === 'history' ? (
           <Card className="rounded-[2rem] border-stone-200">
             <CardHeader>
               <CardTitle className="text-xl">Import History</CardTitle>
@@ -672,8 +717,10 @@ export function AdminProductsManager({
               )) : <div className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">No imports have been run yet.</div>}
             </CardContent>
           </Card>
+        ) : null}
         </div>
-      </div>
+        </div>
+      
     </div>
   );
 }
@@ -702,6 +749,33 @@ function buildProductInput(formState: ProductFormState): AdminProductFormInput {
     tags: splitPipeList(formState.tags),
     isPublished: formState.isPublished,
   };
+}
+
+function SectionNavButton({
+  active,
+  label,
+  description,
+  onClick,
+}: {
+  active: boolean;
+  label: string;
+  description: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`w-full rounded-[1.25rem] border px-4 py-3 text-left transition ${
+        active
+          ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
+          : 'border-stone-200 bg-[#fcfaf7] text-slate-900 hover:border-stone-300 hover:bg-white'
+      }`}
+    >
+      <div className="text-sm font-semibold">{label}</div>
+      <div className={`mt-1 text-xs ${active ? 'text-slate-300' : 'text-stone-500'}`}>{description}</div>
+    </button>
+  );
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
