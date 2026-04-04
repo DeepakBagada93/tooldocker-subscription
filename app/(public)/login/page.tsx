@@ -1,4 +1,4 @@
-import { ShieldCheck, ArrowRight, Store, UserRound, ArrowLeftRight } from 'lucide-react'
+import { ShieldCheck, ArrowRight, UserRound, ArrowLeftRight } from 'lucide-react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 
@@ -12,12 +12,12 @@ const portals = [
     color: 'bg-[#f3ede4]',
   },
   {
-    title: 'Vendor Portal',
-    description: 'Manage your store, products, orders, and subscription.',
-    href: '/vendor/login',
-    cta: 'Vendor Login',
-    icon: Store,
-    color: 'bg-orange-50',
+    title: 'Admin Portal',
+    description: 'Manage products, categories, disputes, and analytics.',
+    href: '/tooldocker-admin/login',
+    cta: 'Admin Login',
+    icon: ShieldCheck,
+    color: 'bg-blue-50',
   },
 ]
 
@@ -71,7 +71,7 @@ export default async function LoginPage(props: { searchParams: Promise<{ [key: s
 
         <div className="mt-12 text-center">
           <p className="text-sm text-stone-500">
-            New to Tooldocker? <Link href="/register/vendor" className="font-bold text-primary hover:underline">Register your business as a vendor</Link>
+            New to Tooldocker? <Link href="/register" className="font-bold text-primary hover:underline">Create an account</Link>
           </p>
         </div>
       </div>

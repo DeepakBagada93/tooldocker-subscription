@@ -3,7 +3,6 @@ import { createClient } from '@/lib/supabase/server'
 import { compactUserAuthMetadataIfNeeded } from '@/lib/supabase/auth-metadata'
 import {
     ensureUserProfile,
-    ensureVendorStoreForUser,
     normalizeAppRole,
 } from '@/lib/supabase/profiles'
 
@@ -22,12 +21,9 @@ export async function GET(request: Request) {
             const profile = await ensureUserProfile(supabase, user)
             const role = normalizeAppRole(profile?.role ?? user?.user_metadata?.role)
 
-            await ensureVendorStoreForUser(supabase, user, role)
-
             let targetUrl = `${origin}${next}`
             if (next === '/') {
                 if (role === 'admin') targetUrl = `${origin}/admin`
-                else if (role === 'vendor') targetUrl = `${origin}/vendor/dashboard`
                 else targetUrl = `${origin}/buyer`
             }
 

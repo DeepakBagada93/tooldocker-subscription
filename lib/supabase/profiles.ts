@@ -1,6 +1,6 @@
 import type { User } from '@supabase/supabase-js'
 
-export const APP_ROLES = ['admin', 'vendor', 'buyer'] as const
+export const APP_ROLES = ['admin', 'buyer'] as const
 
 export type AppRole = (typeof APP_ROLES)[number]
 
@@ -90,60 +90,6 @@ export async function ensureUserProfile(
 
   if (error) {
     throw new Error(`Failed to sync profile: ${error.message}`)
-  }
-
-  return data
-}
-
-export async function ensureVendorStoreForUser(
-  supabase: SupabaseLikeClient,
-  user: User | null | undefined,
-  role?: AppRole
-) {
-  if (!user) {
-    return null
-  }
-
-  const resolvedRole = role ?? (await getUserRole(supabase, user))
-  if (resolvedRole !== 'vendor') {
-    return null
-  }
-
-  const { data: existingStore, error: existingStoreError } = await supabase
-    .from('stores')
-    .select('id, vendor_id')
-    .eq('vendor_id', user.id)
-    .maybeSingle()
-
-  if (existingStoreError) {
-    throw new Error(`Failed to check vendor store: ${existingStoreError.message}`)
-  }
-
-  if (existingStore?.id) {
-    return existingStore
-  }
-
-  const storeName =
-    user.user_metadata?.company_name ||
-    user.user_metadata?.full_name ||
-    user.email?.split('@')[0] ||
-    'Vendor Store'
-
-  const { data, error } = await supabase
-    .from('stores')
-    .insert({
-      vendor_id: user.id,
-      store_name: storeName,
-      description:
-        user.user_metadata?.business_summary ??
-        'Vendor storefront created automatically during onboarding.',
-      is_active: true,
-    })
-    .select('id, vendor_id')
-    .single()
-
-  if (error) {
-    throw new Error(`Failed to create vendor store: ${error.message}`)
   }
 
   return data

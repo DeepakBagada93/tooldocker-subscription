@@ -7,78 +7,29 @@ type MonthlyPoint = {
 
 export type AdminDashboardData = {
   mrr: number
-  activeVendors: number
-  churnRate: number
   activeBuyers: number
-  pendingVendorActivations: number
-  moderationThroughput: number
-  pastDueAccounts: number
+  totalProducts: number
+  totalOrders: number
   reviewSlaLabel: string
-  billingHealthLabel: string
-  vendorGrowthLabel: string
   mrrTrend: string
-  vendorTrend: string
-  churnTrend: string
   buyerTrend: string
   mrrData: MonthlyPoint[]
   actionRequired: {
-    vendorActivations: number
-    planManagement: number
     productModeration: number
   }
-}
-
-export type AdminVendorQueueItem = {
-  id: string
-  profileId: string
-  storeId: string | null
-  name: string
-  email: string
-  country: string
-  appliedDate: string
-  type: string
-  subscriptionId: string | null
-  subscriptionPlanKey: string | null
-  subscriptionName: string
-  subscriptionStatus: string
-  status: string
-  productAccess: 'approved' | 'pending' | 'blocked'
-  productAccessLabel: string
-  productLimit: number
-  billingInterval: 'monthly' | 'yearly' | null
-  bulkUploadEnabled: boolean
-  isStoreActive: boolean
-}
-
-export type AdminSubscriptionPlanOption = {
-  id: string
-  planKey: string
-  name: string
-  billingInterval: 'monthly' | 'yearly'
-  productLimit: number
-  bulkUploadEnabled: boolean
 }
 
 function getFallbackAdminDashboardData(): AdminDashboardData {
   return {
     mrr: 0,
-    activeVendors: 0,
-    churnRate: 0,
     activeBuyers: 0,
-    pendingVendorActivations: 0,
-    moderationThroughput: 0,
-    pastDueAccounts: 0,
+    totalProducts: 0,
+    totalOrders: 0,
     reviewSlaLabel: 'No data',
-    billingHealthLabel: 'No data',
-    vendorGrowthLabel: 'No data',
     mrrTrend: '0%',
-    vendorTrend: '0%',
-    churnTrend: '0%',
     buyerTrend: '0%',
     mrrData: [],
     actionRequired: {
-      vendorActivations: 0,
-      planManagement: 0,
       productModeration: 0,
     },
   }
@@ -211,25 +162,10 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
     const supabase = getSupabaseAdmin()
 
     const [
-      vendorProfilesResult,
-      storesResult,
-      subscriptionsResult,
       buyersCountResult,
       productsCountResult,
+      ordersCountResult,
     ] = await Promise.all([
-      supabase
-        .from('profiles')
-        .select('id, email, full_name, company_name, created_at')
-        .eq('role', 'vendor')
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('stores')
-        .select('id, vendor_id, store_name, is_active, created_at')
-        .order('created_at', { ascending: true }),
-      supabase
-        .from('vendor_subscriptions')
-        .select('vendor_id, status, created_at, billing_interval, current_period_end, subscription_plans(name, price, billing_interval)')
-        .order('created_at', { ascending: true }),
       supabase
         .from('profiles')
         .select('id', { count: 'exact', head: true })
@@ -237,242 +173,54 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       supabase
         .from('products')
         .select('id', { count: 'exact', head: true }),
+      supabase
+        .from('orders')
+        .select('id', { count: 'exact', head: true }),
     ])
 
-    if (vendorProfilesResult.error) throw new Error(vendorProfilesResult.error.message)
-    if (storesResult.error) throw new Error(storesResult.error.message)
-    if (subscriptionsResult.error) throw new Error(subscriptionsResult.error.message)
     if (buyersCountResult.error) throw new Error(buyersCountResult.error.message)
     if (productsCountResult.error) throw new Error(productsCountResult.error.message)
-
-    const vendorProfiles = (vendorProfilesResult.data ?? []) as RawProfile[]
-    const stores = (storesResult.data ?? []) as RawStore[]
-    const subscriptions = (subscriptionsResult.data ?? []) as RawSubscription[]
-    const latestSubscriptions = getLatestSubscriptions(subscriptions)
-    const latestSubscriptionList = Array.from(latestSubscriptions.values())
-
-    const activeVendors = stores.filter((store) => store.is_active).length
-    const pastDueAccounts = latestSubscriptionList.filter((subscription) => subscription.status === 'past_due').length
-    const committedSubscriptions = latestSubscriptionList.filter(
-      (subscription) => subscription.status === 'active' || subscription.status === 'trialing'
-    )
-    const mrr = committedSubscriptions.reduce((sum, subscription) => sum + monthlyRevenueAmount(subscription), 0)
-    const moderationThroughput = 100
-
-    const pendingVendorActivations = vendorProfiles.filter((profile) => {
-      const store = stores.find((entry) => entry.vendor_id === profile.id)
-      const subscription = latestSubscriptions.get(profile.id)
-
-      return !store || !store.is_active || !subscription || (subscription.status !== 'active' && subscription.status !== 'trialing')
-    }).length
-
-    const churnBase = vendorProfiles.length || 1
-    const churnRate = Number(((pastDueAccounts / churnBase) * 100).toFixed(1))
+    if (ordersCountResult.error) throw new Error(ordersCountResult.error.message)
 
     const now = new Date()
     const currentMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-    const previousMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
 
-    const currentMonthVendors = vendorProfiles.filter((profile) => new Date(profile.created_at) >= currentMonthStart).length
-    const previousMonthVendors = vendorProfiles.filter((profile) => {
-      const createdAt = new Date(profile.created_at)
-      return createdAt >= previousMonthStart && createdAt < currentMonthStart
-    }).length
-
-    const mrrSeries = buildMrrSeries(latestSubscriptionList)
-    const currentMrrPoint = mrrSeries[mrrSeries.length - 1]?.mrr ?? 0
-    const previousMrrPoint = mrrSeries[mrrSeries.length - 2]?.mrr ?? 0
+    // Generate simple MRR data (placeholder - would need actual revenue tracking)
+    const mrrData = Array.from({ length: 6 }, (_, i) => {
+      const monthDate = new Date(now.getFullYear(), now.getMonth() - 5 + i, 1)
+      return {
+        name: monthDate.toLocaleString('en-US', { month: 'short' }),
+        mrr: 0,
+      }
+    })
 
     return {
-      mrr: Math.round(mrr),
-      activeVendors,
-      churnRate,
+      mrr: 0,
       activeBuyers: buyersCountResult.count ?? 0,
-      pendingVendorActivations,
-      moderationThroughput,
-      pastDueAccounts,
-      reviewSlaLabel: pendingVendorActivations > 0 ? `${pendingVendorActivations} queued` : 'Clear',
-      billingHealthLabel: pastDueAccounts > 0 ? `Watch ${pastDueAccounts}` : 'Healthy',
-      vendorGrowthLabel: currentMonthVendors >= previousMonthVendors ? 'Positive' : 'Softening',
-      mrrTrend: formatPercent(computePeriodChange(currentMrrPoint, previousMrrPoint)),
-      vendorTrend: formatPercent(computePeriodChange(currentMonthVendors, previousMonthVendors)),
-      churnTrend: pastDueAccounts > 0 ? `+${churnRate}%` : '0%',
-      buyerTrend: `${buyersCountResult.count ?? 0} total`,
-      mrrData: mrrSeries,
+      totalProducts: productsCountResult.count ?? 0,
+      totalOrders: ordersCountResult.count ?? 0,
+      reviewSlaLabel: 'No data',
+      mrrTrend: '0%',
+      buyerTrend: '0%',
+      mrrData,
       actionRequired: {
-        vendorActivations: pendingVendorActivations,
-        planManagement: pastDueAccounts,
         productModeration: 0,
       },
     }
   } catch (error) {
-    console.warn('Falling back to admin dashboard defaults', error)
+    console.warn('Failed to fetch admin dashboard data:', error)
     return getFallbackAdminDashboardData()
   }
 }
 
 export async function getAdminAnalyticsData() {
   const dashboardData = await getAdminDashboardData();
-  
-  // Build a default vendor growth series based on DB profiles if possible
-  // For now, reuse buildMrrSeries logic for a simple growth indicator
+
   return {
-    vendorGrowth: dashboardData.mrrData.map(point => ({
-      name: point.name,
-      vendors: Math.round(point.mrr / 50) || 0 // Very rough estimate for visualization
-    })),
     stats: [
-      { name: 'Avg. Order Value', value: '$0.00', trend: '0%', isUp: true },
-      { name: 'Customer LTV', value: '$0.00', trend: '0%', isUp: true },
-      { name: 'Churn Rate', value: `${dashboardData.churnRate}%`, trend: dashboardData.churnTrend, isUp: dashboardData.churnRate < 5 },
+      { name: 'Total Products', value: dashboardData.totalProducts.toString(), trend: '0%', isUp: true },
+      { name: 'Total Orders', value: dashboardData.totalOrders.toString(), trend: '0%', isUp: true },
+      { name: 'Active Buyers', value: dashboardData.activeBuyers.toString(), trend: dashboardData.buyerTrend, isUp: true },
     ]
   };
-}
-
-function getVendorStatus(store: RawStore | undefined, subscription: RawSubscription | undefined) {
-  if (!store) return 'Pending store setup'
-  if (!store.is_active) return 'Inactive store'
-  if (!subscription) return 'Subscription pending'
-  if (subscription.status === 'past_due') return 'Past due'
-  if (subscription.status === 'trialing') return 'Trialing'
-  if (subscription.status === 'active') return 'Active'
-  return 'Needs review'
-}
-
-function getProductAccessState(store: RawStore | undefined, subscription: RawSubscription | undefined) {
-  if (!store || !store.is_active) {
-    return {
-      state: 'blocked' as const,
-      label: 'Store inactive',
-    }
-  }
-
-  if (!subscription) {
-    return {
-      state: 'pending' as const,
-      label: 'Plan required',
-    }
-  }
-
-  if (subscription.status === 'active' || subscription.status === 'trialing') {
-    return {
-      state: 'approved' as const,
-      label: 'Can add products',
-    }
-  }
-
-  if (subscription.status === 'past_due') {
-    return {
-      state: 'blocked' as const,
-      label: 'Billing issue',
-    }
-  }
-
-  return {
-    state: 'pending' as const,
-    label: 'Awaiting approval',
-  }
-}
-
-export async function getAdminSubscriptionPlanOptions(): Promise<AdminSubscriptionPlanOption[]> {
-  try {
-    const supabase = getSupabaseAdmin()
-    const { data, error } = await supabase
-      .from('subscription_plans')
-      .select('id, plan_key, name, billing_interval, product_limit, bulk_upload_enabled')
-      .order('price', { ascending: true })
-
-    if (error) {
-      throw new Error(error.message)
-    }
-
-    return (data ?? []).map((plan) => ({
-      id: String(plan.id),
-      planKey: String(plan.plan_key),
-      name: String(plan.name),
-      billingInterval: plan.billing_interval as 'monthly' | 'yearly',
-      productLimit: Number(plan.product_limit ?? 0),
-      bulkUploadEnabled: Boolean(plan.bulk_upload_enabled),
-    }))
-  } catch (error) {
-    console.warn('Unable to load subscription plans for admin queue', error)
-    return []
-  }
-}
-
-export async function getAdminVendorQueue(): Promise<AdminVendorQueueItem[]> {
-  try {
-    const supabase = getSupabaseAdmin()
-
-    const [vendorProfilesResult, storesResult, subscriptionsResult] = await Promise.all([
-      supabase
-        .from('profiles')
-        .select('id, email, full_name, company_name, created_at')
-        .eq('role', 'vendor')
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('stores')
-        .select('id, vendor_id, store_name, is_active, created_at')
-        .order('created_at', { ascending: false }),
-      supabase
-        .from('vendor_subscriptions')
-        .select('id, vendor_id, status, created_at, billing_interval, current_period_end, subscription_plans(plan_key, name, price, billing_interval, product_limit, bulk_upload_enabled)')
-        .order('created_at', { ascending: false }),
-    ])
-
-    if (vendorProfilesResult.error) throw new Error(vendorProfilesResult.error.message)
-    if (storesResult.error) throw new Error(storesResult.error.message)
-    if (subscriptionsResult.error) throw new Error(subscriptionsResult.error.message)
-
-    const vendorProfiles = (vendorProfilesResult.data ?? []) as RawProfile[]
-    const stores = (storesResult.data ?? []) as RawStore[]
-    const latestSubscriptions = getLatestSubscriptions((subscriptionsResult.data ?? []) as RawSubscription[])
-
-    return vendorProfiles.map((profile) => {
-      const store = stores.find((entry) => entry.vendor_id === profile.id)
-      const subscription = latestSubscriptions.get(profile.id)
-      const plan = subscription ? getPlanDetails(subscription) : null
-      const name = store?.store_name || profile.company_name || profile.full_name || profile.email || 'Unnamed vendor'
-      const productAccess = getProductAccessState(store, subscription)
-      const rawPlan = subscription
-        ? (Array.isArray(subscription.subscription_plans)
-            ? subscription.subscription_plans[0]
-            : subscription.subscription_plans)
-        : null
-
-      return {
-        id: profile.id,
-        profileId: profile.id,
-        storeId: store?.id ?? null,
-        name,
-        email: profile.email ?? 'No email on file',
-        country: 'Not provided',
-        appliedDate: store?.created_at || profile.created_at,
-        type: store ? 'Storefront' : 'Profile only',
-        subscriptionId: subscription?.id ?? null,
-        subscriptionPlanKey:
-          rawPlan && typeof rawPlan === 'object' && 'plan_key' in rawPlan
-            ? String(rawPlan.plan_key)
-            : null,
-        subscriptionName: plan?.name ?? 'No plan',
-        subscriptionStatus: subscription?.status ?? 'inactive',
-        status: getVendorStatus(store, subscription),
-        productAccess: productAccess.state,
-        productAccessLabel: productAccess.label,
-        productLimit:
-          rawPlan && typeof rawPlan === 'object' && 'product_limit' in rawPlan
-            ? Number(rawPlan.product_limit ?? 0)
-            : 0,
-        billingInterval: subscription?.billing_interval ?? null,
-        bulkUploadEnabled:
-          rawPlan && typeof rawPlan === 'object' && 'bulk_upload_enabled' in rawPlan
-            ? Boolean(rawPlan.bulk_upload_enabled)
-            : false,
-        isStoreActive: store?.is_active ?? false,
-      }
-    })
-  } catch (error) {
-    console.warn('Unable to load admin vendor queue', error)
-    return []
-  }
 }

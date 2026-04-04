@@ -19,7 +19,7 @@ const outfit = Outfit({
 
 export const metadata: Metadata = {
   title: 'Tooldocker | Industrial Marketplace',
-  description: 'The premium multivendor industrial marketplace for heavy-duty tools and machinery.',
+  description: 'The premium industrial marketplace for heavy-duty tools and machinery.',
   icons: {
     icon: '/images/tooldocker.png',
     apple: '/images/tooldocker.png',

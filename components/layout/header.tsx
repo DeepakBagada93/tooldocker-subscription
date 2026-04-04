@@ -96,7 +96,6 @@ export function Header({ initialCategories }: { initialCategories: Category[] })
   const getDashboardLink = () => {
     if (!isLoggedIn) return '/login';
     if (userRole === 'admin') return '/admin';
-    if (userRole === 'vendor') return '/vendor/dashboard';
     return '/buyer';
   };
 
@@ -237,7 +236,6 @@ export function Header({ initialCategories }: { initialCategories: Category[] })
               </AnimatePresence>
             </div>
             <Link href="/search" className="text-slate-700 hover:text-primary transition-colors">Shop</Link>
-            <Link href="/buyer/vendors" className="text-slate-700 hover:text-primary transition-colors">Vendors</Link>
           </nav>
 
           {/* Search Bar */}
@@ -363,9 +361,6 @@ export function Header({ initialCategories }: { initialCategories: Category[] })
                 <div className="grid gap-2 border-t border-slate-200 pt-2">
                   <Link href="/search" className="py-2 text-sm text-slate-700 hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>
                     Shop
-                  </Link>
-                  <Link href="/buyer/vendors" className="py-2 text-sm text-slate-700 hover:text-primary" onClick={() => setIsMobileMenuOpen(false)}>
-                    Vendors
                   </Link>
                 </div>
               </nav>

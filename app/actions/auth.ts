@@ -7,7 +7,6 @@ import { headers } from 'next/headers'
 import {
     type AppRole,
     ensureUserProfile,
-    ensureVendorStoreForUser,
     normalizeAppRole,
 } from '@/lib/supabase/profiles'
 import {
@@ -66,8 +65,6 @@ export async function login(formData: FormData) {
     const profile = await ensureUserProfile(supabase, activeUser)
     const role = normalizeAppRole(profile?.role ?? activeUser?.user_metadata?.role)
 
-    await ensureVendorStoreForUser(supabase, activeUser, role)
-
     revalidatePath('/', 'layout')
     redirect(resolvePostLoginRoute(role, redirectTo))
 }
@@ -100,7 +97,7 @@ export async function signup(formData: FormData) {
     })
 
     if (error) {
-        return redirect('/register/vendor?message=Could not sign up user: ' + error.message)
+        return redirect('/register?message=Could not sign up user: ' + error.message)
     }
 
     return redirect('/login?message=Registration successful! Please check your email to verify your account before logging in.')

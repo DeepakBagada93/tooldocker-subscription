@@ -2,10 +2,8 @@ import { DashboardLayout, type DashboardNavItem } from '@/components/layout/dash
 
 const ADMIN_ITEMS: DashboardNavItem[] = [
   { name: 'Dashboard', href: '/admin', icon: 'layout-dashboard' },
-  { name: 'Vendors', href: '/admin/vendors', icon: 'shield-check' },
   { name: 'Products', href: '/admin/products', icon: 'package' },
   { name: 'Category Management', href: '/admin/categories', icon: 'layout-dashboard' },
-  { name: 'Plans & Billing', href: '/admin/commission', icon: 'settings' },
   { name: 'Dispute Resolution', href: '/admin/disputes', icon: 'alert-triangle' },
   { name: 'Role Management', href: '/admin/roles', icon: 'users' },
   { name: 'Analytics', href: '/admin/analytics', icon: 'bar-chart-3' },

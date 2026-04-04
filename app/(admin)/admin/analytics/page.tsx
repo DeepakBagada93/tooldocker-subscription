@@ -1,9 +1,8 @@
 import * as React from 'react';
 import { getAdminAnalyticsData } from '@/lib/admin-dashboard';
-import { AnalyticsCharts } from './analytics-charts';
-import { 
-  Download, 
-  Calendar, 
+import {
+  Download,
+  Calendar,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
@@ -40,8 +39,6 @@ export default async function AnalyticsPage() {
           </div>
         ))}
       </div>
-
-      <AnalyticsCharts vendorGrowth={data.vendorGrowth} />
     </div>
   );
 }

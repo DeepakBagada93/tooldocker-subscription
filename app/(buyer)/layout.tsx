@@ -6,7 +6,6 @@ const BUYER_ITEMS: DashboardNavItem[] = [
   { name: 'Dashboard', href: '/buyer', icon: 'layout-dashboard' },
   { name: 'Order History', href: '/buyer/history', icon: 'history' },
   { name: 'Returns & Disputes', href: '/buyer/disputes', icon: 'message-square' },
-  { name: 'Saved Vendors', href: '/buyer/vendors', icon: 'heart' },
   { name: 'Settings', href: '/buyer/settings', icon: 'settings' },
 ];
 

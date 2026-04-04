@@ -21,7 +21,7 @@ export default function BuyerDashboardPage() {
     { name: 'Active Orders', value: '0', icon: Truck, color: 'text-blue-500', bg: 'bg-blue-50 dark:bg-blue-950/30' },
     { name: 'Completed', value: '0', icon: CheckCircle2, color: 'text-emerald-500', bg: 'bg-emerald-50 dark:bg-emerald-950/30' },
     { name: 'Active RFQs', value: '0', icon: MessageSquare, color: 'text-amber-500', bg: 'bg-amber-50 dark:bg-amber-950/30' },
-    { name: 'Saved Vendors', value: '0', icon: Heart, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-950/30' },
+    { name: 'Wishlist', value: '0', icon: Heart, color: 'text-red-500', bg: 'bg-red-50 dark:bg-red-950/30' },
   ];
 
   return (
@@ -84,15 +84,6 @@ export default function BuyerDashboardPage() {
             <p className="text-xs text-muted-foreground text-center py-4">No active disputes reported.</p>
             <Button variant="outline" size="sm" className="w-full text-xs font-bold uppercase tracking-widest" asChild>
               <Link href="/buyer/disputes">Manage Disputes</Link>
-            </Button>
-          </div>
-
-          {/* Saved Vendors Preview */}
-          <div className="bg-white dark:bg-workshop-dark border rounded-2xl p-6 shadow-sm space-y-4">
-            <h3 className="font-bold uppercase tracking-tighter border-b pb-2">Saved Vendors</h3>
-            <p className="text-xs text-muted-foreground text-center py-4">No vendors saved yet.</p>
-            <Button variant="ghost" size="sm" className="w-full text-xs font-bold uppercase tracking-widest" asChild>
-              <Link href="/buyer/vendors">View All Vendors</Link>
             </Button>
           </div>
         </div>

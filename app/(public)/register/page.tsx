@@ -47,11 +47,6 @@ export default async function RegisterPage(props: { searchParams: Promise<{ [key
               <input type="checkbox" className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" required />
               <span className="text-xs text-muted-foreground">I agree to the <Link href="#" className="font-bold text-primary hover:underline">Terms of Service</Link> and <Link href="#" className="font-bold text-primary hover:underline">Privacy Policy</Link></span>
             </div>
-            <div className="flex items-center gap-3">
-              {/* If checked, value 'vendor' is sent. If unchecked, the signup action defaults to 'buyer' */}
-              <input name="role" type="checkbox" value="vendor" className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary" />
-              <span className="text-xs text-muted-foreground">I want to register as a <span className="font-bold text-primary">Vendor</span></span>
-            </div>
           </div>
 
           <Button type="submit" className="w-full h-12 text-lg font-bold uppercase tracking-tighter" variant="industrial">
@@ -69,10 +64,6 @@ export default async function RegisterPage(props: { searchParams: Promise<{ [key
         <p className="text-center text-sm text-muted-foreground">
           Already have an account?{' '}
           <Link href="/login" className="font-bold text-primary hover:underline">Sign in</Link>
-        </p>
-        <p className="text-center text-sm text-muted-foreground">
-          Need a vendor-ready onboarding flow?{' '}
-          <Link href="/register/vendor" className="font-bold text-primary hover:underline">Apply as a vendor</Link>
         </p>
       </div>
     </div>

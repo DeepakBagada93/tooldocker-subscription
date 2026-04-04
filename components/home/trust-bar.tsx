@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Hammer, ShieldCheck, Truck, Clock } from 'lucide-react';
+import { Boxes, CreditCard, ShieldCheck, Sparkles } from 'lucide-react';
 
 export function TrustBar() {
     return (
@@ -9,10 +9,10 @@ export function TrustBar() {
             <div className="container mx-auto px-4">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {[
-                        { icon: ShieldCheck, title: "Verified vendors", desc: "Carefully reviewed sellers" },
-                        { icon: Truck, title: "Reliable delivery", desc: "Logistics built for bulky orders" },
-                        { icon: Clock, title: "Simple checkout", desc: "Fast and calm buying flow" },
-                        { icon: Hammer, title: "Expert guidance", desc: "Support for serious buyers" }
+                        { icon: ShieldCheck, title: "Quality verified products", desc: "Every product checked for quality and reliability" },
+                        { icon: Boxes, title: "Category-led discovery", desc: "Browse tools, machinery, PPE, and site supplies faster" },
+                        { icon: CreditCard, title: "India-ready payments", desc: "Designed for UPI, cards, and net banking flows" },
+                        { icon: Sparkles, title: "Smart product search", desc: "Find exactly what you need for your projects" }
                     ].map((item, index) => (
                         <motion.div
                             key={index}

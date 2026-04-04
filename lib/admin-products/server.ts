@@ -66,23 +66,14 @@ export async function getAdminProductLookups() {
 export async function getAdminProductLookupsWithClient(supabase: SupabaseLikeClient) {
   await assertAdmin(supabase);
 
-  const [{ data: categories }, { data: stores }, { data: skuRows }] = await Promise.all([
+  const [{ data: categories }, { data: skuRows }] = await Promise.all([
     supabase.from('categories').select('id, name').order('name'),
-    supabase.from('stores').select('id, vendor_id, store_name, is_active').order('store_name'),
     supabase.from('products').select('sku').not('sku', 'is', null),
   ]);
 
   const categoryOptions: AdminProductOption[] = (categories ?? []).map((category: any) => ({
     id: category.id,
     label: category.name,
-  }));
-
-  const vendorOptions: AdminVendorOption[] = (stores ?? []).map((store: any) => ({
-    id: store.vendor_id,
-    vendorId: store.vendor_id,
-    storeId: store.id,
-    label: store.store_name,
-    isActive: Boolean(store.is_active),
   }));
 
   const existingSkus = new Set(
@@ -94,7 +85,7 @@ export async function getAdminProductLookupsWithClient(supabase: SupabaseLikeCli
   return {
     supabase,
     categoryOptions,
-    vendorOptions,
+    vendorOptions: [],
     existingSkus,
   };
 }
@@ -107,15 +98,14 @@ export async function getAdminProductsPageData() {
 export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeClient) {
   await assertAdmin(supabase);
 
-  const [productsResult, categoriesResult, storesResult, importsResult, previewProducts] = await Promise.all([
+  const [productsResult, categoriesResult, importsResult, previewProducts] = await Promise.all([
     supabase
       .from('products')
-      .select('id, title, description, specifications, seo_title, seo_description, vendor_id, store_id, category_id, price, sale_price, sku, stock_quantity, inventory_count, condition, brand, weight, dimensions, images, tags, is_published, created_at, categories(name), stores(store_name)')
+      .select('id, title, description, specifications, seo_title, seo_description, category_id, price, sale_price, sku, stock_quantity, inventory_count, condition, brand, weight, dimensions, images, tags, is_published, created_at, categories(name)')
       .is('deleted_at', null)
       .order('created_at', { ascending: false })
       .limit(500),
     supabase.from('categories').select('id, name').order('name'),
-    supabase.from('stores').select('id, vendor_id, store_name, is_active').order('store_name'),
     supabase
       .from('product_imports')
       .select('id, file_name, total_products, success_count, failed_count, status, source_type, created_at')
@@ -131,9 +121,9 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
     specifications: isStringRecord(product.specifications) ? product.specifications : {},
     seoTitle: product.seo_title ?? '',
     seoDescription: product.seo_description ?? '',
-    vendorId: product.vendor_id ?? null,
-    vendorName: product.stores?.store_name ?? 'Unknown vendor',
-    storeId: product.store_id ?? null,
+    vendorId: null,
+    vendorName: 'Tooldocker',
+    storeId: null,
     categoryId: product.category_id ?? null,
     categoryName: product.categories?.name ?? 'Uncategorized',
     price: Number(product.price ?? 0),
@@ -160,14 +150,6 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
     label: category.name,
   }));
 
-  const vendors: AdminVendorOption[] = (storesResult.data ?? []).map((store: any) => ({
-    id: store.vendor_id,
-    vendorId: store.vendor_id,
-    storeId: store.id,
-    label: store.store_name,
-    isActive: Boolean(store.is_active),
-  }));
-
   const importHistory: AdminImportHistoryItem[] = (importsResult.data ?? []).map((item: any) => ({
     id: item.id,
     fileName: item.file_name,
@@ -182,7 +164,7 @@ export async function getAdminProductsPageDataWithClient(supabase: SupabaseLikeC
   return {
     products,
     categories,
-    vendors,
+    vendors: [],
     importHistory,
   };
 }
