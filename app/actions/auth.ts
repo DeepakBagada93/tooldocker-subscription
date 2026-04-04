@@ -20,14 +20,12 @@ function getLoginRouteForRedirectTarget(redirectTo: FormDataEntryValue | null) {
     }
 
     if (redirectTo.startsWith('/admin')) return '/tooldocker-admin/login'
-    if (redirectTo.startsWith('/vendor')) return '/vendor/login'
     if (redirectTo.startsWith('/buyer')) return '/buyer/login'
     return '/login'
 }
 
 function getDefaultPostLoginRoute(role: AppRole) {
     if (role === 'admin') return '/admin'
-    if (role === 'vendor') return '/vendor/dashboard'
     return '/buyer'
 }
 
@@ -37,7 +35,6 @@ function resolvePostLoginRoute(role: AppRole, redirectTo: FormDataEntryValue | n
     }
 
     if (role === 'admin' && redirectTo.startsWith('/admin')) return '/admin'
-    if (role === 'vendor' && redirectTo.startsWith('/vendor')) return '/vendor/dashboard'
     if (role === 'buyer' && redirectTo.startsWith('/buyer')) return '/buyer'
 
     return getDefaultPostLoginRoute(role)
@@ -77,7 +74,7 @@ export async function signup(formData: FormData) {
 
     const email = formData.get('email') as string
     const password = formData.get('password') as string
-    const role = formData.get('role') as string || 'buyer' // buyer or vendor
+    const role = formData.get('role') as string || 'buyer'
     const fullName = formData.get('full_name') as string
     const companyName = formData.get('company_name') as string
     const phone = formData.get('phone') as string
