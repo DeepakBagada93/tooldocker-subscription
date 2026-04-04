@@ -106,7 +106,7 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
                 <p className="mt-2 text-sm text-white/70">Monthly recurring revenue currently committed across active vendor plans.</p>
               </div>
               <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10">
-                {data.pastDueAccounts > 0 ? 'Watchlist' : 'Healthy'}
+                Healthy
               </Badge>
             </div>
             <div className="mt-6 space-y-4">
