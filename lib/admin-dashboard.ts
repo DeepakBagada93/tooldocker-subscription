@@ -13,9 +13,11 @@ export type AdminDashboardData = {
   reviewSlaLabel: string
   mrrTrend: string
   buyerTrend: string
+  billingHealthLabel: string
   mrrData: MonthlyPoint[]
   actionRequired: {
     productModeration: number
+    planManagement: number
   }
 }
 
@@ -28,9 +30,11 @@ function getFallbackAdminDashboardData(): AdminDashboardData {
     reviewSlaLabel: 'No data',
     mrrTrend: '0%',
     buyerTrend: '0%',
+    billingHealthLabel: 'No data',
     mrrData: [],
     actionRequired: {
       productModeration: 0,
+      planManagement: 0,
     },
   }
 }
@@ -202,9 +206,11 @@ export async function getAdminDashboardData(): Promise<AdminDashboardData> {
       reviewSlaLabel: 'No data',
       mrrTrend: '0%',
       buyerTrend: '0%',
+      billingHealthLabel: 'No data',
       mrrData,
       actionRequired: {
         productModeration: 0,
+        planManagement: 0,
       },
     }
   } catch (error) {

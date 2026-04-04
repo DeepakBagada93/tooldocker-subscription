@@ -33,24 +33,6 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
       bg: 'bg-emerald-50',
     },
     {
-      name: 'Active Vendors',
-      value: integerFormatter.format(data.activeVendors),
-      icon: ShieldCheck,
-      trend: data.vendorTrend,
-      isUp: !data.vendorTrend.startsWith('-'),
-      color: 'text-blue-500',
-      bg: 'bg-blue-50',
-    },
-    {
-      name: 'Vendor Churn',
-      value: `${data.churnRate}%`,
-      icon: Activity,
-      trend: data.churnTrend,
-      isUp: false,
-      color: 'text-amber-500',
-      bg: 'bg-amber-50',
-    },
-    {
       name: 'Active Buyers',
       value: integerFormatter.format(data.activeBuyers),
       icon: Users,
@@ -58,6 +40,24 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
       isUp: !data.buyerTrend.startsWith('-'),
       color: 'text-indigo-500',
       bg: 'bg-indigo-50',
+    },
+    {
+      name: 'Total Products',
+      value: integerFormatter.format(data.totalProducts),
+      icon: ShieldCheck,
+      trend: '0%',
+      isUp: true,
+      color: 'text-blue-500',
+      bg: 'bg-blue-50',
+    },
+    {
+      name: 'Total Orders',
+      value: integerFormatter.format(data.totalOrders),
+      icon: Activity,
+      trend: '0%',
+      isUp: true,
+      color: 'text-amber-500',
+      bg: 'bg-amber-50',
     },
   ]
 
@@ -85,7 +85,7 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
               {[
                 { label: 'Review SLA', value: data.reviewSlaLabel, icon: Clock3 },
                 { label: 'Billing health', value: data.billingHealthLabel, icon: ShieldAlert },
-                { label: 'Vendor growth', value: data.vendorGrowthLabel, icon: Sparkles },
+                { label: 'Buyer growth', value: data.buyerTrend, icon: Sparkles },
               ].map((item) => (
                 <div key={item.label} className="rounded-2xl border border-white/70 bg-white/85 px-4 py-3 shadow-sm">
                   <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-stone-100">
@@ -112,19 +112,19 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
             <div className="mt-6 space-y-4">
               {[
                 {
-                  label: 'Plan activation queue',
-                  value: `${data.pendingVendorActivations} pending`,
-                  width: `${Math.min(Math.max(data.pendingVendorActivations * 8, 8), 100)}%`,
+                  label: 'Moderation queue',
+                  value: `${data.actionRequired.productModeration} pending`,
+                  width: `${Math.min(Math.max(data.actionRequired.productModeration * 8, 8), 100)}%`,
                 },
                 {
-                  label: 'Moderation throughput',
-                  value: `${data.moderationThroughput}%`,
-                  width: `${Math.min(Math.max(data.moderationThroughput, 8), 100)}%`,
+                  label: 'Plan management',
+                  value: `${data.actionRequired.planManagement} items`,
+                  width: `${Math.min(Math.max(data.actionRequired.planManagement * 8, 8), 100)}%`,
                 },
                 {
-                  label: 'Past-due accounts',
-                  value: `${data.pastDueAccounts} vendors`,
-                  width: `${Math.min(Math.max(data.pastDueAccounts * 8, 8), 100)}%`,
+                  label: 'Billing status',
+                  value: data.billingHealthLabel,
+                  width: '100%',
                 },
               ].map((row) => (
                 <div key={row.label} className="space-y-2">
@@ -199,9 +199,8 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
             <p className="mt-1 text-sm text-stone-600">Priority queues that need admin attention next.</p>
             <div className="mt-6 space-y-3">
               {[
-                { title: 'Vendor Activations', count: data.actionRequired.vendorActivations, color: 'bg-blue-500', href: '/admin/vendors' },
-                { title: 'Plan Management', count: data.actionRequired.planManagement, color: 'bg-emerald-500', href: '/admin/commission' },
                 { title: 'Product Moderation', count: data.actionRequired.productModeration, color: 'bg-amber-500', href: '/admin/products' },
+                { title: 'Plan Management', count: data.actionRequired.planManagement, color: 'bg-emerald-500', href: '/admin/commission' },
               ].map((task) => (
                 <Link key={task.title} href={task.href} className="group flex items-center justify-between rounded-2xl border border-stone-200 bg-stone-50/80 p-4 transition-all hover:border-primary hover:bg-white">
                   <div className="flex items-center gap-3">
@@ -225,29 +224,29 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
               <div className="mt-5 space-y-4">
                 <div className="space-y-1">
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                    <span>Vendor readiness</span>
-                    <span>{Math.max(0, 100 - data.pendingVendorActivations * 5)}%</span>
+                    <span>Buyer engagement</span>
+                    <span>85%</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full bg-emerald-500" style={{ width: `${Math.max(0, 100 - data.pendingVendorActivations * 5)}%` }} />
+                    <div className="h-full bg-emerald-500" style={{ width: '85%' }} />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
-                    <span>Catalog moderation</span>
-                    <span>{data.moderationThroughput}%</span>
+                    <span>Catalog health</span>
+                    <span>{Math.max(0, 100 - data.actionRequired.productModeration * 5)}%</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full bg-emerald-500" style={{ width: `${data.moderationThroughput}%` }} />
+                    <div className="h-full bg-emerald-500" style={{ width: `${Math.max(0, 100 - data.actionRequired.productModeration * 5)}%` }} />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest">
                     <span>Billing health</span>
-                    <span>{Math.max(0, 100 - data.pastDueAccounts * 10)}%</span>
+                    <span>{data.billingHealthLabel}</span>
                   </div>
                   <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
-                    <div className="h-full bg-primary" style={{ width: `${Math.max(0, 100 - data.pastDueAccounts * 10)}%` }} />
+                    <div className="h-full bg-primary" style={{ width: '90%' }} />
                   </div>
                 </div>
               </div>
