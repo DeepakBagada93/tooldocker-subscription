@@ -9,8 +9,7 @@ import Link from 'next/link';
 export function CTASection() {
     return (
         <section className="bg-white py-20">
-            <div className="container mx-auto px-4">
-                <div className="mx-auto max-w-6xl">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="relative overflow-hidden rounded-3xl bg-[#c7112c]">
                         {/* Background pattern */}
                         <div className="absolute inset-0 opacity-[0.06]">
@@ -86,7 +85,6 @@ export function CTASection() {
                             </motion.div>
                         </div>
                     </div>
-                </div>
             </div>
         </section>
     );

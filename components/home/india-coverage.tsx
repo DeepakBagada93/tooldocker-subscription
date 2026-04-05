@@ -1,186 +1,143 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { MapPin, Building2, Users, Truck } from 'lucide-react';
+import { MapPin, Building2, Users, Truck, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
 
 const stats = [
-    { icon: MapPin, value: '28', label: 'States covered' },
-    { icon: Building2, value: '500+', label: 'Verified sellers' },
-    { icon: Users, value: '10K+', label: 'Active buyers' },
-    { icon: Truck, value: 'Same day', label: 'Delivery in metros' },
-];
-
-// Dot positions as percentage (top/left) for overlay on image
-const cityDots = [
-    // Metros (larger)
-    { top: '18%', left: '44%', size: 'w-5 h-5', pulse: true },
-    { top: '42%', left: '28%', size: 'w-6 h-6', pulse: true },
-    { top: '48%', left: '31%', size: 'w-4 h-4', pulse: true },
-    { top: '66%', left: '34%', size: 'w-5 h-5', pulse: true },
-    { top: '65%', left: '40%', size: 'w-5 h-5', pulse: true },
-    { top: '58%', left: '36%', size: 'w-4 h-4', pulse: true },
-    { top: '44%', left: '60%', size: 'w-5 h-5', pulse: true },
-    // Other cities (smaller)
-    { top: '38%', left: '24%', size: 'w-3 h-3' },
-    { top: '46%', left: '40%', size: 'w-3 h-3' },
-    { top: '40%', left: '48%', size: 'w-2 h-2' },
-    { top: '36%', left: '44%', size: 'w-2 h-2' },
-    { top: '34%', left: '63%', size: 'w-2 h-2' },
-    { top: '46%', left: '56%', size: 'w-2 h-2' },
-    { top: '50%', left: '53%', size: 'w-2 h-2' },
-    { top: '74%', left: '37%', size: 'w-3 h-3' },
-    { top: '39%', left: '33%', size: 'w-2 h-2' },
-    { top: '41%', left: '39%', size: 'w-2 h-2' },
-    { top: '28%', left: '46%', size: 'w-2 h-2' },
-    { top: '36%', left: '30%', size: 'w-2 h-2' },
-    { top: '54%', left: '44%', size: 'w-2 h-2' },
-    { top: '55%', left: '34%', size: 'w-2 h-2' },
-    { top: '32%', left: '26%', size: 'w-2 h-2' },
+    { icon: MapPin, value: '28', label: 'States covered', growth: '+5 this year' },
+    { icon: Building2, value: '500+', label: 'Verified sellers', growth: '+120 new' },
+    { icon: Users, value: '10K+', label: 'Active buyers', growth: '+3K this quarter' },
+    { icon: Truck, value: 'Same day', label: 'Delivery in metros', growth: '25 cities' },
 ];
 
 export function IndiaCoverage() {
     return (
-        <section className="bg-white py-20">
-            <div className="container mx-auto px-4">
-                <div className="mx-auto max-w-6xl">
-                    <div className="relative overflow-hidden rounded-3xl border border-slate-100 bg-white p-8 sm:p-10 lg:p-14 xl:p-16 shadow-sm">
-                        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
-                            {/* Left: Text content */}
-                            <motion.div
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                className="space-y-6"
-                            >
-                                {/* Badge */}
-                                <div className="flex items-center gap-3">
-                                    <div className="flex h-9 w-14 items-center justify-center rounded-lg bg-[#c7112c]">
-                                        <div className="flex h-2.5 w-2.5 items-center justify-center rounded-full bg-white" />
-                                    </div>
-                                    <div>
-                                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-900">Proudly Indian</div>
-                                        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Made for India</div>
-                                    </div>
-                                </div>
+        <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-[#fff5f6] py-24 lg:py-32">
+            {/* Background decorations */}
+            <div className="absolute inset-0 opacity-[0.02]">
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle at 2px 2px, #c7112c 1px, transparent 0)',
+                        backgroundSize: '40px 40px',
+                    }}
+                />
+            </div>
 
-                                {/* Heading */}
-                                <h2 className="text-3xl font-bold leading-tight tracking-tight text-slate-900 sm:text-4xl">
-                                    India's leader in
-                                    <span className="block text-[#c7112c]">industrial supplies.</span>
-                                </h2>
+            <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                {/* Top badge */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mx-auto mb-12 flex w-fit items-center gap-3 rounded-full bg-white px-6 py-3 shadow-lg shadow-slate-900/5"
+                >
+                    <div className="flex h-10 w-16 items-center justify-center rounded-full bg-gradient-to-r from-[#c7112c] to-[#ff4d6a]">
+                        <div className="h-2 w-2 rounded-full bg-white" />
+                    </div>
+                    <div>
+                        <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-900">Proudly Indian</div>
+                        <div className="text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500">Made for India</div>
+                    </div>
+                </motion.div>
 
-                                {/* Subtitle */}
-                                <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#c7112c]">
-                                    Serving over 10,000+ customers
+                {/* Main heading */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mx-auto mb-16 max-w-4xl text-center"
+                >
+                    <h2 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
+                        India's leader in{' '}
+                        <span className="relative inline-block">
+                            <span className="relative z-10 bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                                industrial supplies
+                            </span>
+                            <span className="absolute bottom-1 left-0 h-2 w-full bg-[#ff4d6a]/10" aria-hidden="true" />
+                        </span>
+                    </h2>
+                    <p className="text-lg font-medium uppercase tracking-[0.12em] text-[#c7112c]">
+                        Serving over 10,000+ customers across the nation
+                    </p>
+                </motion.div>
+
+                {/* Hero image section */}
+                <motion.div
+                    initial={{ opacity: 0, y: 40 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-100px' }}
+                    transition={{ duration: 0.7 }}
+                    className="relative mb-16 overflow-hidden rounded-3xl"
+                >
+                    <div className="relative h-[400px] w-full lg:h-[500px]">
+                        <Image
+                            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1400&q=80"
+                            alt="India industrial growth"
+                            fill
+                            className="object-cover"
+                            priority
+                            referrerPolicy="no-referrer"
+                        />
+                        {/* Gradient overlays */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#c7112c]/30 to-[#ff4d6a]/20" />
+
+                        {/* Overlay content */}
+                        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
+                            <div className="max-w-3xl space-y-4">
+                                <p className="text-lg leading-relaxed text-white/90 md:text-xl">
+                                    Tooldocker brings together quality tools, machinery, and project supplies from verified sellers across India. Built for contractors, builders, and procurement teams who need reliable products fast.
                                 </p>
-
-                                {/* Description */}
-                                <div className="space-y-4 text-sm leading-7 text-slate-500">
-                                    <p>
-                                        Tooldocker brings together quality tools, machinery, and project supplies from verified sellers across India. Our platform is built for contractors, builders, and procurement teams who need reliable products fast.
-                                    </p>
-                                    <p>
-                                        We are laser focused on creating outstanding experiences by providing the most dependable supply chain solutions that enable our customers to thrive.
-                                    </p>
-                                </div>
-
-                                {/* Stats grid */}
-                                <div className="grid grid-cols-2 gap-x-6 gap-y-4 pt-2">
-                                    {stats.map((stat, idx) => {
-                                        const Icon = stat.icon;
-                                        return (
-                                            <motion.div
-                                                key={stat.label}
-                                                initial={{ opacity: 0, y: 10 }}
-                                                whileInView={{ opacity: 1, y: 0 }}
-                                                viewport={{ once: true }}
-                                                transition={{ delay: idx * 0.08 }}
-                                                className="flex items-center gap-3"
-                                            >
-                                                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#c7112c]/10">
-                                                    <Icon className="h-4 w-4 text-[#c7112c]" />
-                                                </div>
-                                                <div>
-                                                    <div className="text-sm font-bold text-slate-900">{stat.value}</div>
-                                                    <div className="text-[11px] text-slate-400">{stat.label}</div>
-                                                </div>
-                                            </motion.div>
-                                        );
-                                    })}
-                                </div>
-                            </motion.div>
-
-                            {/* Right: India map image with dot overlay */}
-                            <motion.div
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: 0.2 }}
-                                className="relative flex items-center justify-center"
-                            >
-                                <div className="relative w-full max-w-[340px]">
-                                    {/* Map image */}
-                                    <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl bg-[#f8fafc] border border-slate-100">
-                                        <Image
-                                            src="https://images.unsplash.com/photo-1524661135-423995f22d0b?w=600&q=80"
-                                            alt="India map"
-                                            fill
-                                            className="object-cover"
-                                            referrerPolicy="no-referrer"
-                                        />
-                                        <div className="absolute inset-0 bg-white/60" />
-
-                                        {/* Dot markers overlay */}
-                                        {cityDots.map((dot, i) => (
-                                            <div
-                                                key={i}
-                                                className="absolute"
-                                                style={{ top: dot.top, left: dot.left }}
-                                            >
-                                                <motion.div
-                                                    className={`${dot.size} rounded-full bg-[#c7112c] opacity-80`}
-                                                    initial={{ scale: 0 }}
-                                                    whileInView={{ scale: 1 }}
-                                                    viewport={{ once: true }}
-                                                    transition={{
-                                                        delay: 0.3 + i * 0.04,
-                                                        type: 'spring',
-                                                        stiffness: 200,
-                                                        damping: 15
-                                                    }}
-                                                />
-                                                {dot.pulse && (
-                                                    <motion.div
-                                                        className="absolute inset-0 rounded-full border border-[#c7112c] opacity-30"
-                                                        initial={{ scale: 0.7, opacity: 0.4 }}
-                                                        animate={{ scale: 1.8, opacity: 0 }}
-                                                        transition={{
-                                                            delay: 0.5 + i * 0.1,
-                                                            duration: 2.5,
-                                                            repeat: Infinity,
-                                                        }}
-                                                    />
-                                                )}
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Legend */}
-                                    <div className="flex items-center justify-center gap-5 mt-3">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="h-2 w-2 rounded-full bg-[#c7112c]" />
-                                            <span className="text-[10px] text-slate-400">Small cities</span>
-                                        </div>
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="h-3 w-3 rounded-full bg-[#c7112c] opacity-80" />
-                                            <span className="text-[10px] text-slate-400">Metros</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </motion.div>
+                                <p className="text-base leading-relaxed text-white/70">
+                                    We are laser focused on creating outstanding experiences by providing the most dependable supply chain solutions that enable our customers to thrive.
+                                </p>
+                            </div>
                         </div>
                     </div>
+
+                    {/* Corner accent */}
+                    <div className="absolute -right-2 -top-2 h-32 w-32 rounded-bl-3xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] opacity-90 lg:h-40 lg:w-40" />
+                </motion.div>
+
+                {/* Stats grid */}
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                    {stats.map((stat, idx) => {
+                        const Icon = stat.icon;
+                        return (
+                            <motion.div
+                                key={stat.label}
+                                initial={{ opacity: 0, y: 30 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg shadow-slate-900/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#c7112c]/10"
+                            >
+                                {/* Background gradient on hover */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#c7112c]/5 to-[#ff4d6a]/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                                <div className="relative z-10">
+                                    {/* Icon */}
+                                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] shadow-lg shadow-[#c7112c]/20 transition-transform duration-500 group-hover:scale-110">
+                                        <Icon className="h-6 w-6 text-white" />
+                                    </div>
+
+                                    {/* Value */}
+                                    <div className="mb-1 text-3xl font-bold text-slate-900">{stat.value}</div>
+
+                                    {/* Label */}
+                                    <div className="mb-3 text-sm font-medium text-slate-600">{stat.label}</div>
+
+                                    {/* Growth indicator */}
+                                    <div className="flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1.5">
+                                        <TrendingUp className="h-3.5 w-3.5 text-emerald-600" />
+                                        <span className="text-xs font-semibold text-emerald-700">{stat.growth}</span>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>

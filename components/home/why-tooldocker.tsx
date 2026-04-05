@@ -1,133 +1,222 @@
 'use client';
 
-import type { ElementType } from 'react';
 import { motion } from 'motion/react';
-import { ShieldCheck, Search, ClipboardList, Zap } from 'lucide-react';
+import { ShieldCheck, Search, ClipboardList, Zap, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
 
-interface FeatureCard {
-    type: 'feature';
-    icon: ElementType;
+interface Feature {
+    icon: typeof ShieldCheck;
     title: string;
     description: string;
+    stats?: { value: string; label: string };
 }
 
-interface ImageCard {
-    type: 'image';
-    src: string;
-    alt: string;
-    span?: string;
-}
-
-type CardData = FeatureCard | ImageCard;
-
-const cardData: CardData[] = [
+const features: Feature[] = [
     {
-        type: 'feature',
         icon: ShieldCheck,
         title: 'Quality assured products',
-        description: 'Every product is verified for quality so buyers get reliable tools machinery and supplies for their projects',
+        description: 'Every product is verified for quality so buyers get reliable tools, machinery, and supplies for their projects. We rigorously test and certify each item before it reaches your doorstep.',
+        stats: { value: '100%', label: 'Quality verified' }
     },
     {
-        type: 'image',
-        src: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80',
-        alt: 'Industrial warehouse',
-        span: 'sm:row-span-2',
-    },
-    {
-        type: 'feature',
         icon: Search,
         title: 'Built for product discovery',
-        description: 'Category browsing search and filters organized for contractors and industrial procurement teams',
+        description: 'Category browsing, search, and filters organized for contractors and industrial procurement teams. Find exactly what you need in seconds, not hours.',
+        stats: { value: '10K+', label: 'Products searchable' }
     },
     {
-        type: 'image',
-        src: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&q=80',
-        alt: 'Construction workers',
-    },
-    {
-        type: 'feature',
         icon: ClipboardList,
         title: 'Bulk ordering made easy',
-        description: 'Order in bulk with clear pricing stock availability and GST invoicing for business buyers',
+        description: 'Order in bulk with clear pricing, stock availability, and GST invoicing for business buyers. Streamline your procurement process with our enterprise-ready features.',
+        stats: { value: '500+', label: 'Bulk orders monthly' }
     },
     {
-        type: 'image',
-        src: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80',
-        alt: 'Welding equipment',
-        span: 'sm:row-span-2',
-    },
-    {
-        type: 'feature',
         icon: Zap,
         title: 'Smart search that works',
-        description: 'Find products faster with intelligent search that understands industrial terms and categories',
+        description: 'Find products faster with intelligent search that understands industrial terms and categories. Our AI-powered search learns from your behavior to deliver better results.',
+        stats: { value: '<2s', label: 'Search response time' }
     },
+];
+
+const images = [
+    'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',
+    'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=800&q=80',
+    'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80',
 ];
 
 export function WhyTooldocker() {
     return (
-        <section className="bg-white py-20">
-            <div className="container mx-auto px-4">
-                <div className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
-                    <motion.h2
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        className="text-3xl font-semibold tracking-tight text-black md:text-4xl"
-                    >
-                        Why Tooldocker is the best place to buy industrial products.
-                    </motion.h2>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ delay: 0.1 }}
-                        className="mx-auto max-w-2xl text-base leading-7 text-stone-500"
-                    >
-                        Quality products clear categories fast search and a buying experience built for contractors and procurement teams.
-                    </motion.p>
-                </div>
+        <section className="relative overflow-hidden bg-gradient-to-b from-white via-[#faf8f4] to-white py-24 lg:py-32">
+            {/* Background decorations */}
+            <div className="absolute inset-0 opacity-[0.03]">
+                <div
+                    className="absolute inset-0"
+                    style={{
+                        backgroundImage: 'radial-gradient(circle at 2px 2px, #c7112c 1px, transparent 0)',
+                        backgroundSize: '48px 48px',
+                    }}
+                />
+            </div>
+            <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-[#c7112c]/5 to-[#ff4d6a]/5 blur-3xl" />
+            <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-[#ff4d6a]/5 to-[#c7112c]/5 blur-3xl" />
 
-                {/* Bento grid */}
-                <div className="mx-auto grid max-w-4xl grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 auto-rows-[180px]">
-                    {cardData.map((card, idx) => {
-                        if (card.type === 'feature') {
-                            const IconComponent = card.icon as ElementType;
-                            return (
-                                <motion.div
-                                    key={idx}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.08 }}
-                                    className="group flex flex-col justify-center rounded-2xl bg-[#c7112c] p-5 sm:p-6 transition-all hover:shadow-xl hover:shadow-[#c7112c]/20 hover:-translate-y-1"
-                                >
-                                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm sm:mb-4 sm:h-11 sm:w-11">
-                                        <IconComponent className="h-5 w-5 text-white" />
-                                    </div>
-                                    <h3 className="mb-1.5 text-sm font-semibold tracking-tight text-white sm:text-base">{card.title}</h3>
-                                    <p className="text-xs leading-5 text-white/80 sm:text-sm">{card.description}</p>
-                                </motion.div>
-                            );
-                        }
+            <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                {/* Section header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="mx-auto mb-20 max-w-3xl text-center"
+                >
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: true }}
+                        className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#c7112c]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#c7112c]"
+                    >
+                        <div className="h-1.5 w-1.5 rounded-full bg-[#c7112c]" />
+                        Why choose us
+                    </motion.div>
+                    <h2 className="mb-6 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
+                        Why Tooldocker is the{' '}
+                        <span className="relative inline-block">
+                            <span className="relative z-10 bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                                best place
+                            </span>
+                            <span className="absolute bottom-2 left-0 h-3 w-full bg-[#ff4d6a]/10" aria-hidden="true" />
+                        </span>{' '}
+                        to buy
+                    </h2>
+                    <p className="mx-auto max-w-2xl text-lg leading-relaxed text-slate-600">
+                        Quality products, clear categories, fast search, and a buying experience built for contractors and procurement teams.
+                    </p>
+                </motion.div>
+
+                {/* Feature rows - alternating layout */}
+                <div className="space-y-24 lg:space-y-32">
+                    {features.map((feature, idx) => {
+                        const isEven = idx % 2 === 0;
+                        const imageIdx = idx % images.length;
 
                         return (
                             <motion.div
                                 key={idx}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                whileInView={{ opacity: 1, scale: 1 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: idx * 0.08 }}
-                                className={`relative overflow-hidden rounded-2xl ${card.span || ''}`}
+                                initial={{ opacity: 0, y: 40 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true, margin: '-100px' }}
+                                transition={{ duration: 0.6, delay: 0.1 }}
+                                className={`grid items-center gap-12 lg:grid-cols-2 lg:gap-16 ${
+                                    !isEven ? 'lg:direction-rtl' : ''
+                                }`}
                             >
-                                <Image
-                                    src={card.src}
-                                    alt={card.alt}
-                                    fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                                    referrerPolicy="no-referrer"
-                                />
+                                {/* Content */}
+                                <div className={!isEven ? 'lg:order-2' : ''}>
+                                    {/* Icon badge */}
+                                    <motion.div
+                                        initial={{ opacity: 0, scale: 0.8 }}
+                                        whileInView={{ opacity: 1, scale: 1 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: 0.2 }}
+                                        className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] shadow-xl shadow-[#c7112c]/20"
+                                    >
+                                        <feature.icon className="h-7 w-7 text-white" />
+                                    </motion.div>
+
+                                    {/* Title */}
+                                    <motion.h3
+                                        initial={{ opacity: 0, x: -20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: 0.3 }}
+                                        className="mb-4 text-3xl font-bold tracking-tight text-slate-900 md:text-4xl"
+                                    >
+                                        {feature.title}
+                                    </motion.h3>
+
+                                    {/* Description */}
+                                    <motion.p
+                                        initial={{ opacity: 0, x: -20 }}
+                                        whileInView={{ opacity: 1, x: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: 0.4 }}
+                                        className="mb-8 text-lg leading-relaxed text-slate-600"
+                                    >
+                                        {feature.description}
+                                    </motion.p>
+
+                                    {/* Stats & Checkmarks */}
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        whileInView={{ opacity: 1, y: 0 }}
+                                        viewport={{ once: true }}
+                                        transition={{ delay: 0.5 }}
+                                        className="flex flex-wrap items-center gap-6"
+                                    >
+                                        {feature.stats && (
+                                            <div className="rounded-2xl bg-gradient-to-br from-[#c7112c]/5 to-[#ff4d6a]/5 px-6 py-4">
+                                                <div className="text-3xl font-bold bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                                                    {feature.stats.value}
+                                                </div>
+                                                <div className="mt-1 text-sm font-medium text-slate-600">
+                                                    {feature.stats.label}
+                                                </div>
+                                            </div>
+                                        )}
+                                        <div className="space-y-2">
+                                            {['Verified sellers', 'Fast delivery', 'Easy returns'].map((item, i) => (
+                                                <div key={i} className="flex items-center gap-2">
+                                                    <CheckCircle2 className="h-4 w-4 text-[#c7112c]" />
+                                                    <span className="text-sm font-medium text-slate-700">{item}</span>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </motion.div>
+                                </div>
+
+                                {/* Image */}
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    whileInView={{ opacity: 1, scale: 1 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.3 }}
+                                    className={`relative ${!isEven ? 'lg:order-1' : ''}`}
+                                >
+                                    <div className="group relative overflow-hidden rounded-3xl">
+                                        <Image
+                                            src={images[imageIdx]}
+                                            alt={feature.title}
+                                            width={600}
+                                            height={500}
+                                            className="h-auto w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                                            referrerPolicy="no-referrer"
+                                        />
+                                        {/* Gradient overlay */}
+                                        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                                        {/* Floating arrow on hover */}
+                                        <div className="absolute right-6 top-6 flex h-12 w-12 items-center justify-center rounded-full bg-white/20 backdrop-blur-md opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:translate-x-1 group-hover:-translate-y-1">
+                                            <ArrowUpRight className="h-5 w-5 text-white" />
+                                        </div>
+
+                                        {/* Corner accent */}
+                                        <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-tr-3xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] opacity-80" />
+                                        <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-tr-3xl bg-[#c7112c]" style={{ transform: 'translate(8px, -8px)' }} />
+                                    </div>
+
+                                    {/* Floating stat card */}
+                                    {feature.stats && (
+                                        <motion.div
+                                            initial={{ opacity: 0, x: 20 }}
+                                            whileInView={{ opacity: 1, x: 0 }}
+                                            viewport={{ once: true }}
+                                            transition={{ delay: 0.6 }}
+                                            className="absolute -bottom-6 -right-6 rounded-2xl bg-white p-4 shadow-2xl shadow-slate-900/10 lg:-right-8"
+                                        >
+                                            <div className="text-2xl font-bold text-slate-900">{feature.stats.value}</div>
+                                            <div className="text-xs text-slate-500">{feature.stats.label}</div>
+                                        </motion.div>
+                                    )}
+                                </motion.div>
                             </motion.div>
                         );
                     })}

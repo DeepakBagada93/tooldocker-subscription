@@ -8,7 +8,7 @@ export async function FeaturedProducts() {
   const products = await getPublishedProducts({ limit: 4 });
   return (
     <section className="py-24">
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mb-10 flex flex-col gap-6 md:mb-14 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl space-y-3">
             <div className="text-xs font-semibold uppercase tracking-[0.28em] text-stone-500 dark:text-stone-400">Featured products</div>

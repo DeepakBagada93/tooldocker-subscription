@@ -6,7 +6,7 @@ import { Boxes, CreditCard, ShieldCheck, Zap } from 'lucide-react';
 export function TrustBar() {
     return (
         <section className="border-b border-[#c7112c]/10 bg-gradient-to-r from-white via-[#fff5f6] to-white py-8">
-            <div className="container mx-auto px-4">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                     {[
                         { icon: ShieldCheck, title: "Quality verified products", desc: "Every product checked for quality and reliability" },
