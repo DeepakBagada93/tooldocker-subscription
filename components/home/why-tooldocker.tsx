@@ -1,10 +1,27 @@
 'use client';
 
+import type { ElementType } from 'react';
 import { motion } from 'motion/react';
 import { ShieldCheck, Search, ClipboardList, Zap } from 'lucide-react';
 import Image from 'next/image';
 
-const cardData = [
+interface FeatureCard {
+    type: 'feature';
+    icon: ElementType;
+    title: string;
+    description: string;
+}
+
+interface ImageCard {
+    type: 'image';
+    src: string;
+    alt: string;
+    span?: string;
+}
+
+type CardData = FeatureCard | ImageCard;
+
+const cardData: CardData[] = [
     {
         type: 'feature',
         icon: ShieldCheck,
@@ -76,7 +93,7 @@ export function WhyTooldocker() {
                 <div className="mx-auto grid max-w-4xl grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 auto-rows-[180px]">
                     {cardData.map((card, idx) => {
                         if (card.type === 'feature') {
-                            const Icon = card.icon;
+                            const IconComponent = card.icon as ElementType;
                             return (
                                 <motion.div
                                     key={idx}
@@ -87,7 +104,7 @@ export function WhyTooldocker() {
                                     className="group flex flex-col justify-center rounded-2xl bg-[#c7112c] p-5 sm:p-6 transition-all hover:shadow-xl hover:shadow-[#c7112c]/20 hover:-translate-y-1"
                                 >
                                     <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm sm:mb-4 sm:h-11 sm:w-11">
-                                        <Icon className="h-5 w-5 text-white" />
+                                        <IconComponent className="h-5 w-5 text-white" />
                                     </div>
                                     <h3 className="mb-1.5 text-sm font-semibold tracking-tight text-white sm:text-base">{card.title}</h3>
                                     <p className="text-xs leading-5 text-white/80 sm:text-sm">{card.description}</p>
