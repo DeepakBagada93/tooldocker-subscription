@@ -2,9 +2,9 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  --color-primary: #c7622c;
-  --color-secondary: #1f2937;
-  --color-accent: #8b735e;
+  --color-primary: #c7112c;
+  --color-secondary: #ff4d6a;
+  --color-accent: #8b0a1c;
   --color-workshop-bg: #faf8f4;
   --color-workshop-dark: #1f2937;
 
@@ -61,4 +61,15 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
+}
+
+/* Animated gradient animation */
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient {
+  animation: gradient 3s ease infinite;
 }

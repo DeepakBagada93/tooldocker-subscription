@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { X, Mail, Sparkles, MoveRight } from 'lucide-react';
+import { X, Mail, Tag, MoveRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -79,7 +79,7 @@ export function PromoPopup() {
                                 <div className="relative hidden w-2/5 overflow-hidden bg-primary sm:block">
                                     <div className="absolute inset-0 bg-gradient-to-br from-primary to-primary/80 mix-blend-multiply" />
                                     <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                                        <Sparkles className="h-32 w-32 text-white" />
+                                        <Tag className="h-32 w-32 text-white" />
                                     </div>
                                     <div className="absolute bottom-6 left-6 right-6 text-white text-center">
                                         <p className="font-heading text-4xl font-black italic tracking-tighter">SALE</p>
@@ -89,7 +89,7 @@ export function PromoPopup() {
                                 {/* Content Section */}
                                 <div className="flex-1 p-8 sm:p-10">
                                     <div className="mb-2 inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary dark:bg-primary/20">
-                                        <Sparkles className="mr-1.5 h-3 w-3" />
+                                        <Tag className="mr-1.5 h-3 w-3" />
                                         Special Offer
                                     </div>
 

@@ -26,7 +26,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { createClient } from '@/lib/supabase/client';
 import { signout } from '@/app/actions/auth';
 
@@ -252,7 +251,6 @@ export function DashboardLayout({
           </div>
           
           <div className="flex items-center gap-1 sm:gap-2">
-            <ThemeToggle />
             <Button variant="ghost" size="icon" className="relative text-slate-700 hover:bg-white">
               <Bell className="h-5 w-5" />
               <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full" />

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "clean": "next clean"
+    "clean": "next clean",
+    "create-admin": "node scripts/create-admin.js",
+    "create-buyer": "node scripts/create-demo-buyer.js"
   },
   "dependencies": {
     "@google/genai": "^1.17.0",

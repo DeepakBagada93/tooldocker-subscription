@@ -14,7 +14,6 @@ import {
   ShieldCheck,
   Zap,
   Box,
-  Sparkles,
   Loader2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,6 @@ import { motion, AnimatePresence } from 'motion/react';
 import { useCart } from '@/context/cart-context';
 import { type Category } from '@/app/actions/products';
 import { useRouter } from 'next/navigation';
-import { ThemeToggle } from '@/components/layout/theme-toggle';
 import { createClient } from '@/lib/supabase/client';
 import { normalizeAppRole } from '@/lib/supabase/profiles';
 
@@ -265,7 +263,7 @@ export function Header({ initialCategories }: { initialCategories: Category[] })
                     transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
                     className="inline-flex"
                   >
-                    <Sparkles className="h-3.5 w-3.5" />
+                    <Zap className="h-3.5 w-3.5" />
                   </motion.span>
                 )}
                 <span>AI</span>
@@ -290,7 +288,6 @@ export function Header({ initialCategories }: { initialCategories: Category[] })
                 <User className="h-5 w-5" />
               </Button>
             </Link>
-            <ThemeToggle />
             <Button
               variant="ghost"
               size="icon"
@@ -338,7 +335,7 @@ export function Header({ initialCategories }: { initialCategories: Category[] })
                       transition={{ duration: 2.4, repeat: Infinity, ease: 'easeInOut' }}
                       className="inline-flex"
                     >
-                      <Sparkles className="h-3.5 w-3.5" />
+                      <Zap className="h-3.5 w-3.5" />
                     </motion.span>
                   )}
                   <span>AI</span>

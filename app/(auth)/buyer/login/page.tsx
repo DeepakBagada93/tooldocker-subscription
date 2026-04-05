@@ -57,12 +57,6 @@ export default async function BuyerLoginPage(props: { searchParams: Promise<{ [k
             </Link>
           </Button>
         </div>
-
-        <p className="mt-8 text-center text-sm text-stone-500">
-          <Link href="/vendor/login" className="inline-flex items-center font-bold text-stone-400 transition-colors hover:text-primary">
-            <ShieldCheck className="mr-2 h-4 w-4" /> Are you a vendor? Vendor Portal
-          </Link>
-        </p>
       </div>
     </div>
   )

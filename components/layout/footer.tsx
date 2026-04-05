@@ -36,7 +36,7 @@ export function Footer() {
               <li><Link href="#" className="transition-colors hover:text-primary">Featured Brands</Link></li>
               <li><Link href="/checkout" className="transition-colors hover:text-primary">Seamless Checkout</Link></li>
               <li><Link href="#" className="transition-colors hover:text-primary">Industrial Auctions</Link></li>
-              <li><Link href="/vendor" className="font-semibold text-primary transition-colors hover:text-slate-900">Vendor Dashboard</Link></li>
+              <li><Link href="/buyer" className="font-semibold text-primary transition-colors hover:text-slate-900">Buyer Dashboard</Link></li>
               <li><Link href="/admin" className="font-semibold text-primary transition-colors hover:text-slate-900">Admin Dashboard</Link></li>
             </ul>
           </div>

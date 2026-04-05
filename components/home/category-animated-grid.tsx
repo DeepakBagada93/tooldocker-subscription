@@ -98,7 +98,7 @@ function getCategoryContent(category: Category) {
 
 export function CategoryAnimatedGrid({ categories }: { categories: Category[] }) {
     return (
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {categories.map((category, index) => {
                 const content = getCategoryContent(category);
 
@@ -113,9 +113,9 @@ export function CategoryAnimatedGrid({ categories }: { categories: Category[] })
                 >
                     <Link
                         href={`/category/${category.slug}`}
-                        className="group flex h-full flex-col overflow-hidden rounded-[2rem] border border-stone-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.28)]"
+                        className="group flex h-full flex-col overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-orange-200 hover:shadow-[0_24px_60px_-35px_rgba(15,23,42,0.28)]"
                     >
-                        <div className={`relative h-[220px] w-full overflow-hidden bg-gradient-to-br ${content.accent}`}>
+                        <div className={`relative h-28 w-full overflow-hidden bg-gradient-to-br ${content.accent}`}>
                             {category.image ? (
                                 <Image
                                     src={category.image}
@@ -124,22 +124,19 @@ export function CategoryAnimatedGrid({ categories }: { categories: Category[] })
                                     className="object-cover transition-transform duration-700 ease-in-out group-hover:scale-105"
                                 />
                             ) : (
-                                <div className="absolute inset-0 flex flex-col justify-between p-7">
-                                    <div className="text-[11px] font-semibold uppercase tracking-[0.26em] text-stone-500">{content.eyebrow}</div>
-                                    <div className="max-w-[14rem] text-3xl font-semibold leading-tight tracking-[-0.04em] text-slate-900">
-                                        {category.name}
-                                    </div>
+                                <div className="absolute inset-0 flex flex-col justify-between p-4">
+                                    <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-stone-500">{content.eyebrow}</div>
                                 </div>
                             )}
                             <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0)_20%,rgba(15,23,42,0.12)_100%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         </div>
-                        <div className="relative flex flex-1 flex-col p-7">
-                            <div className="mb-4 flex items-center justify-between gap-4">
-                                <div className="text-[11px] font-semibold uppercase tracking-[0.26em] text-stone-400">{content.eyebrow}</div>
-                                <div className="text-sm font-medium text-orange-700 transition-transform duration-300 group-hover:translate-x-1">Explore</div>
+                        <div className="relative flex flex-1 flex-col p-4">
+                            <h3 className="text-sm font-semibold tracking-tight text-slate-900 transition-colors group-hover:text-primary leading-snug">{category.name}</h3>
+                            <p className="mt-1 line-clamp-2 text-xs leading-5 text-stone-500">{content.description}</p>
+                            <div className="mt-auto pt-2 flex items-center justify-between">
+                                <div className="text-[10px] font-medium uppercase tracking-wider text-stone-400">{content.eyebrow}</div>
+                                <div className="text-xs font-medium text-orange-600 transition-transform duration-300 group-hover:translate-x-0.5">Explore</div>
                             </div>
-                            <h3 className="mb-3 text-xl font-semibold tracking-[-0.03em] text-slate-900 transition-colors group-hover:text-primary">{category.name}</h3>
-                            <p className="mt-auto line-clamp-3 text-sm leading-6 text-stone-500">{content.description}</p>
                         </div>
                     </Link>
                 </motion.div>

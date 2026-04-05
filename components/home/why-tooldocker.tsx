@@ -1,48 +1,63 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ClipboardList, Search, ShieldCheck, Sparkles } from 'lucide-react';
+import { ShieldCheck, Search, ClipboardList, Zap } from 'lucide-react';
+import Image from 'next/image';
 
-const features = [
+const cardData = [
     {
+        type: 'feature',
         icon: ShieldCheck,
         title: 'Quality assured products',
-        description: 'Every product is verified for quality so buyers get reliable tools, machinery, and supplies for their projects.'
+        description: 'Every product is verified for quality so buyers get reliable tools machinery and supplies for their projects',
     },
     {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=600&q=80',
+        alt: 'Industrial warehouse',
+        span: 'sm:row-span-2',
+    },
+    {
+        type: 'feature',
         icon: Search,
         title: 'Built for product discovery',
-        description: 'Category browsing, search, and filters are organized for contractors, builders, and industrial procurement teams that buy with intent.'
+        description: 'Category browsing search and filters organized for contractors and industrial procurement teams',
     },
     {
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=600&q=80',
+        alt: 'Construction workers',
+    },
+    {
+        type: 'feature',
         icon: ClipboardList,
         title: 'Bulk ordering made easy',
-        description: 'Order in bulk with clear pricing, stock availability, and GST invoicing designed for business buyers.'
+        description: 'Order in bulk with clear pricing stock availability and GST invoicing for business buyers',
     },
     {
-        icon: Sparkles,
+        type: 'image',
+        src: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=600&q=80',
+        alt: 'Welding equipment',
+        span: 'sm:row-span-2',
+    },
+    {
+        type: 'feature',
+        icon: Zap,
         title: 'Smart search that works',
-        description: 'Find products faster with intelligent search that understands industrial terms and categories.'
-    }
-];
-
-const milestones = [
-    { top: '20%', left: '16%', label: 'Search products' },
-    { top: '42%', left: '48%', label: 'Compare categories' },
-    { top: '66%', left: '28%', label: 'Checkout faster' },
-    { top: '62%', left: '74%', label: 'Track orders' }
+        description: 'Find products faster with intelligent search that understands industrial terms and categories',
+    },
 ];
 
 export function WhyTooldocker() {
     return (
-        <section className="relative overflow-hidden bg-white py-28">
-            <div className="container mx-auto px-4 relative z-10">
-                <div className="mx-auto mb-16 max-w-3xl space-y-4 text-center">
+        <section className="bg-white py-20">
+            <div className="container mx-auto px-4">
+                <div className="mx-auto mb-14 max-w-3xl space-y-4 text-center">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
-                        className="text-3xl font-semibold tracking-[-0.04em] text-slate-900 md:text-5xl"
+                        className="text-3xl font-semibold tracking-tight text-black md:text-4xl"
                     >
                         Why Tooldocker is the best place to buy industrial products.
                     </motion.h2>
@@ -51,126 +66,54 @@ export function WhyTooldocker() {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ delay: 0.1 }}
-                        className="mx-auto max-w-2xl text-lg leading-8 text-stone-600"
+                        className="mx-auto max-w-2xl text-base leading-7 text-stone-500"
                     >
-                        The blueprint is simple: quality products, clear categories, fast search, and a buying experience built for contractors, builders, and procurement teams.
+                        Quality products clear categories fast search and a buying experience built for contractors and procurement teams.
                     </motion.p>
                 </div>
 
-                <div className="grid items-center gap-10 lg:grid-cols-2">
-                    <div className="grid gap-5 sm:grid-cols-2">
-                        {features.map((feature, idx) => {
-                            const Icon = feature.icon;
+                {/* Bento grid */}
+                <div className="mx-auto grid max-w-4xl grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 auto-rows-[180px]">
+                    {cardData.map((card, idx) => {
+                        if (card.type === 'feature') {
+                            const Icon = card.icon;
                             return (
                                 <motion.div
                                     key={idx}
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
                                     viewport={{ once: true }}
-                                    transition={{ delay: idx * 0.1 }}
-                                    className="rounded-[2rem] border border-stone-200 bg-[#fcfaf7] p-7 transition-shadow hover:shadow-md"
+                                    transition={{ delay: idx * 0.08 }}
+                                    className="group flex flex-col justify-center rounded-2xl bg-[#c7112c] p-5 sm:p-6 transition-all hover:shadow-xl hover:shadow-[#c7112c]/20 hover:-translate-y-1"
                                 >
-                                    <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-white text-slate-900 shadow-sm">
-                                        <Icon className="w-6 h-6" />
+                                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 backdrop-blur-sm sm:mb-4 sm:h-11 sm:w-11">
+                                        <Icon className="h-5 w-5 text-white" />
                                     </div>
-                                    <h3 className="mb-3 text-xl font-semibold tracking-[-0.03em] text-slate-900">{feature.title}</h3>
-                                    <p className="text-sm leading-7 text-stone-600">
-                                        {feature.description}
-                                    </p>
+                                    <h3 className="mb-1.5 text-sm font-semibold tracking-tight text-white sm:text-base">{card.title}</h3>
+                                    <p className="text-xs leading-5 text-white/80 sm:text-sm">{card.description}</p>
                                 </motion.div>
                             );
-                        })}
-                    </div>
+                        }
 
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        viewport={{ once: true }}
-                        className="relative flex aspect-square items-center justify-center overflow-hidden rounded-[2.5rem] border border-stone-200 bg-[linear-gradient(180deg,#faf7f1_0%,#f2ece2_100%)] p-8 shadow-[0_30px_80px_-45px_rgba(15,23,42,0.35)] md:aspect-video lg:aspect-square"
-                    >
-                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(199,98,44,0.14),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(15,23,42,0.07),transparent_30%)]" />
-
-                        <svg viewBox="0 0 100 100" className="absolute inset-0 z-0 h-full w-full p-8 text-stone-300" preserveAspectRatio="none">
-                            <path d="M14 26 H86" stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 2.5" fill="none" opacity="0.6" />
-                            <path d="M14 50 H86" stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 2.5" fill="none" opacity="0.6" />
-                            <path d="M14 74 H86" stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 2.5" fill="none" opacity="0.6" />
-                            <path d="M20 20 V80" stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 2.5" fill="none" opacity="0.35" />
-                            <path d="M50 20 V80" stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 2.5" fill="none" opacity="0.35" />
-                            <path d="M80 20 V80" stroke="currentColor" strokeWidth="0.3" strokeDasharray="1.5 2.5" fill="none" opacity="0.35" />
-                        </svg>
-
-                        <svg viewBox="0 0 100 100" className="pointer-events-none absolute inset-0 z-10 h-full w-full opacity-20" preserveAspectRatio="none">
-                            <motion.path
-                                d="M20,30 Q38,24 52,42 T82,64"
-                                fill="none"
-                                stroke="url(#grad1)"
-                                strokeWidth="0.9"
-                                initial={{ pathLength: 0 }}
-                                whileInView={{ pathLength: 1 }}
-                                transition={{ duration: 2, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut' }}
-                            />
-                            <motion.path
-                                d="M18,70 Q38,54 60,58 T84,34"
-                                fill="none"
-                                stroke="url(#grad1)"
-                                strokeWidth="0.9"
-                                initial={{ pathLength: 0 }}
-                                whileInView={{ pathLength: 1 }}
-                                transition={{ duration: 2.5, repeat: Infinity, repeatType: 'reverse', ease: 'easeInOut', delay: 0.5 }}
-                            />
-                            <defs>
-                                <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                                    <stop offset="0%" stopColor="#e31e33" stopOpacity="1" />
-                                    <stop offset="100%" stopColor="#ff8a00" stopOpacity="1" />
-                                </linearGradient>
-                            </defs>
-                        </svg>
-
-                        <div className="relative z-20 h-full w-full">
-                            {milestones.map((shop, idx) => (
-                                <motion.div
-                                    key={idx}
-                                    className="absolute"
-                                    style={{ top: shop.top, left: shop.left }}
-                                    initial={{ opacity: 0, scale: 0 }}
-                                    whileInView={{ opacity: 1, scale: 1 }}
-                                    viewport={{ once: true }}
-                                    transition={{ delay: 0.5 + idx * 0.1, type: "spring" }}
-                                >
-                                    <div className="relative group cursor-pointer">
-                                        <div className="absolute -inset-2 bg-primary/20 rounded-full animate-ping"></div>
-
-                                        <div className="relative flex items-center justify-center rounded-full bg-slate-900 p-1.5 text-white shadow-lg transition-transform group-hover:scale-110 md:p-2">
-                                            <ClipboardList className="w-4 h-4 md:w-5 md:h-5" />
-                                        </div>
-
-                                        <div className="pointer-events-none absolute bottom-full left-1/2 mb-3 -translate-x-1/2 whitespace-nowrap rounded-md bg-slate-900 px-3 py-1.5 text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100">
-                                            {shop.label}
-                                            <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-slate-900"></div>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            ))}
-                        </div>
-
-                        <motion.div
-                            initial={{ opacity: 0, x: 20 }}
-                            whileInView={{ opacity: 1, x: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: 1.2 }}
-                            className="absolute bottom-6 right-6 z-30 hidden rounded-[1.5rem] border border-white/70 bg-white/85 p-5 shadow-lg backdrop-blur-md sm:block"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
-                                    <ShieldCheck className="w-5 h-5" />
-                                </div>
-                                <div>
-                                    <p className="text-sm font-semibold text-slate-900">Search to order</p>
-                                    <p className="text-xs font-medium text-stone-500">A simpler flow for industrial buyers</p>
-                                </div>
-                            </div>
-                        </motion.div>
-                    </motion.div>
+                        return (
+                            <motion.div
+                                key={idx}
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.08 }}
+                                className={`relative overflow-hidden rounded-2xl ${card.span || ''}`}
+                            >
+                                <Image
+                                    src={card.src}
+                                    alt={card.alt}
+                                    fill
+                                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                                    referrerPolicy="no-referrer"
+                                />
+                            </motion.div>
+                        );
+                    })}
                 </div>
             </div>
         </section>
