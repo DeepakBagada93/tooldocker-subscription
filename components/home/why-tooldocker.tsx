@@ -46,19 +46,19 @@ const images = [
 
 export function WhyTooldocker() {
     return (
-        <section className="relative overflow-hidden bg-gradient-to-b from-white via-[#faf8f4] to-white py-24 lg:py-32">
+        <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-white py-24 lg:py-32">
             {/* Background decorations */}
             <div className="absolute inset-0 opacity-[0.03]">
                 <div
                     className="absolute inset-0"
                     style={{
-                        backgroundImage: 'radial-gradient(circle at 2px 2px, #c7112c 1px, transparent 0)',
+                        backgroundImage: 'radial-gradient(circle at 2px 2px, #64748b 1px, transparent 0)',
                         backgroundSize: '48px 48px',
                     }}
                 />
             </div>
-            <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-[#c7112c]/5 to-[#ff4d6a]/5 blur-3xl" />
-            <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-[#ff4d6a]/5 to-[#c7112c]/5 blur-3xl" />
+            <div className="absolute -top-40 -right-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-slate-200/30 to-slate-300/20 blur-3xl" />
+            <div className="absolute -bottom-40 -left-40 h-[500px] w-[500px] rounded-full bg-gradient-to-br from-slate-300/20 to-slate-200/30 blur-3xl" />
 
             <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 {/* Section header */}
@@ -72,18 +72,18 @@ export function WhyTooldocker() {
                         initial={{ opacity: 0, scale: 0.9 }}
                         whileInView={{ opacity: 1, scale: 1 }}
                         viewport={{ once: true }}
-                        className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#c7112c]/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#c7112c]"
+                        className="mb-4 inline-flex items-center gap-2 rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-700"
                     >
-                        <div className="h-1.5 w-1.5 rounded-full bg-[#c7112c]" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-slate-600" />
                         Why choose us
                     </motion.div>
                     <h2 className="mb-6 text-4xl font-bold tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
                         Why Tooldocker is the{' '}
                         <span className="relative inline-block">
-                            <span className="relative z-10 bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                            <span className="relative z-10 text-slate-800">
                                 best place
                             </span>
-                            <span className="absolute bottom-2 left-0 h-3 w-full bg-[#ff4d6a]/10" aria-hidden="true" />
+                            <span className="absolute bottom-2 left-0 h-3 w-full bg-slate-200" aria-hidden="true" />
                         </span>{' '}
                         to buy
                     </h2>
@@ -117,7 +117,7 @@ export function WhyTooldocker() {
                                         whileInView={{ opacity: 1, scale: 1 }}
                                         viewport={{ once: true }}
                                         transition={{ delay: 0.2 }}
-                                        className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] shadow-xl shadow-[#c7112c]/20"
+                                        className="mb-6 inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-slate-800 to-slate-700 shadow-xl shadow-slate-900/20"
                                     >
                                         <feature.icon className="h-7 w-7 text-white" />
                                     </motion.div>
@@ -153,8 +153,8 @@ export function WhyTooldocker() {
                                         className="flex flex-wrap items-center gap-6"
                                     >
                                         {feature.stats && (
-                                            <div className="rounded-2xl bg-gradient-to-br from-[#c7112c]/5 to-[#ff4d6a]/5 px-6 py-4">
-                                                <div className="text-3xl font-bold bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                                            <div className="rounded-2xl bg-gradient-to-br from-slate-100 to-slate-50 px-6 py-4">
+                                                <div className="text-3xl font-bold text-slate-900">
                                                     {feature.stats.value}
                                                 </div>
                                                 <div className="mt-1 text-sm font-medium text-slate-600">
@@ -165,7 +165,7 @@ export function WhyTooldocker() {
                                         <div className="space-y-2">
                                             {['Verified sellers', 'Fast delivery', 'Easy returns'].map((item, i) => (
                                                 <div key={i} className="flex items-center gap-2">
-                                                    <CheckCircle2 className="h-4 w-4 text-[#c7112c]" />
+                                                    <CheckCircle2 className="h-4 w-4 text-slate-600" />
                                                     <span className="text-sm font-medium text-slate-700">{item}</span>
                                                 </div>
                                             ))}
@@ -199,8 +199,8 @@ export function WhyTooldocker() {
                                         </div>
 
                                         {/* Corner accent */}
-                                        <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-tr-3xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] opacity-80" />
-                                        <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-tr-3xl bg-[#c7112c]" style={{ transform: 'translate(8px, -8px)' }} />
+                                        <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-tr-3xl bg-gradient-to-br from-slate-700 to-slate-500 opacity-80" />
+                                        <div className="absolute -bottom-4 -left-4 h-24 w-24 rounded-tr-3xl bg-slate-700" style={{ transform: 'translate(8px, -8px)' }} />
                                     </div>
 
                                     {/* Floating stat card */}

@@ -13,13 +13,13 @@ const stats = [
 
 export function IndiaCoverage() {
     return (
-        <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-[#fff5f6] py-24 lg:py-32">
+        <section className="relative overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 py-24 lg:py-32">
             {/* Background decorations */}
             <div className="absolute inset-0 opacity-[0.02]">
                 <div
                     className="absolute inset-0"
                     style={{
-                        backgroundImage: 'radial-gradient(circle at 2px 2px, #c7112c 1px, transparent 0)',
+                        backgroundImage: 'radial-gradient(circle at 2px 2px, #64748b 1px, transparent 0)',
                         backgroundSize: '40px 40px',
                     }}
                 />
@@ -33,7 +33,7 @@ export function IndiaCoverage() {
                     viewport={{ once: true }}
                     className="mx-auto mb-12 flex w-fit items-center gap-3 rounded-full bg-white px-6 py-3 shadow-lg shadow-slate-900/5"
                 >
-                    <div className="flex h-10 w-16 items-center justify-center rounded-full bg-gradient-to-r from-[#c7112c] to-[#ff4d6a]">
+                    <div className="flex h-10 w-16 items-center justify-center rounded-full bg-gradient-to-r from-slate-700 to-slate-600">
                         <div className="h-2 w-2 rounded-full bg-white" />
                     </div>
                     <div>
@@ -52,13 +52,13 @@ export function IndiaCoverage() {
                     <h2 className="mb-6 text-4xl font-bold leading-tight tracking-tight text-slate-900 md:text-5xl lg:text-6xl">
                         India's leader in{' '}
                         <span className="relative inline-block">
-                            <span className="relative z-10 bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                            <span className="relative z-10 text-slate-800">
                                 industrial supplies
                             </span>
-                            <span className="absolute bottom-1 left-0 h-2 w-full bg-[#ff4d6a]/10" aria-hidden="true" />
+                            <span className="absolute bottom-1 left-0 h-2 w-full bg-slate-300" aria-hidden="true" />
                         </span>
                     </h2>
-                    <p className="text-lg font-medium uppercase tracking-[0.12em] text-[#c7112c]">
+                    <p className="text-lg font-medium uppercase tracking-[0.12em] text-slate-600">
                         Serving over 10,000+ customers across the nation
                     </p>
                 </motion.div>
@@ -82,7 +82,7 @@ export function IndiaCoverage() {
                         />
                         {/* Gradient overlays */}
                         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/20 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#c7112c]/30 to-[#ff4d6a]/20" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-700/20 to-slate-600/15" />
 
                         {/* Overlay content */}
                         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 lg:p-16">
@@ -98,7 +98,7 @@ export function IndiaCoverage() {
                     </div>
 
                     {/* Corner accent */}
-                    <div className="absolute -right-2 -top-2 h-32 w-32 rounded-bl-3xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] opacity-90 lg:h-40 lg:w-40" />
+                    <div className="absolute -right-2 -top-2 h-32 w-32 rounded-bl-3xl bg-gradient-to-br from-slate-700 to-slate-500 opacity-90 lg:h-40 lg:w-40" />
                 </motion.div>
 
                 {/* Stats grid */}
@@ -112,14 +112,14 @@ export function IndiaCoverage() {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.1 }}
-                                className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg shadow-slate-900/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#c7112c]/10"
+                                className="group relative overflow-hidden rounded-2xl bg-white p-6 shadow-lg shadow-slate-900/5 transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-slate-900/10"
                             >
                                 {/* Background gradient on hover */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#c7112c]/5 to-[#ff4d6a]/5 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-slate-100/50 to-slate-50/30 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
 
                                 <div className="relative z-10">
                                     {/* Icon */}
-                                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-[#c7112c] to-[#ff4d6a] shadow-lg shadow-[#c7112c]/20 transition-transform duration-500 group-hover:scale-110">
+                                    <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-slate-800 to-slate-700 shadow-lg shadow-slate-900/20 transition-transform duration-500 group-hover:scale-110">
                                         <Icon className="h-6 w-6 text-white" />
                                     </div>
 

@@ -65,7 +65,7 @@ function FloatingParticles() {
       {particles.map((i) => (
         <motion.div
           key={i}
-          className="absolute h-2 w-2 rounded-full bg-[#c7112c]/10"
+          className="absolute h-2 w-2 rounded-full bg-slate-300/30"
           initial={{
             x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
             y: Math.random() * 800,
@@ -118,12 +118,12 @@ function TypingText({ words }: { words: string[] }) {
   }, [charIndex, isDeleting, wordIndex, words]);
 
   return (
-    <span className="inline-block text-[#c7112c]">
+    <span className="inline-block text-slate-800">
       {currentText}
       <motion.span
         animate={{ opacity: [1, 0] }}
         transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-        className="inline-block w-[3px] h-[0.95em] bg-[#c7112c] ml-1 align-text-bottom"
+        className="inline-block w-[3px] h-[0.95em] bg-slate-800 ml-1 align-text-bottom"
       />
     </span>
   );
@@ -144,7 +144,7 @@ function SearchBar() {
       <div
         className={`relative flex items-center rounded-2xl border-2 bg-white transition-all duration-300 ${
           isFocused
-            ? 'border-[#c7112c] shadow-xl shadow-[#c7112c]/10 scale-105'
+            ? 'border-slate-800 shadow-xl shadow-slate-900/10 scale-105'
             : 'border-slate-200 shadow-lg shadow-slate-900/5'
         }`}
       >
@@ -160,7 +160,7 @@ function SearchBar() {
         />
         <Button
           asChild
-          className="mr-2 h-10 rounded-xl bg-[#c7112c] px-6 text-white hover:bg-[#a50e23]"
+          className="mr-2 h-10 rounded-xl bg-slate-900 px-6 text-white hover:bg-slate-800"
         >
           <Link href="/search">Search</Link>
         </Button>
@@ -175,13 +175,13 @@ function SearchBar() {
             exit={{ opacity: 0, y: 10 }}
             className="absolute -bottom-12 left-0 flex items-center gap-2 text-xs"
           >
-            <TrendingUp className="h-3.5 w-3.5 text-[#c7112c]" />
+            <TrendingUp className="h-3.5 w-3.5 text-slate-600" />
             <span className="text-slate-500">Popular:</span>
             {['Drill Machine', 'Welding', 'Safety Kit'].map((term) => (
               <button
                 key={term}
                 onClick={() => setSearchValue(term)}
-                className="rounded-full bg-slate-100 px-3 py-1 text-slate-600 transition-colors hover:bg-[#c7112c] hover:text-white"
+                className="rounded-full bg-slate-100 px-3 py-1 text-slate-600 transition-colors hover:bg-slate-800 hover:text-white"
               >
                 {term}
               </button>
@@ -250,14 +250,14 @@ export function Hero() {
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #c7112c 1px, transparent 0)',
+            backgroundImage: 'radial-gradient(circle at 1px 1px, #64748b 1px, transparent 0)',
             backgroundSize: '50px 50px',
           }}
         />
       </div>
 
       {/* Top accent line */}
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-[#c7112c] to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
 
       <motion.div
         style={{ opacity, y: parallaxY }}
@@ -271,12 +271,12 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#c7112c]/10 to-[#ff4d6a]/10 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-[#c7112c] border border-[#c7112c]/20"
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-slate-100 to-slate-50 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-slate-700 border border-slate-200"
             >
               <motion.div
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ duration: 2, repeat: Infinity }}
-                className="h-2 w-2 rounded-full bg-[#c7112c]"
+                className="h-2 w-2 rounded-full bg-slate-600"
               />
               India's #1 industrial marketplace
             </motion.div>
@@ -292,10 +292,10 @@ export function Hero() {
                 Buy{' '}
                 <span className="relative inline-block">
                   <TypingText words={typingWords} />
-                  <span className="absolute -bottom-2 left-0 h-1 w-full bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] rounded-full" />
+                  <span className="absolute -bottom-2 left-0 h-1 w-full bg-gradient-to-r from-slate-700 to-slate-500 rounded-full" />
                 </span>
                 <br />
-                <span className="mt-2 block bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] bg-clip-text text-transparent">
+                <span className="mt-2 block text-slate-800">
                   for real work in India.
                 </span>
               </motion.h1>
@@ -324,7 +324,7 @@ export function Hero() {
               <Button
                 asChild
                 size="lg"
-                className="group h-14 rounded-2xl bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] px-8 text-white hover:opacity-90 shadow-2xl shadow-[#c7112c]/30"
+                className="group h-14 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 px-8 text-white hover:opacity-90 shadow-2xl shadow-slate-900/30"
               >
                 <Link href="/search">
                   Browse Catalog
@@ -335,7 +335,7 @@ export function Hero() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-14 rounded-2xl border-2 border-slate-300 bg-white px-8 text-slate-900 hover:bg-slate-50 hover:border-[#c7112c]"
+                className="h-14 rounded-2xl border-2 border-slate-300 bg-white px-8 text-slate-900 hover:bg-slate-50 hover:border-slate-500"
               >
                 <Link href="/search">
                   View All Products
@@ -350,12 +350,12 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 1.5 }}
               className="flex flex-wrap items-center gap-3"
             >
-              <Zap className="h-4 w-4 text-[#c7112c]" />
+              <Zap className="h-4 w-4 text-slate-600" />
               {quickCategories.map((category, idx) => (
                 <Link
                   key={category.name}
                   href={category.href}
-                  className="group rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-all hover:border-[#c7112c] hover:bg-[#c7112c] hover:text-white hover:shadow-lg hover:shadow-[#c7112c]/20 hover:-translate-y-0.5"
+                  className="group rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-800 hover:text-white hover:shadow-lg hover:shadow-slate-900/20 hover:-translate-y-0.5"
                 >
                   <span className="mr-1.5">{category.icon}</span>
                   {category.name}
@@ -373,7 +373,7 @@ export function Hero() {
               <div className="flex items-center gap-2">
                 <div className="flex">
                   {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-[#c7112c] text-[#c7112c]" />
+                    <Star key={star} className="h-4 w-4 fill-amber-500 text-amber-500" />
                   ))}
                 </div>
                 <span className="text-sm font-semibold text-slate-900">4.8/5</span>
@@ -406,7 +406,7 @@ export function Hero() {
 
             {/* Main product slider */}
             <div className="relative mx-auto w-full max-w-md lg:max-w-lg">
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-white shadow-2xl shadow-[#c7112c]/15 border border-slate-100">
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-900/15 border border-slate-100">
                 {/* Animated product content */}
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -429,7 +429,7 @@ export function Hero() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 
                       {/* Badge */}
-                      <div className="absolute left-4 top-4 rounded-xl bg-gradient-to-r from-[#c7112c] to-[#ff4d6a] px-3 py-1.5 text-xs font-bold text-white">
+                      <div className="absolute left-4 top-4 rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 px-3 py-1.5 text-xs font-bold text-white">
                         {sliderProducts[currentSlide].badge}
                       </div>
 
@@ -439,24 +439,24 @@ export function Hero() {
                         whileTap={{ scale: 0.9 }}
                         className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm transition-colors hover:bg-white"
                       >
-                        <Search className="h-5 w-5 text-[#c7112c]" />
+                        <Search className="h-5 w-5 text-slate-700" />
                       </motion.button>
                     </div>
 
                     {/* Product info */}
                     <div className="relative bg-white p-6">
-                      <div className="text-xs font-bold uppercase tracking-wider text-[#c7112c] mb-1">
+                      <div className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
                         {sliderProducts[currentSlide].category}
                       </div>
                       <div className="text-xl font-bold text-slate-900 mb-2">
                         {sliderProducts[currentSlide].name}
                       </div>
                       <div className="flex items-center justify-between">
-                        <div className="text-2xl font-bold text-[#c7112c]">
+                        <div className="text-2xl font-bold text-slate-900">
                           {sliderProducts[currentSlide].price}
                         </div>
                         <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-[#c7112c] text-[#c7112c]" />
+                          <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
                           <span className="text-sm font-semibold text-slate-900">
                             {sliderProducts[currentSlide].rating}
                           </span>
@@ -475,14 +475,14 @@ export function Hero() {
                   className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
                   aria-label="Previous product"
                 >
-                  <ChevronLeft className="h-6 w-6 text-[#c7112c]" />
+                  <ChevronLeft className="h-6 w-6 text-slate-700" />
                 </button>
                 <button
                   onClick={nextSlide}
                   className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
                   aria-label="Next product"
                 >
-                  <ChevronRight className="h-6 w-6 text-[#c7112c]" />
+                  <ChevronRight className="h-6 w-6 text-slate-700" />
                 </button>
 
                 {/* Dot indicators */}
@@ -493,8 +493,8 @@ export function Hero() {
                       onClick={() => setCurrentSlide(index)}
                       className={`rounded-full transition-all duration-300 ${
                         index === currentSlide
-                          ? 'h-2.5 w-8 bg-[#c7112c]'
-                          : 'h-2.5 w-2.5 bg-slate-300 hover:bg-[#c7112c]/50'
+                          ? 'h-2.5 w-8 bg-slate-800'
+                          : 'h-2.5 w-2.5 bg-slate-300 hover:bg-slate-500'
                       }`}
                       aria-label={`Go to product ${index + 1}`}
                     />
@@ -503,8 +503,8 @@ export function Hero() {
               </div>
 
               {/* Decorative elements */}
-              <div className="absolute -bottom-4 -left-4 -z-10 h-full w-full rounded-3xl border-2 border-[#c7112c]/10" />
-              <div className="absolute -bottom-8 -left-8 -z-20 h-full w-full rounded-3xl border-2 border-[#c7112c]/5" />
+              <div className="absolute -bottom-4 -left-4 -z-10 h-full w-full rounded-3xl border-2 border-slate-200" />
+              <div className="absolute -bottom-8 -left-8 -z-20 h-full w-full rounded-3xl border-2 border-slate-100" />
             </div>
           </div>
         </div>
@@ -529,7 +529,7 @@ export function Hero() {
             <motion.div
               animate={{ y: [0, 12, 0] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              className="h-1.5 w-1.5 rounded-full bg-[#c7112c]"
+              className="h-1.5 w-1.5 rounded-full bg-slate-600"
             />
           </div>
         </motion.div>

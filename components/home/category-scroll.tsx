@@ -7,13 +7,13 @@ import Link from 'next/link';
 import { useRef, useState } from 'react';
 
 const categories = [
-    { name: 'Power Tools', slug: 'power-tools', icon: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=300&q=80', count: 245, gradient: 'from-[#c7112c] to-[#a50e23]' },
+    { name: 'Power Tools', slug: 'power-tools', icon: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=300&q=80', count: 245, gradient: 'from-slate-800 to-slate-700' },
     { name: 'Hand Tools', slug: 'hand-tools', icon: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80', count: 189, gradient: 'from-[#1a1a2e] to-[#16213e]' },
     { name: 'Safety Gear', slug: 'safety-equipment', icon: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=300&q=80', count: 156, gradient: 'from-[#0f4c3a] to-[#0a3628]' },
-    { name: 'Welding', slug: 'welding', icon: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&q=80', count: 98, gradient: 'from-[#c7112c] to-[#e85d75]' },
+    { name: 'Welding', slug: 'welding', icon: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&q=80', count: 98, gradient: 'from-slate-700 to-slate-600' },
     { name: 'Construction', slug: 'construction-equipment', icon: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80', count: 312, gradient: 'from-[#2d1b00] to-[#4a2c00]' },
     { name: 'Electrical', slug: 'electrical', icon: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=300&q=80', count: 203, gradient: 'from-[#1e3a5f] to-[#152a45]' },
-    { name: 'Machinery', slug: 'machinery', icon: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80', count: 87, gradient: 'from-[#3d0c02] to-[#5c1a10]' },
+    { name: 'Machinery', slug: 'machinery', icon: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=300&q=80', count: 87, gradient: 'from-[#2c2c2c] to-[#1a1a1a]' },
     { name: 'Hardware', slug: 'hardware', icon: 'https://images.unsplash.com/photo-1572981779307-38b8cabb2407?w=300&q=80', count: 421, gradient: 'from-[#2c2c2c] to-[#1a1a1a]' },
 ];
 
@@ -46,7 +46,7 @@ export function CategoryScroll() {
                                 initial={{ opacity: 0, y: 10 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#c7112c]"
+                                className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-slate-600"
                             >
                                 Browse by category
                             </motion.p>
@@ -64,7 +64,7 @@ export function CategoryScroll() {
                             <button
                                 onClick={() => scroll('left')}
                                 disabled={!canScrollLeft}
-                                className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:bg-[#c7112c] hover:text-white hover:border-[#c7112c] disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:bg-slate-800 hover:text-white hover:border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
                                 aria-label="Scroll left"
                             >
                                 <ArrowLeft className="h-4 w-4" />
@@ -72,7 +72,7 @@ export function CategoryScroll() {
                             <button
                                 onClick={() => scroll('right')}
                                 disabled={!canScrollRight}
-                                className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:bg-[#c7112c] hover:text-white hover:border-[#c7112c] disabled:opacity-30 disabled:cursor-not-allowed"
+                                className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-500 transition-colors hover:bg-slate-800 hover:text-white hover:border-slate-800 disabled:opacity-30 disabled:cursor-not-allowed"
                                 aria-label="Scroll right"
                             >
                                 <ArrowRight className="h-4 w-4" />
@@ -100,7 +100,7 @@ export function CategoryScroll() {
                                     href={`/category/${cat.slug}`}
                                     className="block"
                                 >
-                                    <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-[#c7112c]/10 hover:-translate-y-1">
+                                    <div className="relative overflow-hidden rounded-2xl bg-white border border-slate-100 shadow-sm transition-all duration-300 hover:shadow-xl hover:shadow-slate-900/10 hover:-translate-y-1">
                                         {/* Image */}
                                         <div className="relative h-36 overflow-hidden">
                                             <Image
@@ -128,7 +128,7 @@ export function CategoryScroll() {
 
                                         {/* Content */}
                                         <div className="p-4">
-                                            <h3 className="text-sm font-semibold text-slate-900 group-hover:text-[#c7112c] transition-colors">
+                                            <h3 className="text-sm font-semibold text-slate-900 group-hover:text-slate-700 transition-colors">
                                                 {cat.name}
                                             </h3>
                                         </div>
