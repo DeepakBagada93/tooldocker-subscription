@@ -10,6 +10,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import type { AdminBulkEditAction, AdminImportHistoryItem, AdminMutationResult, AdminProductFormInput, AdminProductOption, AdminProductTableRow, AdminVendorOption, ProductCondition, ProductImportResponse } from '@/lib/admin-products/types';
 
+import { ImageUpload } from './image-upload';
+
 const PAGE_SIZE = 10;
 
 type ProductFormState = {
@@ -31,7 +33,7 @@ type ProductFormState = {
   length: string;
   width: string;
   height: string;
-  images: string;
+  images: string[];
   tags: string;
   isPublished: boolean;
 };
@@ -56,7 +58,7 @@ const createInitial: ProductFormState = {
   length: '',
   width: '',
   height: '',
-  images: '',
+  images: [],
   tags: '',
   isPublished: false,
 };
@@ -130,7 +132,7 @@ export function AdminProductsManager({
     setPage((current) => Math.min(current, pages));
   }, [pages]);
 
-  const setField = (key: keyof ProductFormState, value: string | boolean) => {
+  const setField = (key: keyof ProductFormState, value: string | boolean | string[]) => {
     setFormState((current) => ({ ...current, [key]: value }));
   };
 
@@ -212,7 +214,7 @@ export function AdminProductsManager({
       length: product.length,
       width: product.width,
       height: product.height,
-      images: product.images.join(' | '),
+      images: product.images,
       tags: product.tags.join(' | '),
       isPublished: product.isPublished,
     });
@@ -620,7 +622,13 @@ export function AdminProductsManager({
                 <Field label="Specifications"><textarea value={formState.specifications} onChange={(event) => setField('specifications', event.target.value)} placeholder={'Power: 1200W\nVoltage: 220V\nMaterial: Steel'} className="min-h-28 w-full rounded-xl border border-stone-200 bg-white px-3 py-3 text-sm" /></Field>
                 <Field label="SEO title"><Input value={formState.seoTitle} onChange={(event) => setField('seoTitle', event.target.value)} className="h-11 rounded-xl border-stone-200" /></Field>
                 <Field label="SEO description"><textarea value={formState.seoDescription} onChange={(event) => setField('seoDescription', event.target.value)} className="min-h-24 w-full rounded-xl border border-stone-200 bg-white px-3 py-3 text-sm" /></Field>
-                <Field label="Images"><Input value={formState.images} onChange={(event) => setField('images', event.target.value)} placeholder="https://... | https://..." className="h-11 rounded-xl border-stone-200" /></Field>
+                <Field label="Gallery Images">
+                  <ImageUpload 
+                    value={formState.images} 
+                    onChange={(urls) => setField('images', urls)} 
+                    disabled={isSaving}
+                  />
+                </Field>
                 <Field label="Tags"><Input value={formState.tags} onChange={(event) => setField('tags', event.target.value)} placeholder="industrial | cutting | tools" className="h-11 rounded-xl border-stone-200" /></Field>
 
                 {createFeedback ? <Feedback result={createFeedback} /> : null}
@@ -745,7 +753,7 @@ function buildProductInput(formState: ProductFormState): AdminProductFormInput {
     length: formState.length,
     width: formState.width,
     height: formState.height,
-    images: splitPipeList(formState.images),
+    images: formState.images,
     tags: splitPipeList(formState.tags),
     isPublished: formState.isPublished,
   };
@@ -779,7 +787,7 @@ function SectionNavButton({
 }
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="space-y-2 text-sm font-medium"><span>{label}</span><div>{children}</div></label>;
+  return <div className="space-y-2 text-sm font-medium"><span>{label}</span><div>{children}</div></div>;
 }
 
 function formatVendorLabel(label: string) {
