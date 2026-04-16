@@ -56,27 +56,34 @@ const sliderProducts = [
   },
 ];
 
+const particleConfigs = Array.from({ length: 20 }, (_, index) => ({
+  id: index,
+  x: (index * 57) % 1200,
+  y: 80 + ((index * 91) % 720),
+  scale: 0.5 + ((index % 5) * 0.12),
+  driftX: ((index % 7) - 3) * 14,
+  duration: 10 + (index % 6) * 2,
+}));
+
 // Floating particles background
 function FloatingParticles() {
-  const particles = Array.from({ length: 20 }, (_, i) => i);
-
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((i) => (
+      {particleConfigs.map((particle) => (
         <motion.div
-          key={i}
+          key={particle.id}
           className="absolute h-2 w-2 rounded-full bg-slate-300/30"
           initial={{
-            x: Math.random() * (typeof window !== 'undefined' ? window.innerWidth : 1200),
-            y: Math.random() * 800,
-            scale: Math.random() * 0.5 + 0.5,
+            x: particle.x,
+            y: particle.y,
+            scale: particle.scale,
           }}
           animate={{
             y: [null, -100],
-            x: [null, Math.random() * 100 - 50],
+            x: [null, particle.x + particle.driftX],
           }}
           transition={{
-            duration: Math.random() * 10 + 10,
+            duration: particle.duration,
             repeat: Infinity,
             ease: 'linear',
           }}

@@ -18,16 +18,23 @@ import {
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { formatCurrency } from '@/lib/currency'
 import { cn } from '@/lib/utils'
 import type { AdminDashboardData } from '@/lib/admin-dashboard'
 
 const integerFormatter = new Intl.NumberFormat('en-US')
+const compactInrFormatter = new Intl.NumberFormat('en-IN', {
+  style: 'currency',
+  currency: 'INR',
+  notation: 'compact',
+  maximumFractionDigits: 1,
+})
 
 export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
   const stats = [
     {
       name: 'Total Revenue',
-      value: `$${(data.mrr / 1000).toFixed(0)}k`,
+      value: compactInrFormatter.format(data.mrr),
       icon: DollarSign,
       trend: data.mrrTrend,
       isUp: !data.mrrTrend.startsWith('-'),
@@ -106,7 +113,7 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-xs uppercase tracking-[0.24em] text-white/60">Live command center</p>
-                <h2 className="mt-2 text-2xl font-black tracking-tight">${(data.mrr / 1000).toFixed(0)}k</h2>
+                <h2 className="mt-2 text-2xl font-black tracking-tight">{compactInrFormatter.format(data.mrr)}</h2>
                 <p className="mt-2 text-sm text-white/70">Total revenue currently committed across active orders.</p>
               </div>
               <Badge className="rounded-full bg-white/10 text-white hover:bg-white/10">
@@ -192,8 +199,11 @@ export function AdminDashboardClient({ data }: { data: AdminDashboardData }) {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                 <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700 }} />
-                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700 }} tickFormatter={(value) => `$${value / 1000}k`} />
-                <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 700 }} tickFormatter={(value) => compactInrFormatter.format(Number(value))} />
+                <Tooltip
+                  contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                  formatter={(value) => formatCurrency(Number(value))}
+                />
                 <Area type="monotone" dataKey="mrr" stroke="var(--color-primary, #F27D26)" strokeWidth={3} fillOpacity={1} fill="url(#colorRevenue)" />
               </AreaChart>
             </ResponsiveContainer>
