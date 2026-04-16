@@ -6,6 +6,7 @@ import { Star, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useCart } from '@/context/cart-context';
+import { formatCurrency } from '@/lib/currency';
 
 import { type Product } from '@/app/actions/products';
 
@@ -67,7 +68,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
         <div className="mt-auto flex items-center justify-between pt-4">
           <div className="text-xl font-semibold tracking-[-0.03em] text-slate-900">
-            ${product.price.toLocaleString()}
+            {formatCurrency(product.price)}
           </div>
           <Button
             size="icon"

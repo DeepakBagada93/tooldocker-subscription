@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { ShoppingCart, Star, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useCart } from '@/context/cart-context';
+import { formatCurrency } from '@/lib/currency';
 
 interface ProductCardProps {
   id: string;
@@ -17,8 +19,6 @@ interface ProductCardProps {
   vendor: string;
   isVerified?: boolean;
 }
-
-import { useCart } from '@/context/cart-context';
 
 export function ProductCard({ id, name, price, image, category, rating, reviews, vendor, isVerified }: ProductCardProps) {
   const { addItem } = useCart();
@@ -71,7 +71,7 @@ export function ProductCard({ id, name, price, image, category, rating, reviews,
         <div className="mt-auto flex items-center justify-between border-t border-stone-200 pt-4">
           <div className="flex flex-col">
             <span className="text-xs text-stone-500">Starting at</span>
-            <span className="text-2xl font-semibold tracking-[-0.03em] text-slate-900">${price.toLocaleString()}</span>
+            <span className="text-2xl font-semibold tracking-[-0.03em] text-slate-900">{formatCurrency(price)}</span>
           </div>
           <Button 
             size="icon" 

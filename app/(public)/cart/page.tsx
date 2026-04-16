@@ -6,6 +6,7 @@ import { Trash2, ShoppingCart, ArrowRight, ShieldCheck, Truck, Clock } from 'luc
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/currency';
 
 export default function CartPage() {
   const { items, removeItem, totalPrice, totalItems } = useCart();
@@ -66,8 +67,8 @@ export default function CartPage() {
                     </div>
 
                     <div className="text-right min-w-[100px]">
-                      <div className="text-lg font-semibold tracking-[-0.03em] text-slate-900">${(item.price * item.quantity).toLocaleString()}</div>
-                      <div className="text-xs text-stone-500">${item.price.toLocaleString()} / unit</div>
+                      <div className="text-lg font-semibold tracking-[-0.03em] text-slate-900">{formatCurrency(item.price * item.quantity)}</div>
+                      <div className="text-xs text-stone-500">{formatCurrency(item.price)} / unit</div>
                     </div>
 
                     <Button
@@ -93,7 +94,7 @@ export default function CartPage() {
             <div className="space-y-4 text-sm">
               <div className="flex justify-between">
                 <span className="text-stone-500">Subtotal</span>
-                <span className="font-bold">${totalPrice.toLocaleString()}</span>
+                <span className="font-bold">{formatCurrency(totalPrice)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-stone-500">Shipping (Estimated)</span>
@@ -101,12 +102,12 @@ export default function CartPage() {
               </div>
               <div className="flex justify-between">
                 <span className="text-stone-500">Tax</span>
-                <span className="font-bold">$0.00</span>
+                <span className="font-bold">{formatCurrency(0)}</span>
               </div>
               <div className="my-4 h-px bg-stone-200" />
               <div className="flex justify-between text-xl">
                 <span className="font-semibold tracking-[-0.03em] text-slate-900">Total</span>
-                <span className="font-semibold tracking-[-0.03em] text-primary">${totalPrice.toLocaleString()}</span>
+                <span className="font-semibold tracking-[-0.03em] text-primary">{formatCurrency(totalPrice)}</span>
               </div>
             </div>
 

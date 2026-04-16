@@ -49,7 +49,7 @@ export function FilterSidebar() {
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Min</span>
             <Input 
               type="number" 
-              placeholder="$0" 
+              placeholder={'\u20B90'} 
               className="border-stone-200 bg-[#fcfaf7]"
               value={priceRange.min}
               onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
@@ -59,7 +59,7 @@ export function FilterSidebar() {
             <span className="text-xs font-semibold uppercase tracking-[0.18em] text-stone-500">Max</span>
             <Input 
               type="number" 
-              placeholder="$10k+" 
+              placeholder={'\u20B910,000+'} 
               className="border-stone-200 bg-[#fcfaf7]"
               value={priceRange.max}
               onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}

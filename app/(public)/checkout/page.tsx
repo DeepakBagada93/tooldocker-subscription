@@ -5,8 +5,10 @@ import { useCart } from '@/context/cart-context';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ShieldCheck, Truck, CreditCard, CheckCircle2, ArrowRight, ArrowLeft } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/currency';
 
 const STEPS = [
   { id: 'shipping', name: 'Shipping', icon: Truck },
@@ -177,7 +179,7 @@ export default function CheckoutPage() {
                             <div className="text-xs text-muted-foreground">Qty: {item.quantity}</div>
                           </div>
                         </div>
-                        <div className="font-bold">${(item.price * item.quantity).toLocaleString()}</div>
+                        <div className="font-bold">{formatCurrency(item.price * item.quantity)}</div>
                       </div>
                     ))}
                   </div>
@@ -213,7 +215,7 @@ export default function CheckoutPage() {
               <div className="space-y-4 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span className="font-bold">${totalPrice.toLocaleString()}</span>
+                  <span className="font-bold">{formatCurrency(totalPrice)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
@@ -221,12 +223,12 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tax</span>
-                  <span className="font-bold">$0.00</span>
+                  <span className="font-bold">{formatCurrency(0)}</span>
                 </div>
                 <div className="h-px bg-slate-200 dark:bg-slate-800 my-4" />
                 <div className="flex justify-between text-xl">
                   <span className="font-black tracking-tighter uppercase">Total</span>
-                  <span className="font-black tracking-tighter text-primary">${totalPrice.toLocaleString()}</span>
+                  <span className="font-black tracking-tighter text-primary">{formatCurrency(totalPrice)}</span>
                 </div>
               </div>
               
@@ -243,5 +245,3 @@ export default function CheckoutPage() {
     </div>
   );
 }
-
-import Image from 'next/image';

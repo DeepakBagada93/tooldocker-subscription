@@ -8,6 +8,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { formatCurrency } from '@/lib/currency';
 
 export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -62,8 +63,8 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
             <div className="p-6 bg-slate-50 dark:bg-slate-900 rounded-2xl border space-y-6">
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-black tracking-tighter">${product.price.toLocaleString()}</span>
-                <span className="text-muted-foreground line-through text-lg">${(product.price * 1.2).toLocaleString()}</span>
+                <span className="text-4xl font-black tracking-tighter">{formatCurrency(product.price)}</span>
+                <span className="text-muted-foreground line-through text-lg">{formatCurrency(product.price * 1.2)}</span>
                 <Badge className="bg-emerald-500 ml-2">SAVE 20%</Badge>
               </div>
 
