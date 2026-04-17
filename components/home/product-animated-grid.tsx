@@ -13,7 +13,7 @@ export function ProductAnimatedGrid({ products }: { products: any[] }) {
     }
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 gap-3 sm:gap-6 lg:grid-cols-4 lg:gap-8">
             {products.map((product, index) => (
                 <motion.div
                     key={product.id}

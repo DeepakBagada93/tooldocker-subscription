@@ -15,7 +15,7 @@ const quickCategories = [
   { name: 'Electrical', icon: '🔌', href: '/category/electrical' },
 ];
 
-const typingWords = ['tools', 'machinery', 'site essentials'];
+const typingWords = ['machines', 'tools', 'site essentials'];
 
 const sliderProducts = [
   {
@@ -158,7 +158,7 @@ function SearchBar() {
         <Search className="ml-4 h-5 w-5 text-slate-400" />
         <input
           type="text"
-          placeholder="Search tools, machinery, equipment..."
+          placeholder="Search grinders, welders, cutters, safety gear..."
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
           onFocus={() => setIsFocused(true)}
@@ -184,7 +184,7 @@ function SearchBar() {
           >
             <TrendingUp className="h-3.5 w-3.5 text-slate-600" />
             <span className="text-slate-500">Popular:</span>
-            {['Drill Machine', 'Welding', 'Safety Kit'].map((term) => (
+            {['Angle Grinder', 'Welding Machine', 'Safety Shoes'].map((term) => (
               <button
                 key={term}
                 onClick={() => setSearchValue(term)}
@@ -285,7 +285,7 @@ export function Hero() {
                 transition={{ duration: 2, repeat: Infinity }}
                 className="h-2 w-2 rounded-full bg-slate-600"
               />
-              India's #1 industrial marketplace
+              Trusted by contractors, fabricators, and B2B buyers across India
             </motion.div>
 
             {/* Heading with typing animation */}
@@ -296,14 +296,14 @@ export function Hero() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="text-5xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
               >
-                Buy{' '}
+                Source{' '}
                 <span className="relative inline-block">
                   <TypingText words={typingWords} />
                   <span className="absolute -bottom-2 left-0 h-1 w-full bg-gradient-to-r from-slate-700 to-slate-500 rounded-full" />
                 </span>
                 <br />
                 <span className="mt-2 block text-slate-800">
-                  for real work in India.
+                  faster, smarter, and without the guesswork.
                 </span>
               </motion.h1>
             </div>
@@ -315,8 +315,25 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="max-w-lg text-lg leading-relaxed text-slate-600"
             >
-              Search faster, compare clearly, and order quality industrial products built for contractors, builders, and B2B buyers.
+              Discover industrial products that are easier to trust and quicker to shortlist. Compare pricing, evaluate specs, and order with confidence for projects, workshops, and procurement teams.
             </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.55 }}
+              className="flex flex-wrap items-center gap-3 text-sm text-slate-600"
+            >
+              <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 shadow-sm">
+                Verified industrial categories
+              </div>
+              <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 shadow-sm">
+                Clear pricing and specs
+              </div>
+              <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 shadow-sm">
+                Built for real purchase decisions
+              </div>
+            </motion.div>
 
             {/* Interactive Search Bar */}
             <SearchBar />
@@ -334,7 +351,7 @@ export function Hero() {
                 className="group h-14 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 px-8 text-white hover:opacity-90 shadow-2xl shadow-slate-900/30"
               >
                 <Link href="/search">
-                  Browse Catalog
+                  Explore Top Products
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
@@ -345,7 +362,7 @@ export function Hero() {
                 className="h-14 rounded-2xl border-2 border-slate-300 bg-white px-8 text-slate-900 hover:bg-slate-50 hover:border-slate-500"
               >
                 <Link href="/search">
-                  View All Products
+                  Compare Categories
                 </Link>
               </Button>
             </motion.div>
@@ -383,12 +400,12 @@ export function Hero() {
                     <Star key={star} className="h-4 w-4 fill-amber-500 text-amber-500" />
                   ))}
                 </div>
-                <span className="text-sm font-semibold text-slate-900">4.8/5</span>
-                <span className="text-xs text-slate-500">(2.3k reviews)</span>
+                <span className="text-sm font-semibold text-slate-900">4.8/5 buyer rating</span>
+                <span className="text-xs text-slate-500">(2.3k verified reviews)</span>
               </div>
               <div className="h-4 w-px bg-slate-300" />
               <div className="text-sm text-slate-600">
-                <span className="font-bold text-slate-900">10,000+</span> happy customers
+                <span className="font-bold text-slate-900">10,000+</span> sourcing teams and workshop buyers
               </div>
             </motion.div>
           </div>
