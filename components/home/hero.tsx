@@ -3,19 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, ChevronLeft, ChevronRight, Search, TrendingUp, Zap, Star } from 'lucide-react';
+import { ArrowRight, ChevronLeft, ChevronRight, Search, TrendingUp, Zap, Star, ShieldCheck, Truck, FileText } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-const quickCategories = [
-  { name: 'Power Tools', icon: '⚡', href: '/category/power-tools' },
-  { name: 'Hand Tools', icon: '🔧', href: '/category/hand-tools' },
-  { name: 'Construction', icon: '🏗️', href: '/category/construction-equipment' },
-  { name: 'Safety Gear', icon: '🛡️', href: '/category/safety-equipment' },
-  { name: 'Electrical', icon: '🔌', href: '/category/electrical' },
-];
-
-const typingWords = ['machines', 'tools', 'site essentials'];
+const typingWords = ['industrial tools', 'machinery', 'workshop gear'];
 
 const sliderProducts = [
   {
@@ -45,53 +37,13 @@ const sliderProducts = [
     image: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?w=800&q=80',
     badge: 'Top Rated',
   },
-  {
-    name: 'Welding Machine 200A',
-    category: 'Welding',
-    price: '₹12,999',
-    rating: 4.6,
-    reviews: 145,
-    image: 'https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80',
-    badge: 'Hot Deal',
-  },
 ];
 
-const particleConfigs = Array.from({ length: 20 }, (_, index) => ({
-  id: index,
-  x: (index * 57) % 1200,
-  y: 80 + ((index * 91) % 720),
-  scale: 0.5 + ((index % 5) * 0.12),
-  driftX: ((index % 7) - 3) * 14,
-  duration: 10 + (index % 6) * 2,
-}));
-
-// Floating particles background
-function FloatingParticles() {
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particleConfigs.map((particle) => (
-        <motion.div
-          key={particle.id}
-          className="absolute h-2 w-2 rounded-full bg-slate-300/30"
-          initial={{
-            x: particle.x,
-            y: particle.y,
-            scale: particle.scale,
-          }}
-          animate={{
-            y: [null, -100],
-            x: [null, particle.x + particle.driftX],
-          }}
-          transition={{
-            duration: particle.duration,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        />
-      ))}
-    </div>
-  );
-}
+const b2bBenefits = [
+  { icon: ShieldCheck, label: 'Verified Vendors' },
+  { icon: FileText, label: 'GST Invoices' },
+  { icon: Truck, label: 'Bulk Logistics' },
+];
 
 // Typing animation
 function TypingText({ words }: { words: string[] }) {
@@ -119,90 +71,25 @@ function TypingText({ words }: { words: string[] }) {
           }
         }
       },
-      isDeleting ? 50 : 120
+      isDeleting ? 40 : 100
     );
     return () => clearTimeout(timeout);
   }, [charIndex, isDeleting, wordIndex, words]);
 
   return (
-    <span className="inline-block text-slate-800">
+    <span className="inline-block text-slate-900 min-w-[200px]">
       {currentText}
       <motion.span
         animate={{ opacity: [1, 0] }}
         transition={{ duration: 0.5, repeat: Infinity, repeatType: 'reverse' }}
-        className="inline-block w-[3px] h-[0.95em] bg-slate-800 ml-1 align-text-bottom"
+        className="inline-block w-[3px] h-[0.95em] bg-primary ml-1 align-text-bottom"
       />
     </span>
   );
 }
 
-// Interactive search bar
-function SearchBar() {
-  const [isFocused, setIsFocused] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.15 }}
-      className="relative max-w-xl"
-    >
-      <div
-        className={`relative flex items-center rounded-2xl border-2 bg-white transition-all duration-300 ${
-          isFocused
-            ? 'border-slate-800 shadow-xl shadow-slate-900/10 scale-105'
-            : 'border-slate-200 shadow-lg shadow-slate-900/5'
-        }`}
-      >
-        <Search className="ml-4 h-5 w-5 text-slate-400" />
-        <input
-          type="text"
-          placeholder="Search grinders, welders, cutters, safety gear..."
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          className="w-full bg-transparent px-4 py-4 text-sm outline-none placeholder:text-slate-400"
-        />
-        <Button
-          asChild
-          className="mr-2 h-10 rounded-xl bg-slate-900 px-6 text-white hover:bg-slate-800"
-        >
-          <Link href="/search">Search</Link>
-        </Button>
-      </div>
-
-      {/* Quick suggestions */}
-      <AnimatePresence>
-        {isFocused && !searchValue && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute -bottom-12 left-0 flex items-center gap-2 text-xs"
-          >
-            <TrendingUp className="h-3.5 w-3.5 text-slate-600" />
-            <span className="text-slate-500">Popular:</span>
-            {['Angle Grinder', 'Welding Machine', 'Safety Shoes'].map((term) => (
-              <button
-                key={term}
-                onClick={() => setSearchValue(term)}
-                className="rounded-full bg-slate-100 px-3 py-1 text-slate-600 transition-colors hover:bg-slate-800 hover:text-white"
-              >
-                {term}
-              </button>
-            ))}
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
-  );
-}
-
 export function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const heroRef = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
@@ -221,137 +108,78 @@ export function Hero() {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
+    const interval = setInterval(nextSlide, 6000);
     return () => clearInterval(interval);
   }, [nextSlide]);
-
-  // Mouse tracking for interactive gradient
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!heroRef.current) return;
-    const rect = heroRef.current.getBoundingClientRect();
-    setMousePosition({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
-  };
 
   return (
     <section
       ref={heroRef}
-      onMouseMove={handleMouseMove}
-      className="relative overflow-hidden bg-gradient-to-br from-white via-[#fff8f9] to-[#fff5f6] min-h-screen flex items-center py-20 lg:py-0"
+      className="relative overflow-hidden bg-white min-h-[90vh] flex items-center pt-32 pb-20 lg:pt-20 lg:pb-0"
     >
-      {/* Animated gradient that follows mouse */}
-      <motion.div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(600px circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(199, 17, 44, 0.06), transparent 40%)`,
-        }}
-      />
-
-      {/* Floating particles */}
-      <FloatingParticles />
-
-      {/* Background grid pattern */}
-      <div className="absolute inset-0 opacity-[0.03]">
+      {/* Clean background pattern */}
+      <div className="absolute inset-0 opacity-[0.02] pointer-events-none">
         <div
           className="absolute inset-0"
           style={{
-            backgroundImage: 'radial-gradient(circle at 1px 1px, #64748b 1px, transparent 0)',
-            backgroundSize: '50px 50px',
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #000 1px, transparent 0)',
+            backgroundSize: '40px 40px',
           }}
         />
       </div>
-
-      {/* Top accent line */}
-      <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-transparent via-slate-400 to-transparent" />
 
       <motion.div
         style={{ opacity, y: parallaxY }}
         className="container mx-auto px-4 relative z-10"
       >
-        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+        <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           {/* LEFT: Content */}
-          <div className="space-y-8">
-            {/* Badge with animation */}
+          <div className="space-y-10">
+            {/* Direct Value Statement */}
             <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="inline-flex items-center gap-3 rounded-full bg-slate-50 border border-slate-100 px-4 py-2 text-xs font-bold uppercase tracking-widest text-slate-600"
+            >
+              <Zap className="h-3.5 w-3.5 text-primary fill-primary" />
+              India&apos;s Smartest B2B Sourcing Hub
+            </motion.div>
+
+            {/* Sharp Heading */}
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-slate-100 to-slate-50 px-5 py-2 text-[11px] font-bold uppercase tracking-[0.25em] text-slate-700 border border-slate-200"
+              className="text-5xl font-black leading-[1.05] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
             >
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="h-2 w-2 rounded-full bg-slate-600"
-              />
-              Trusted by contractors, fabricators, and B2B buyers across India
-            </motion.div>
+              The easiest way to procure <br />
+              <TypingText words={typingWords} />
+            </motion.h1>
 
-            {/* Heading with typing animation */}
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="text-5xl font-bold leading-[1.1] tracking-tight text-slate-900 sm:text-6xl lg:text-7xl"
-              >
-                Source{' '}
-                <span className="relative inline-block">
-                  <TypingText words={typingWords} />
-                  <span className="absolute -bottom-2 left-0 h-1 w-full bg-gradient-to-r from-slate-700 to-slate-500 rounded-full" />
-                </span>
-                <br />
-                <span className="mt-2 block text-slate-800">
-                  faster, smarter, and without the guesswork.
-                </span>
-              </motion.h1>
-            </div>
-
-            {/* Subtitle */}
+            {/* Simple Subtitle */}
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="max-w-lg text-lg leading-relaxed text-slate-600"
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="max-w-lg text-lg text-slate-500 font-medium leading-relaxed"
             >
-              Discover industrial products that are easier to trust and quicker to shortlist. Compare pricing, evaluate specs, and order with confidence for projects, workshops, and procurement teams.
+              A purpose-built marketplace for Indian contractors and procurement teams. Verified vendors, transparent pricing, and seamless GST invoicing.
             </motion.p>
 
+            {/* Engagement Actions */}
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.55 }}
-              className="flex flex-wrap items-center gap-3 text-sm text-slate-600"
-            >
-              <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 shadow-sm">
-                Verified industrial categories
-              </div>
-              <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 shadow-sm">
-                Clear pricing and specs
-              </div>
-              <div className="rounded-full border border-slate-200 bg-white px-3 py-1.5 font-medium text-slate-700 shadow-sm">
-                Built for real purchase decisions
-              </div>
-            </motion.div>
-
-            {/* Interactive Search Bar */}
-            <SearchBar />
-
-            {/* CTA Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 1.3 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               className="flex flex-wrap items-center gap-4"
             >
               <Button
                 asChild
                 size="lg"
-                className="group h-14 rounded-2xl bg-gradient-to-r from-slate-800 to-slate-700 px-8 text-white hover:opacity-90 shadow-2xl shadow-slate-900/30"
+                className="group h-14 rounded-full bg-slate-900 px-8 text-white hover:bg-slate-800 shadow-xl shadow-slate-200"
               >
                 <Link href="/search">
-                  Explore Top Products
+                  Browse Catalog
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </Link>
               </Button>
@@ -359,204 +187,101 @@ export function Hero() {
                 asChild
                 size="lg"
                 variant="outline"
-                className="h-14 rounded-2xl border-2 border-slate-300 bg-white px-8 text-slate-900 hover:bg-slate-50 hover:border-slate-500"
+                className="h-14 rounded-full border-2 border-slate-200 bg-white px-8 text-slate-900 hover:bg-slate-50"
               >
-                <Link href="/search">
-                  Compare Categories
+                <Link href="/register">
+                  Register as Buyer
                 </Link>
               </Button>
             </motion.div>
 
-            {/* Category Pills */}
+            {/* B2B Proof Points */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5, delay: 1.5 }}
-              className="flex flex-wrap items-center gap-3"
+              transition={{ delay: 0.5 }}
+              className="flex flex-wrap items-center gap-8 pt-4"
             >
-              <Zap className="h-4 w-4 text-slate-600" />
-              {quickCategories.map((category, idx) => (
-                <Link
-                  key={category.name}
-                  href={category.href}
-                  className="group rounded-xl border-2 border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 transition-all hover:border-slate-400 hover:bg-slate-800 hover:text-white hover:shadow-lg hover:shadow-slate-900/20 hover:-translate-y-0.5"
-                >
-                  <span className="mr-1.5">{category.icon}</span>
-                  {category.name}
-                </Link>
-              ))}
-            </motion.div>
-
-            {/* Trust indicators */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.7 }}
-              className="flex flex-wrap items-center gap-6 pt-4"
-            >
-              <div className="flex items-center gap-2">
-                <div className="flex">
-                  {[1, 2, 3, 4, 5].map((star) => (
-                    <Star key={star} className="h-4 w-4 fill-amber-500 text-amber-500" />
-                  ))}
+              {b2bBenefits.map((benefit, idx) => (
+                <div key={idx} className="flex items-center gap-2.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                    <benefit.icon className="h-4 w-4" />
+                  </div>
+                  <span className="text-sm font-bold text-slate-700 tracking-tight">{benefit.label}</span>
                 </div>
-                <span className="text-sm font-semibold text-slate-900">4.8/5 buyer rating</span>
-                <span className="text-xs text-slate-500">(2.3k verified reviews)</span>
-              </div>
-              <div className="h-4 w-px bg-slate-300" />
-              <div className="text-sm text-slate-600">
-                <span className="font-bold text-slate-900">10,000+</span> sourcing teams and workshop buyers
-              </div>
+              ))}
             </motion.div>
           </div>
 
-          {/* RIGHT: Interactive Product Showcase */}
-          <div className="relative">
-            {/* Floating badges */}
+          {/* RIGHT: Visual Showcase */}
+          <div className="relative lg:block">
+            {/* Animated card container */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.8 }}
-              className="absolute -right-4 top-8 z-20 rounded-2xl bg-white px-4 py-3 shadow-xl shadow-slate-900/10"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative mx-auto w-full max-w-md lg:max-w-lg"
             >
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-emerald-600" />
-                <div>
-                  <div className="text-xs font-bold text-slate-900">Trending Now</div>
-                  <div className="text-[10px] text-slate-500">+250% sales this month</div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Main product slider */}
-            <div className="relative mx-auto w-full max-w-md lg:max-w-lg">
-              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-white shadow-2xl shadow-slate-900/15 border border-slate-100">
-                {/* Animated product content */}
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-[2.5rem] bg-slate-50 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border border-slate-100">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentSlide}
-                    initial={{ opacity: 0, x: 50 }}
+                    initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    exit={{ opacity: 0, x: -20 }}
+                    transition={{ duration: 0.5 }}
                     className="absolute inset-0 flex flex-col"
                   >
-                    {/* Product image */}
-                    <div className="relative flex-1 overflow-hidden">
-                      <Image
-                        src={sliderProducts[currentSlide].image}
-                        alt={sliderProducts[currentSlide].name}
-                        fill
-                        className="object-cover transition-transform duration-700 hover:scale-110"
-                        referrerPolicy="no-referrer"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
-
-                      {/* Badge */}
-                      <div className="absolute left-4 top-4 rounded-xl bg-gradient-to-r from-slate-800 to-slate-700 px-3 py-1.5 text-xs font-bold text-white">
-                        {sliderProducts[currentSlide].badge}
-                      </div>
-
-                      {/* Quick view button */}
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/90 backdrop-blur-sm transition-colors hover:bg-white"
-                      >
-                        <Search className="h-5 w-5 text-slate-700" />
-                      </motion.button>
+                    <div className="relative flex-1 overflow-hidden p-6 pb-0">
+                       <div className="relative h-full w-full overflow-hidden rounded-[1.5rem] shadow-inner">
+                        <Image
+                          src={sliderProducts[currentSlide].image}
+                          alt={sliderProducts[currentSlide].name}
+                          fill
+                          className="object-cover"
+                          priority
+                          referrerPolicy="no-referrer"
+                        />
+                       </div>
                     </div>
 
-                    {/* Product info */}
-                    <div className="relative bg-white p-6">
-                      <div className="text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                        {sliderProducts[currentSlide].category}
+                    <div className="p-8 pb-10">
+                      <div className="flex items-center justify-between mb-3">
+                        <span className="text-xs font-black uppercase tracking-widest text-primary">
+                          {sliderProducts[currentSlide].category}
+                        </span>
+                        <div className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1 border border-slate-100 shadow-sm">
+                          <Star className="h-3.5 w-3.5 fill-amber-500 text-amber-500" />
+                          <span className="text-xs font-bold text-slate-900">{sliderProducts[currentSlide].rating}</span>
+                        </div>
                       </div>
-                      <div className="text-xl font-bold text-slate-900 mb-2">
-                        {sliderProducts[currentSlide].name}
-                      </div>
+                      <h3 className="text-2xl font-black text-slate-900 mb-4">{sliderProducts[currentSlide].name}</h3>
                       <div className="flex items-center justify-between">
-                        <div className="text-2xl font-bold text-slate-900">
-                          {sliderProducts[currentSlide].price}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Star className="h-4 w-4 fill-amber-500 text-amber-500" />
-                          <span className="text-sm font-semibold text-slate-900">
-                            {sliderProducts[currentSlide].rating}
-                          </span>
-                          <span className="text-xs text-slate-500">
-                            ({sliderProducts[currentSlide].reviews})
-                          </span>
-                        </div>
+                        <div className="text-3xl font-black text-slate-900">{sliderProducts[currentSlide].price}</div>
+                        <Button size="sm" className="rounded-full bg-slate-900 px-6 font-bold h-10">View Deal</Button>
                       </div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
 
-                {/* Navigation arrows */}
-                <button
-                  onClick={prevSlide}
-                  className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
-                  aria-label="Previous product"
-                >
-                  <ChevronLeft className="h-6 w-6 text-slate-700" />
-                </button>
-                <button
-                  onClick={nextSlide}
-                  className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 shadow-lg backdrop-blur-sm transition-all hover:bg-white hover:scale-110"
-                  aria-label="Next product"
-                >
-                  <ChevronRight className="h-6 w-6 text-slate-700" />
-                </button>
-
-                {/* Dot indicators */}
-                <div className="absolute bottom-[7.5rem] left-1/2 z-20 flex -translate-x-1/2 gap-2">
-                  {sliderProducts.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentSlide(index)}
-                      className={`rounded-full transition-all duration-300 ${
-                        index === currentSlide
-                          ? 'h-2.5 w-8 bg-slate-800'
-                          : 'h-2.5 w-2.5 bg-slate-300 hover:bg-slate-500'
-                      }`}
-                      aria-label={`Go to product ${index + 1}`}
-                    />
-                  ))}
+                {/* Simplified navigation */}
+                <div className="absolute bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/80 backdrop-blur-md px-4 py-2 rounded-full border border-white/50 shadow-xl">
+                  <button onClick={prevSlide} className="text-slate-900 hover:text-primary transition-colors"><ChevronLeft className="h-5 w-5" /></button>
+                  <div className="flex gap-1.5">
+                    {sliderProducts.map((_, idx) => (
+                      <div key={idx} className={`h-1.5 rounded-full transition-all ${idx === currentSlide ? 'w-6 bg-slate-900' : 'w-1.5 bg-slate-300'}`} />
+                    ))}
+                  </div>
+                  <button onClick={nextSlide} className="text-slate-900 hover:text-primary transition-colors"><ChevronRight className="h-5 w-5" /></button>
                 </div>
               </div>
 
-              {/* Decorative elements */}
-              <div className="absolute -bottom-4 -left-4 -z-10 h-full w-full rounded-3xl border-2 border-slate-200" />
-              <div className="absolute -bottom-8 -left-8 -z-20 h-full w-full rounded-3xl border-2 border-slate-100" />
-            </div>
+              {/* Decorative accent */}
+              <div className="absolute -z-10 -bottom-6 -right-6 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
+              <div className="absolute -z-10 -top-6 -left-6 h-64 w-64 rounded-full bg-slate-100 blur-3xl" />
+            </motion.div>
           </div>
         </div>
-      </motion.div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-        className="absolute bottom-8 left-1/2 z-20 -translate-x-1/2"
-      >
-        <motion.div
-          animate={{ y: [0, 10, 0] }}
-          transition={{ duration: 1.5, repeat: Infinity }}
-          className="flex flex-col items-center gap-2"
-        >
-          <span className="text-xs font-medium uppercase tracking-wider text-slate-500">
-            Scroll to explore
-          </span>
-          <div className="h-8 w-5 rounded-full border-2 border-slate-400 flex items-start justify-center p-1">
-            <motion.div
-              animate={{ y: [0, 12, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="h-1.5 w-1.5 rounded-full bg-slate-600"
-            />
-          </div>
-        </motion.div>
       </motion.div>
     </section>
   );

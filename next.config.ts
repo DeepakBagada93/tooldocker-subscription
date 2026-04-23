@@ -47,6 +47,12 @@ const nextConfig: NextConfig = {
       },
       {
         protocol: 'https',
+        hostname: 'kswnycrkrgpnzvwuzeuv.supabase.co',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
         hostname: 'www.alibaba.com',
         port: '',
         pathname: '/**',

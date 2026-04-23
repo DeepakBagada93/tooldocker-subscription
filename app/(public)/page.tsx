@@ -5,10 +5,11 @@ import { WhyTooldocker } from '@/components/home/why-tooldocker';
 import { CTASection } from '@/components/home/cta-section';
 import { CategoryScroll } from '@/components/home/category-scroll';
 import { IndiaCoverage } from '@/components/home/india-coverage';
+import { HomeClient } from '@/components/home/home-client';
 
-export default function Home() {
+export default async function Home() {
   return (
-    <>
+    <HomeClient>
       <Hero />
       <TrustBar />
       <CategoryScroll />
@@ -16,6 +17,6 @@ export default function Home() {
       <IndiaCoverage />
       <WhyTooldocker />
       <CTASection />
-    </>
+    </HomeClient>
   );
 }
