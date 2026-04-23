@@ -30,7 +30,7 @@ export function Footer() {
                   width={219}
                   height={53}
                   sizes="(max-width: 640px) 140px, 170px"
-                  className="h-auto w-[140px] object-contain sm:w-[170px] brightness-0 invert"
+                  className="h-auto w-[140px] object-contain sm:w-[170px] invert brightness-200"
                 />
               </Link>
               <p className="text-sm leading-7 text-slate-300">
